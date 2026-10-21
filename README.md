@@ -174,7 +174,14 @@ Add a new post object to `src/data/blogPosts.ts`. The post will automatically ge
 
 ## 🌐 Deploy to Vercel or Cloudflare
 
-### Deploy to Vercel (Recommended)
+### Deploy to Cloudflare Pages (Production Store)
+- **Live URL**: [https://riya-tarot-crystals-store.pages.dev](https://riya-tarot-crystals-store.pages.dev)
+- **Repository**: [https://github.com/arjungupta434320/riya-tarot-crystals-store](https://github.com/arjungupta434320/riya-tarot-crystals-store)
+- **Framework Preset**: None (Static)
+- **Build Command**: `npm run build`
+- **Output Directory**: `out`
+
+### Deploy to Vercel
 1. Push your repository to GitHub.
 2. Go to [Vercel](https://vercel.com) and click **Add New Project**.
 3. Import the repository. Next.js App Router will be auto-detected.
