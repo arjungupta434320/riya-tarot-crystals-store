@@ -153,7 +153,7 @@ export default function Navbar() {
               className="hover:text-[#7B4FC9] transition-colors relative py-1 flex items-center gap-1.5 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-[#7B4FC9] hover:after:w-full after:transition-all"
             >
               <BookOpen size={13} className="text-[#C9A24D]" />
-              <span>Journal</span>
+              <span>Blog</span>
             </Link>
             <Link
               href="/about"
@@ -480,7 +480,7 @@ export default function Navbar() {
                 >
                   <span className="font-semibold text-xs flex items-center gap-1.5">
                     <BookOpen size={13} className="text-[#C9A24D]" />
-                    <span>Crystal Library & Journal</span>
+                    <span>Blog & Crystal Library</span>
                   </span>
                   <ArrowRight size={14} className="text-[#C9A24D]" />
                 </Link>

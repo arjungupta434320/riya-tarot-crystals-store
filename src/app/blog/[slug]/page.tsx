@@ -16,6 +16,7 @@ import {
   BookOpen,
   ArrowRight
 } from "lucide-react";
+import MarkdownRenderer from "@/components/blog/MarkdownRenderer";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
@@ -60,7 +61,7 @@ export default async function BlogPostPage({
   }
 
   const relatedProducts = fallbackProducts.filter((p) =>
-    post.relatedProductIds.includes(p.id)
+    (post.relatedProductIds || []).includes(p.id)
   );
 
   const relatedArticles = blogPosts
@@ -153,41 +154,43 @@ export default async function BlogPostPage({
         </div>
 
         {/* Crystal Fact-Sheet Card */}
-        <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C9A24D]/40 mb-10 shadow-xs">
-          <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#EFE9E2]">
-            <Sparkles size={18} className="text-[#C9A24D]" />
-            <h3 className="font-serif text-base sm:text-lg font-bold text-[#2B1B3D] uppercase tracking-wider">
-              Sacred Gemstone Fact-Sheet
-            </h3>
-          </div>
+        {post.factSheet && (
+          <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#C9A24D]/40 mb-10 shadow-xs">
+            <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#EFE9E2]">
+              <Sparkles size={18} className="text-[#C9A24D]" />
+              <h3 className="font-serif text-base sm:text-lg font-bold text-[#2B1B3D] uppercase tracking-wider">
+                Sacred Gemstone Fact-Sheet
+              </h3>
+            </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
-            <div>
-              <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Primary Chakra</span>
-              <span className="font-semibold text-[#2B1B3D]">{post.factSheet.chakra}</span>
-            </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Elemental Affinity</span>
-              <span className="font-semibold text-[#2B1B3D]">{post.factSheet.element}</span>
-            </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Astrological Zodiac</span>
-              <span className="font-semibold text-[#2B1B3D]">{post.factSheet.zodiac}</span>
-            </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Mohs Hardness</span>
-              <span className="font-semibold text-[#2B1B3D]">{post.factSheet.hardness}</span>
-            </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Geological Origin</span>
-              <span className="font-semibold text-[#2B1B3D]">{post.factSheet.origin}</span>
-            </div>
-            <div>
-              <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Primary Frequency</span>
-              <span className="font-semibold text-[#7B4FC9]">{post.factSheet.primaryVibration}</span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Primary Chakra</span>
+                <span className="font-semibold text-[#2B1B3D]">{post.factSheet.chakra || "Universal Balance"}</span>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Elemental Affinity</span>
+                <span className="font-semibold text-[#2B1B3D]">{post.factSheet.element || "Cosmic Ether"}</span>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Astrological Zodiac</span>
+                <span className="font-semibold text-[#2B1B3D]">{post.factSheet.zodiac || "All Signs"}</span>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Mohs Hardness</span>
+                <span className="font-semibold text-[#2B1B3D]">{post.factSheet.hardness || "7.0 (Mohs)"}</span>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Geological Origin</span>
+                <span className="font-semibold text-[#2B1B3D]">{post.factSheet.origin || "Ethically Sourced"}</span>
+              </div>
+              <div>
+                <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-0.5">Primary Frequency</span>
+                <span className="font-semibold text-[#7B4FC9]">{post.factSheet.primaryVibration || "Harmonizing"}</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Collapsible Mobile Table of Contents */}
         <details className="mb-8 p-4 sm:p-5 rounded-2xl bg-white border border-[#EFE9E2] shadow-xs cursor-pointer group">
@@ -207,10 +210,8 @@ export default async function BlogPostPage({
         </details>
 
         {/* Article Body Content */}
-        <div className="prose prose-sm sm:prose-base max-w-none text-[#2B1B3D] font-sans leading-relaxed space-y-6 overflow-x-auto">
-          <div className="whitespace-pre-line text-base sm:text-lg leading-relaxed text-[#2B1B3D]">
-            {post.content}
-          </div>
+        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-[#EFE9E2] shadow-xs mb-12">
+          <MarkdownRenderer content={post.content} />
         </div>
 
         {/* Shoppable Crystal Embeds */}

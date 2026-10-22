@@ -2,7 +2,7 @@ export interface BlogPost {
   slug: string;
   title: string;
   excerpt: string;
-  category: "Crystal Encyclopedia" | "Chakras" | "Healing Guides" | "Cleansing & Charging" | "Zodiac & Birthstones" | "Beginner Guides";
+  category: "Crystal Encyclopedia" | "Chakras" | "Healing Guides" | "Cleansing & Charging" | "Zodiac & Birthstones" | "Beginner Guides" | string;
   publishDate: string;
   readTime: string;
   coverImage: string;
@@ -11,17 +11,20 @@ export interface BlogPost {
     role: string;
     avatar: string;
   };
-  factSheet: {
-    chakra: string;
-    element: string;
-    zodiac: string;
-    hardness: string;
-    origin: string;
-    primaryVibration: string;
+  factSheet?: {
+    chakra?: string;
+    element?: string;
+    zodiac?: string;
+    hardness?: string;
+    origin?: string;
+    primaryVibration?: string;
   };
   content: string;
-  relatedProductIds: string[];
-  seoDescription: string;
+  relatedProductIds?: string[];
+  seoDescription?: string;
+  status?: "published" | "draft";
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const blogPosts: BlogPost[] = [

@@ -1,7 +1,38 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Sparkles, Compass, ArrowRight } from "lucide-react";
+import { Sparkles, ArrowRight } from "lucide-react";
 
 export default function NotFound() {
+  const [redirecting, setRedirecting] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const pathname = window.location.pathname;
+      if (
+        pathname.startsWith("/blog/") &&
+        !pathname.startsWith("/blog/article") &&
+        !pathname.startsWith("/blog/post")
+      ) {
+        const slug = pathname.replace(/^\/blog\//, "").replace(/\/$/, "").trim();
+        if (slug) {
+          setRedirecting(true);
+          window.location.replace(`/blog/article?slug=${encodeURIComponent(slug)}`);
+        }
+      }
+    }
+  }, []);
+
+  if (redirecting) {
+    return (
+      <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-6 bg-[#FBF8F3] text-[#2B1B3D]">
+        <Sparkles className="w-8 h-8 text-[#C9A24D] animate-spin mb-4" />
+        <p className="font-serif text-lg text-[#2B1B3D]">Aligning crystal frequency...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-[80vh] flex flex-col items-center justify-center text-center px-6 bg-[#FBF8F3] text-[#2B1B3D] relative overflow-hidden">
       
