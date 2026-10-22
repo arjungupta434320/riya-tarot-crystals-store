@@ -14,7 +14,6 @@ import {
   Minus, 
   ChevronDown, 
   ArrowRight, 
-  ShieldCheck, 
   Sparkles, 
   Moon, 
   Check, 
@@ -22,7 +21,6 @@ import {
   ShoppingBag,
   Compass,
   Ruler,
-  Truck,
   MessageCircle,
   HelpCircle,
   CheckCircle2,
@@ -54,10 +52,6 @@ function ProductContent() {
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [justAdded, setJustAdded] = useState(false);
   const [showStickyAdd, setShowStickyAdd] = useState(false);
-
-  // Pincode Checker
-  const [pincodeInput, setPincodeInput] = useState("");
-  const [pincodeResult, setPincodeResult] = useState<string | null>(null);
 
   // Kundli customization form
   const [kundliName, setKundliName] = useState("");
@@ -146,25 +140,6 @@ function ProductContent() {
   const currentPrice = basePrice + beadPriceModifier;
   const originalPrice = (product.price || basePrice) + beadPriceModifier;
   const discount = originalPrice > currentPrice ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
-
-  const handlePincodeCheck = (e: React.FormEvent) => {
-    e.preventDefault();
-    const pin = pincodeInput.trim();
-    if (pin.length !== 6 || !/^\d+$/.test(pin)) {
-      setPincodeResult("Please enter a valid 6-digit Indian PIN code.");
-      return;
-    }
-    // Indian delivery estimation simulation
-    if (pin.startsWith("11") || pin.startsWith("12") || pin.startsWith("20")) {
-      setPincodeResult("✓ Express Air: Delivery in 2 Business Days to Delhi NCR (Free Shipping).");
-    } else if (pin.startsWith("40") || pin.startsWith("41")) {
-      setPincodeResult("✓ Express Air: Delivery in 2-3 Business Days to Maharashtra (Free Shipping).");
-    } else if (pin.startsWith("56") || pin.startsWith("60") || pin.startsWith("50")) {
-      setPincodeResult("✓ Express Air: Delivery in 2-3 Business Days to South Hubs (Free Shipping).");
-    } else {
-      setPincodeResult("✓ Standard Air: Delivery in 3-4 Business Days with live tracking (Free Shipping).");
-    }
-  };
 
   const handleAddToCart = () => {
     let customKundli: KundliDetails | undefined = undefined;
@@ -270,25 +245,6 @@ function ProductContent() {
             </div>
 
             <Image360Viewer images={galleryImages} productName={product.name} />
-
-            {/* Sacred Seals Banner */}
-            <div className="grid grid-cols-3 gap-2.5 p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center text-[10px] text-[#635572] shadow-xs">
-              <div className="flex flex-col items-center gap-1">
-                <ShieldCheck size={16} className="text-[#C9A24D]" />
-                <span className="font-semibold text-[#2B1B3D]">100% Authentic</span>
-                <span>Natural Gemstones</span>
-              </div>
-              <div className="flex flex-col items-center gap-1 border-x border-[#EFE9E2] px-2">
-                <Sparkles size={16} className="text-[#7B4FC9]" />
-                <span className="font-semibold text-[#2B1B3D]">108 Mantra Japa</span>
-                <span>Vedic Prana Pratishtha</span>
-              </div>
-              <div className="flex flex-col items-center gap-1">
-                <Truck size={16} className="text-[#C9A24D]" />
-                <span className="font-semibold text-[#2B1B3D]">Insured Air</span>
-                <span>Pan-India Dispatch</span>
-              </div>
-            </div>
           </motion.div>
 
           {/* Right Column: Details & Customization */}
@@ -592,35 +548,6 @@ function ProductContent() {
               </div>
             </div>
 
-            {/* Pincode Delivery Estimator */}
-            <div className="p-4 rounded-2xl bg-white border border-[#EFE9E2] space-y-2">
-              <span className="text-xs font-semibold text-[#2B1B3D] flex items-center gap-1.5">
-                <Truck size={14} className="text-[#C9A24D]" />
-                <span>Estimate Delivery to Your Pincode</span>
-              </span>
-              <form onSubmit={handlePincodeCheck} className="flex gap-2">
-                <input
-                  type="text"
-                  maxLength={6}
-                  value={pincodeInput}
-                  onChange={(e) => setPincodeInput(e.target.value)}
-                  placeholder="Enter 6-digit PIN code (e.g. 110001)..."
-                  className="flex-1 px-3.5 py-2 text-xs rounded-xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] focus:outline-none focus:border-[#C9A24D]"
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-semibold uppercase text-white btn-amethyst cursor-pointer"
-                >
-                  Check
-                </button>
-              </form>
-              {pincodeResult && (
-                <p className="text-[11px] text-[#2E7D32] font-medium pt-1">
-                  {pincodeResult}
-                </p>
-              )}
-            </div>
-
           </motion.div>
 
         </div>
@@ -734,15 +661,6 @@ function ProductContent() {
                       Wear on your right wrist for outward manifestation, closing high-value sales deals, public speaking confidence, and psychic defense against evil eye.
                     </p>
                   </div>
-                </div>
-
-                <div>
-                  <h4 className="font-serif text-sm text-[#2B1B3D] font-semibold mb-2">
-                    Cleansing & Monthly Recharging Ritual
-                  </h4>
-                  <p>
-                    Every crystal absorbs ambient emotional static. Once a month (preferably during Purnima or Ekadashi), cleanse your bracelet by passing it through sacred Himalayan sage or dhoop smoke for 30 seconds. Leave it overnight in moonlight on a dry natural cloth.
-                  </p>
                 </div>
               </div>
             )}

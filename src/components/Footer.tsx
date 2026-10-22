@@ -7,7 +7,6 @@ import {
   ShieldCheck, 
   Truck, 
   Compass, 
-  Award, 
   Mail, 
   Phone, 
   Clock, 
@@ -41,68 +40,7 @@ export default function Footer() {
 
       <div className="container mx-auto max-w-7xl relative z-10">
         
-        {/* 1. TRUST ROW (4 Spiritual Seals) */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 p-6 sm:p-8 rounded-3xl bg-white border border-[#EFE9E2] mb-14 shadow-xs">
-          
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#FBF8F3] border border-[#C9A24D]/40 flex items-center justify-center text-[#C9A24D] flex-shrink-0 shadow-2xs">
-              <Award size={22} />
-            </div>
-            <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider text-[#2B1B3D]">
-                100% Natural Earth Gems
-              </h5>
-              <p className="text-[11px] text-[#635572]">
-                Grade-A raw minerals, zero dyed plastic
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#FBF8F3] border border-[#C9A24D]/40 flex items-center justify-center text-[#C9A24D] flex-shrink-0 shadow-2xs">
-              <ShieldCheck size={22} />
-            </div>
-            <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider text-[#2B1B3D]">
-                Lab-Tested Authenticity
-              </h5>
-              <p className="text-[11px] text-[#635572]">
-                Every gem certified with test parameters
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#FBF8F3] border border-[#7B4FC9]/30 flex items-center justify-center text-[#7B4FC9] flex-shrink-0 shadow-2xs">
-              <Sparkles size={22} />
-            </div>
-            <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider text-[#2B1B3D]">
-                Vedic Energization
-              </h5>
-              <p className="text-[11px] text-[#635572]">
-                108 Mantra Japa Prana Pratishtha
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-[#FBF8F3] border border-[#C9A24D]/40 flex items-center justify-center text-[#C9A24D] flex-shrink-0 shadow-2xs">
-              <Truck size={22} />
-            </div>
-            <div>
-              <h5 className="text-xs font-bold uppercase tracking-wider text-[#2B1B3D]">
-                Pan-India Express Air
-              </h5>
-              <p className="text-[11px] text-[#635572]">
-                Free shipping on orders above ₹999
-              </p>
-            </div>
-          </div>
-
-        </div>
-
-        {/* 2. MAIN FOOTER GRID */}
+        {/* MAIN FOOTER GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 mb-14">
           
           {/* Brand Narrative (2 cols) */}
