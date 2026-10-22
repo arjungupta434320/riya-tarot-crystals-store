@@ -26,10 +26,12 @@ import {
   Clock,
   MapPin,
   Flame,
-  Award
+  Award,
+  Ruler
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Image360Viewer } from "@/components/shop/Image360Viewer";
+import { SizeGuideModal } from "@/components/shop/SizeGuideModal";
 
 function ProductContent() {
   const router = useRouter();
@@ -43,6 +45,8 @@ function ProductContent() {
   const [allProducts, setAllProducts] = useState<Product[]>(fallbackProducts);
   
   const [quantity, setQuantity] = useState(1);
+  const [selectedWristSize, setSelectedWristSize] = useState<string>('Standard Elastic (6.5" - 7.5")');
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"about" | "wearCare">("about");
   const [justAdded, setJustAdded] = useState(false);
   const [showStickyAdd, setShowStickyAdd] = useState(false);
@@ -145,7 +149,7 @@ function ProductContent() {
       };
     }
 
-    addToCart(product, quantity, "8mm", 'Standard Elastic (6.5" - 7.5")', customKundli);
+    addToCart(product, quantity, "8mm", selectedWristSize, customKundli);
     setJustAdded(true);
     showToast(`✨ Added ${product.name} to your sacred bag!`);
     setTimeout(() => {
@@ -165,7 +169,7 @@ function ProductContent() {
         intention: kundliIntention,
       };
     }
-    addToCart(product, quantity, "8mm", 'Standard Elastic (6.5" - 7.5")', customKundli);
+    addToCart(product, quantity, "8mm", selectedWristSize, customKundli);
     router.push("/checkout");
   };
 
@@ -204,22 +208,6 @@ function ProductContent() {
       {/* Container */}
       <div className="container mx-auto px-4 sm:px-6 relative">
         
-        {/* Breadcrumb Navigation */}
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className="flex items-center gap-2 text-[11px] sm:text-xs text-[#635572] mb-6 overflow-x-auto no-scrollbar"
-        >
-          <Link href="/" className="hover:text-[#7B4FC9] transition-colors whitespace-nowrap">Home</Link>
-          <span>/</span>
-          <Link href={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-[#7B4FC9] transition-colors whitespace-nowrap capitalize">{product.category}</Link>
-          <span>/</span>
-          <span className="text-[#7B4FC9] font-semibold whitespace-nowrap truncate max-w-[200px] sm:max-w-none">
-            {product.name}
-          </span>
-        </motion.div>
-
         {/* Product Showcase: 2 Columns */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-16">
           
@@ -318,6 +306,44 @@ function ProductContent() {
                 </span>
               </div>
               <span className="text-[11px] text-[#635572]">All taxes & GST included</span>
+            </div>
+
+            {/* Wrist Size Selector with Guide */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-[#2B1B3D] uppercase tracking-wider text-[11px]">
+                  Wrist Size
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsSizeGuideOpen(true)}
+                  className="text-[#7B4FC9] hover:underline flex items-center gap-1 font-semibold text-[11px] cursor-pointer"
+                >
+                  <Ruler size={13} />
+                  <span>Size Guide Modal</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                {[
+                  'Small (6.0" - 6.5")',
+                  'Standard Elastic (6.5" - 7.5")',
+                  'Large (7.5" - 8.5")',
+                ].map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setSelectedWristSize(size)}
+                    className={`py-2 px-3 rounded-xl border text-center font-medium transition-all cursor-pointer ${
+                      selectedWristSize === size
+                        ? "bg-[#7B4FC9] text-white border-[#7B4FC9] shadow-xs font-semibold"
+                        : "bg-white border-[#EFE9E2] text-[#635572] hover:border-[#C9A24D]/40"
+                    }`}
+                  >
+                    {size.split(" ")[0]}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Bespoke Kundali Customization Form */}
@@ -706,6 +732,9 @@ function ProductContent() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Size Guide Modal */}
+      <SizeGuideModal isOpen={isSizeGuideOpen} onClose={() => setIsSizeGuideOpen(false)} />
 
     </div>
   );
