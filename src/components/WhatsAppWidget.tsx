@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { X } from "lucide-react";
 
-const WHATSAPP_NUMBER = "919999999999";
+const WHATSAPP_NUMBER = "917889001587";
 
 export default function WhatsAppWidget() {
   const [position, setPosition] = useState<{ x: number; y: number } | null>(null);

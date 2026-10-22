@@ -551,7 +551,7 @@ function ProductContent() {
                 </button>
 
                 <a
-                  href={`https://wa.me/919876543210?text=Hello%20Riya,%20I%20am%20interested%20in%20the%20${encodeURIComponent(product.name)}.%20Can%20you%20guide%20me%20on%20its%20astrological%20alignment?`}
+                  href={`https://wa.me/917889001587?text=Hello%20Riya,%20I%20am%20interested%20in%20the%20${encodeURIComponent(product.name)}.%20Can%20you%20guide%20me%20on%20its%20astrological%20alignment?`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 px-4 rounded-full text-xs font-semibold uppercase tracking-wider text-[#2B1B3D] bg-white border border-[#25D366]/50 hover:bg-[#25D366]/10 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs text-center"

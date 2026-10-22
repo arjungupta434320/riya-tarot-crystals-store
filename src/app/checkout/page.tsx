@@ -248,13 +248,13 @@ export default function CheckoutPage() {
           {/* Action Buttons: WhatsApp notification & Live Order Tracking */}
           <div className="space-y-2.5 pt-2">
             <a
-              href={`https://wa.me/919876543210?text=Namaste%20Riya,%20I%20have%20placed%20order%20%23${orderId}%20for%20consecration%20in%20the%20name%20of%20${encodeURIComponent(fullName)}.%20Please%20confirm%20dispatch.`}
+              href={`https://wa.me/917889001587?text=Namaste%20Riya,%20I%20have%20placed%20order%20%23${orderId}%20for%20consecration%20in%20the%20name%20of%20${encodeURIComponent(fullName)}.%20Please%20confirm%20dispatch.`}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full py-3.5 px-4 rounded-full text-xs font-semibold uppercase tracking-wider text-white bg-[#25D366] hover:bg-[#20BD5A] transition-colors flex items-center justify-center gap-2 shadow-sm"
             >
               <MessageCircle size={16} />
-              <span>Confirm Order on WhatsApp (+91 98765 43210)</span>
+              <span>Confirm Order on WhatsApp (+91 78890 01587)</span>
             </a>
 
             <Link

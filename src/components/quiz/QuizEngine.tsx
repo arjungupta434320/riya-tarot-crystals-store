@@ -283,7 +283,7 @@ export function QuizEngine({ isModal = false, onClose }: { isModal?: boolean; on
           </button>
 
           <a
-            href={`https://wa.me/919876543210?text=Hello%20Riya,%20I%20just%20completed%20the%20crystal%20quiz%20for%20${encodeURIComponent(answers['goal'] || 'spiritual balance')}.%20Can%20you%20verify%20my%20top%20recommendation?`}
+            href={`https://wa.me/917889001587?text=Hello%20Riya,%20I%20just%20completed%20the%20crystal%20quiz%20for%20${encodeURIComponent(answers['goal'] || 'spiritual balance')}.%20Can%20you%20verify%20my%20top%20recommendation?`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-[#2B1B3D] font-semibold hover:text-[#7B4FC9]"

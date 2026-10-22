@@ -237,7 +237,7 @@ function TrackContent() {
                 Questions about your gemstone consecration?
               </span>
               <a
-                href={`https://wa.me/919876543210?text=Hello%20Riya,%20I%20am%20tracking%20order%20%23${activeOrder.id}.%20Can%20you%20share%20an%20update?`}
+                href={`https://wa.me/917889001587?text=Hello%20Riya,%20I%20am%20tracking%20order%20%23${activeOrder.id}.%20Can%20you%20share%20an%20update?`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#7B4FC9] hover:underline font-semibold flex items-center gap-1"

@@ -158,7 +158,7 @@ export default function PolicyModal() {
                     2. Unboxing Video Requirement for Transit Claims
                   </h4>
                   <p className="text-[#6E6A64]">
-                    To maintain mutual trust with our insured courier partners, transit damage claims require a continuous, uncut unboxing video recorded while breaking the tamper-proof seal. Please WhatsApp the clip to +91 99999 99999 within 48 hours of delivery.
+                    To maintain mutual trust with our insured courier partners, transit damage claims require a continuous, uncut unboxing video recorded while breaking the tamper-proof seal. Please WhatsApp the clip to +91 78890 01587 within 48 hours of delivery.
                   </p>
                 </section>
 

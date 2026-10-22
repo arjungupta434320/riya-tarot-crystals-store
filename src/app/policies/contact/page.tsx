@@ -31,8 +31,8 @@ export default function ContactPage() {
               <div className="flex items-start gap-4">
                 <Phone className="text-accent mt-1" size={20} />
                 <div>
-                  <h3 className="font-medium text-primary">Phone</h3>
-                  <p className="text-primary/70 text-sm mt-1">+91 7889001587</p>
+                  <h3 className="font-medium text-primary">Phone & WhatsApp</h3>
+                  <a href="tel:+917889001587" className="text-primary/70 text-sm mt-1 hover:text-accent transition-colors block">+91 78890 01587</a>
                   <p className="text-primary/50 text-xs mt-1">Mon-Fri, 10am to 6pm IST</p>
                 </div>
               </div>
