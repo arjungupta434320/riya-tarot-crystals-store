@@ -34,7 +34,7 @@ export default function HomePage() {
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
-  const { addToCart, wishlist, toggleWishlist, openQuickView, showToast } = useStore();
+  const { addToCart, wishlist, toggleWishlist, showToast } = useStore();
 
   useEffect(() => {
     fetchProducts().then(setAllProducts);
@@ -342,10 +342,10 @@ export default function HomePage() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {bestSellers.map((product) => (
-              <div
+              <Link
                 key={product.id}
-                onClick={() => openQuickView(product)}
-                className="group rounded-3xl bg-white border border-[#EFE9E2] hover:border-[#C9A24D]/50 p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-xl cursor-pointer"
+                href={`/product?id=${product.id}`}
+                className="group rounded-3xl bg-white border border-[#EFE9E2] hover:border-[#C9A24D] p-4 sm:p-5 flex flex-col justify-between transition-all duration-300 shadow-2xs hover:shadow-xl hover:-translate-y-1.5 cursor-pointer block"
               >
                 <div>
                   <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-[#FAF8F3] mb-3.5">
@@ -353,7 +353,7 @@ export default function HomePage() {
                       src={product.image}
                       alt={product.name}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                      className="object-cover group-hover:scale-108 transition-transform duration-700"
                     />
                     <div className="absolute top-2.5 left-2.5">
                       <span className="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur-md text-[#7B4FC9] border border-[#7B4FC9]/30 shadow-2xs">
@@ -391,14 +391,19 @@ export default function HomePage() {
                   </div>
 
                   <button
-                    onClick={(e) => handleProductAddToCart(product, e)}
-                    className="p-2 rounded-full text-white btn-amethyst shadow-xs cursor-pointer"
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleProductAddToCart(product, e);
+                    }}
+                    className="p-2 rounded-full text-white btn-amethyst shadow-xs cursor-pointer hover:scale-110 active:scale-95 transition-all"
                     aria-label="Add to bag"
                   >
                     <ShoppingBag size={14} />
                   </button>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

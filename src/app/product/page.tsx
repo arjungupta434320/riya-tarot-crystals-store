@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useStore, Product, KundliDetails } from "@/store/useStore";
-import { fetchProducts } from "@/data/products";
+import { fetchProducts, fallbackProducts } from "@/data/products";
 import { 
   Star, 
   Heart, 
@@ -42,8 +42,10 @@ function ProductContent() {
   const id = searchParams.get("id");
   const { addToCart, wishlist, toggleWishlist, toggleCart, showToast } = useStore();
   
-  const [product, setProduct] = useState<Product | null>(null);
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  // Synchronous fallback ensures zero flash/delay
+  const initialFound = fallbackProducts.find((p) => p.id === id) || fallbackProducts[0];
+  const [product, setProduct] = useState<Product | null>(initialFound);
+  const [allProducts, setAllProducts] = useState<Product[]>(fallbackProducts);
   
   const [quantity, setQuantity] = useState(1);
   const [selectedBeadSize, setSelectedBeadSize] = useState<"8mm" | "10mm">("8mm");
@@ -107,6 +109,10 @@ function ProductContent() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [id]);
 
   useEffect(() => {
     fetchProducts().then((products) => {
@@ -223,13 +229,21 @@ function ProductContent() {
     .slice(0, 4);
 
   return (
-    <div className="pt-4 sm:pt-8 pb-24 bg-[#FBF8F3] text-[#2B1B3D] overflow-x-hidden">
+    <div className="relative pt-4 sm:pt-8 pb-24 bg-[#FBF8F3] text-[#2B1B3D] overflow-x-hidden">
       
+      {/* Divine Celestial Ambient Aura */}
+      <div className="fixed top-24 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-[#CDB9F5]/30 via-[#F4C6D0]/20 to-[#C9A24D]/15 rounded-full blur-3xl pointer-events-none -z-10 animate-pulse" />
+
       {/* Container */}
-      <div className="container mx-auto px-4 sm:px-6">
+      <div className="container mx-auto px-4 sm:px-6 relative">
         
         {/* Breadcrumb Navigation */}
-        <div className="flex items-center gap-2 text-[11px] sm:text-xs text-[#635572] mb-6 overflow-x-auto no-scrollbar">
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex items-center gap-2 text-[11px] sm:text-xs text-[#635572] mb-6 overflow-x-auto no-scrollbar"
+        >
           <Link href="/" className="hover:text-[#7B4FC9] transition-colors whitespace-nowrap">Home</Link>
           <span>/</span>
           <Link href="/shop" className="hover:text-[#7B4FC9] transition-colors whitespace-nowrap">{product.category}</Link>
@@ -237,17 +251,28 @@ function ProductContent() {
           <span className="text-[#7B4FC9] font-semibold whitespace-nowrap truncate max-w-[200px] sm:max-w-none">
             {product.name}
           </span>
-        </div>
+        </motion.div>
 
         {/* Product Showcase: 2 Columns */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 mb-16">
           
-          {/* Left Column: 360 Spin & Image Showcase */}
-          <div className="w-full lg:w-1/2 flex flex-col gap-4">
+          {/* Left Column: 360 Spin & Image Showcase with Entrance Aura */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.93, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full lg:w-1/2 flex flex-col gap-4 relative"
+          >
+            {/* Shimmering Sacred Consecration Seal */}
+            <div className="absolute -top-3 -right-2 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#7B4FC9] to-[#5E37A1] text-white text-[10px] font-bold uppercase tracking-wider shadow-md border border-[#C9A24D]/60 animate-bounce">
+              <Sparkles size={11} className="text-[#C9A24D]" />
+              <span>108 Vedic Mantras Charged</span>
+            </div>
+
             <Image360Viewer images={galleryImages} productName={product.name} />
 
             {/* Sacred Seals Banner */}
-            <div className="grid grid-cols-3 gap-2.5 p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center text-[10px] text-[#635572]">
+            <div className="grid grid-cols-3 gap-2.5 p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center text-[10px] text-[#635572] shadow-xs">
               <div className="flex flex-col items-center gap-1">
                 <ShieldCheck size={16} className="text-[#C9A24D]" />
                 <span className="font-semibold text-[#2B1B3D]">100% Authentic</span>
@@ -264,10 +289,15 @@ function ProductContent() {
                 <span>Pan-India Dispatch</span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Column: Details & Customization */}
-          <div className="w-full lg:w-1/2 flex flex-col justify-start space-y-5">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full lg:w-1/2 flex flex-col justify-start space-y-5"
+          >
             
             {/* Header / Badges */}
             <div>
@@ -591,7 +621,7 @@ function ProductContent() {
               )}
             </div>
 
-          </div>
+          </motion.div>
 
         </div>
 

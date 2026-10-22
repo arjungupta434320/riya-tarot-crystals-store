@@ -2,9 +2,9 @@ import { Product, Bundle } from "@/store/useStore";
 
 export const fallbackProducts: Product[] = [
   // ==========================================
-  // CATEGORY 2: HEAL ENERGIZED BRACELETS
+  // CATEGORY: HEAL ENERGIZED BRACELETS
   // ------------------------------------------
-  // Sub-Category: Mixel Bracelets (Multi-stone synergy)
+  // Categories: Love and relationship | Job and business | Wealth and prosperity | Overall wellness | Negativity protection
   // ==========================================
   {
     id: "mixel-triple-abundance",
@@ -20,7 +20,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/citrine-new.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Mixel Bracelets",
+    subCategory: "Wealth and prosperity",
     badge: "Tarot Reader's Bestseller",
     chakra: "Solar Plexus & Heart",
     planet: "Jupiter (Guru) & Sun (Surya)",
@@ -50,7 +50,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/black-tourmaline.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Mixel Bracelets",
+    subCategory: "Love and relationship",
     badge: "Energized & Lab Certified",
     chakra: "Heart (Anahata) & Root (Muladhara)",
     planet: "Venus (Shukra) & Saturn (Shani)",
@@ -80,7 +80,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/lapis-lazuli.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Mixel Bracelets",
+    subCategory: "Overall wellness",
     badge: "Energized & Lab Certified",
     chakra: "Third Eye, Crown & Throat",
     planet: "Jupiter & Mercury",
@@ -96,10 +96,6 @@ export const fallbackProducts: Product[] = [
       "Blessed with 108 Saraswati Vidya & Gayatri mantras"
     ]
   },
-
-  // ==========================================
-  // Sub-Category: Chakra Bracelets
-  // ==========================================
   {
     id: "chakra-7-harmony-bracelet",
     name: "Complete 7-Chakra Master Alignment Bracelet with Sacred Spacers",
@@ -113,7 +109,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/clear-quartz.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Chakra Bracelets",
+    subCategory: "Overall wellness",
     badge: "Energized & Lab Certified",
     chakra: "All 7 Chakras (Root to Crown)",
     planet: "Navagraha (9 Vedic Planets)",
@@ -142,7 +138,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/rhodochrosite.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Chakra Bracelets",
+    subCategory: "Love and relationship",
     badge: "Tarot Reader's Bestseller",
     chakra: "Heart (Anahata)",
     planet: "Venus (Shukra)",
@@ -170,7 +166,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/tiger-eye-new.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Chakra Bracelets",
+    subCategory: "Job and business",
     badge: "Energized & Lab Certified",
     chakra: "Solar Plexus (Manipura) & Root",
     planet: "Sun (Surya) & Mars (Mangal)",
@@ -186,10 +182,6 @@ export const fallbackProducts: Product[] = [
       "Awakened under peak midday Surya rays with Vedic mantras"
     ]
   },
-
-  // ==========================================
-  // Sub-Category: Kundali Bracelets (Planetary / Rashi Specific)
-  // ==========================================
   {
     id: "kundali-shani-blue-sapphire-amethyst",
     name: "Shani & Saturn Balance Kundali Bracelet (Amethyst & Blue Lapis Lazuli)",
@@ -203,7 +195,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/lapis-lazuli.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Kundali Bracelets",
+    subCategory: "Negativity protection",
     badge: "Energized & Lab Certified",
     chakra: "Crown & Third Eye",
     planet: "Saturn (Shani Dev)",
@@ -232,7 +224,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/howlite.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Kundali Bracelets",
+    subCategory: "Love and relationship",
     badge: "Energized & Lab Certified",
     chakra: "Heart & Crown",
     planet: "Venus (Shukra)",
@@ -261,7 +253,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/amazonite.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Kundali Bracelets",
+    subCategory: "Job and business",
     badge: "Energized & Lab Certified",
     chakra: "Heart & Throat",
     planet: "Mercury (Budh Dev)",
@@ -291,7 +283,7 @@ export const fallbackProducts: Product[] = [
       "/images/products/dhan-yog-2.jpg"
     ],
     category: "Heal Energized Bracelets",
-    subCategory: "Kundali Bracelets",
+    subCategory: "Wealth and prosperity",
     badge: "Tarot Reader's Bestseller",
     chakra: "Solar Plexus",
     planet: "Sun (Surya) & Jupiter (Guru)",
@@ -305,6 +297,121 @@ export const fallbackProducts: Product[] = [
       "Attracts high-value contracts, government approvals, and leadership roles",
       "Shields the aura from competitors' evil eye and jealousy",
       "Purified with Himalayan sage and locked with 108 Vedic Lakshmi chants"
+    ]
+  },
+  {
+    id: "bracelet-black-tourmaline-protection",
+    name: "Supreme Aura Armor 8mm Black Tourmaline & Evil Eye Nazar Shield Bracelet",
+    description: "Handcrafted with genuine 8mm Grade-A Brazilian Jet Black Tourmaline beads paired with a hand-painted glass Evil Eye (Nazar Battu) talisman. Forms an impenetrable psychic deflecting shield around your aura, neutralizing jealousy, psychic vampirism, and toxic workplace environments.",
+    shortIntention: "Total Evil Eye Ward, Psychic Defense & Root Grounding (Made with 8mm Beads)",
+    price: 2199,
+    salePrice: 1099,
+    image: "/images/products/black-tourmaline.jpg",
+    gallery: [
+      "/images/products/black-tourmaline.jpg",
+      "/images/products/black-obsidian-new.jpg"
+    ],
+    category: "Heal Energized Bracelets",
+    subCategory: "Negativity protection",
+    badge: "Ultimate Evil-Eye Shield",
+    chakra: "Root (Muladhara)",
+    planet: "Saturn (Shani) & Rahu",
+    zodiac: "Capricorn, Scorpio, Aries",
+    rashi: "Makar (Capricorn) & Vrishchik (Scorpio)",
+    numerologyNumber: "8 & 4",
+    rating: 4.99,
+    reviewCount: 460,
+    benefits: [
+      "Blocks and transmutes negative vibes, gossip, and envious stares into neutral earth energy",
+      "Stops energy drains and fatigue when dealing with toxic people",
+      "Strengthens the Root chakra for unwavering confidence and calm",
+      "Blessed with 108 recitations of the sacred Hanuman Raksha Kavach"
+    ]
+  },
+  {
+    id: "bracelet-citrine-career-elevation",
+    name: "Executive Career Elevation & Business Luck Golden Citrine & Pyrite Bracelet",
+    description: "An elite commercial synergy pairing natural Golden Citrine (Merchant's Stone) with metallic Pyrite and chatoyant Tiger Eye. Designed specifically for ambitious entrepreneurs, founders, and executives seeking promotions, salary spikes, and deal closings.",
+    shortIntention: "Business Expansion, Corporate Promotion & Rapid Success (Made with 8mm Beads)",
+    price: 2599,
+    salePrice: 1349,
+    image: "/images/products/citrine-new.jpg",
+    gallery: [
+      "/images/products/citrine-new.jpg",
+      "/images/products/tiger-eye-new.jpg",
+      "/images/products/money-maker.jpg"
+    ],
+    category: "Heal Energized Bracelets",
+    subCategory: "Job and business",
+    badge: "Executive Favorite",
+    chakra: "Solar Plexus (Manipura)",
+    planet: "Sun (Surya) & Jupiter (Guru)",
+    zodiac: "Leo, Sagittarius, Gemini",
+    rashi: "Simha (Leo) & Dhanu (Sagittarius)",
+    numerologyNumber: "1 & 3",
+    rating: 4.97,
+    reviewCount: 310,
+    benefits: [
+      "Inspires decisive executive leadership and high-stakes negotiation confidence",
+      "Attracts lucrative new client contracts, tenders, and revenue breakthroughs",
+      "Erases self-doubt, interview nervousness, and imposter syndrome",
+      "Charged under Vedic Surya Muhurta with 108 Gayatri Japa mantras"
+    ]
+  },
+  {
+    id: "bracelet-green-jade-wealth",
+    name: "Imperial Burmese Green Jade Prosperity & Growth Bracelet",
+    description: "Carved from natural untreated Burmese Green Jade stones (8mm spheres). Revered across centuries as the quintessential stone of uninterrupted financial fortune, longevity, and peaceful prosperity.",
+    shortIntention: "Sustainable Cashflow, Peaceful Wealth & Organic Business Growth (Made with 8mm Beads)",
+    price: 2399,
+    salePrice: 1199,
+    image: "/images/products/green-aventurine.jpg",
+    gallery: [
+      "/images/products/green-aventurine.jpg",
+      "/images/products/tree-agate.jpg"
+    ],
+    category: "Heal Energized Bracelets",
+    subCategory: "Wealth and prosperity",
+    badge: "Generational Prosperity",
+    chakra: "Heart (Anahata)",
+    planet: "Mercury (Budh) & Venus (Shukra)",
+    zodiac: "Taurus, Virgo, Libra",
+    rashi: "Vrishabha (Taurus) & Kanya (Virgo)",
+    numerologyNumber: "5 & 6",
+    rating: 4.96,
+    reviewCount: 290,
+    benefits: [
+      "Stabilizes cashflow and prevents sudden impulsive financial losses",
+      "Harmonizes home business environments and invites organic expansion",
+      "Infused with 108 Kubera Wealth Mantras and holy Ganga water"
+    ]
+  },
+  {
+    id: "bracelet-amethyst-stress-relief",
+    name: "Deep Serenity & Stress Relief Uruguayan Amethyst Bracelet",
+    description: "Deep regal violet Grade-A Uruguayan Amethyst beads (8mm). Soothes the autonomic nervous system, quiets relentless racing thoughts, relieves chronic migraines, and facilitates deep restorative REM sleep.",
+    shortIntention: "Total Nervous System Calm, Insomnia Relief & Deep Serenity (Made with 8mm Beads)",
+    price: 2299,
+    salePrice: 1149,
+    image: "/images/products/amethyst-new.jpg",
+    gallery: [
+      "/images/products/amethyst-new.jpg",
+      "/images/products/fluorite.jpg"
+    ],
+    category: "Heal Energized Bracelets",
+    subCategory: "Overall wellness",
+    badge: "Master Stress Healer",
+    chakra: "Crown (Sahasrara) & Third Eye",
+    planet: "Jupiter & Saturn",
+    zodiac: "Pisces, Aquarius, Virgo",
+    rashi: "Meena (Pisces) & Kumbha (Aquarius)",
+    numerologyNumber: "7",
+    rating: 4.98,
+    reviewCount: 415,
+    benefits: [
+      "Cools heated emotional tempers, irritability, and chronic tension",
+      "Restores restful, unbroken sleep patterns and relieves morning brain fog",
+      "Purified with Himalayan mountain cedar smoke and lunar full-moon charging"
     ]
   },
 

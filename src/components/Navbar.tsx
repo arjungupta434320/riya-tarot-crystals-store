@@ -32,7 +32,7 @@ export default function Navbar() {
   const searchInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const { cart, wishlist, toggleCart, setDrawerTab, openQuickView } = useStore();
+  const { cart, wishlist, toggleCart, setDrawerTab } = useStore();
   const totalCartCount = cart.reduce((total, item) => total + item.quantity, 0);
 
   useEffect(() => {
@@ -252,13 +252,11 @@ export default function Navbar() {
                 {searchResults.length > 0 && (
                   <div className="mt-3 divide-y divide-[#EFE9E2] border border-[#EFE9E2] rounded-2xl bg-white overflow-hidden shadow-xs">
                     {searchResults.map((item) => (
-                      <div
+                      <Link
                         key={item.id}
-                        onClick={() => {
-                          setIsSearchOpen(false);
-                          openQuickView(item);
-                        }}
-                        className="p-3 flex items-center justify-between hover:bg-[#FBF8F3] cursor-pointer transition-colors"
+                        href={`/product?id=${item.id}`}
+                        onClick={() => setIsSearchOpen(false)}
+                        className="p-3 flex items-center justify-between hover:bg-[#FBF8F3] cursor-pointer transition-colors block"
                       >
                         <div className="min-w-0 pr-3">
                           <h4 className="text-xs font-semibold text-[#2B1B3D] truncate">{item.name}</h4>
@@ -267,7 +265,7 @@ export default function Navbar() {
                         <span className="text-xs font-bold text-[#7B4FC9] flex-shrink-0">
                           ₹{(item.salePrice || item.price).toLocaleString("en-IN")}
                         </span>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 )}
@@ -388,29 +386,43 @@ export default function Navbar() {
                           onClick={() => setIsMobileMenuOpen(false)}
                           className="flex items-center justify-between py-2.5 px-3 rounded-xl text-xs text-[#2B1B3D] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
                         >
-                          <span>All Healed Bracelets</span>
+                          <span className="font-semibold">All Healed Bracelets</span>
                           <span className="text-[10px] text-[#8E6D24]">View all →</span>
                         </Link>
                         <Link
-                          href="/shop?category=Heal+Energized+Bracelets&subCategory=chakra-bracelets"
+                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Love+and+relationship"
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2.5 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
+                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
                         >
-                          <span>• Chakra Bracelets (7 Energy Vortices)</span>
+                          <span>• Love & Relationship</span>
                         </Link>
                         <Link
-                          href="/shop?category=Heal+Energized+Bracelets&subCategory=mixed-bracelets"
+                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Job+and+business"
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2.5 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
+                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
                         >
-                          <span>• Mixed (Mixel) Synergy Bracelets</span>
+                          <span>• Job & Business</span>
                         </Link>
                         <Link
-                          href="/shop?category=Heal+Energized+Bracelets&subCategory=kundli-bracelets"
+                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Wealth+and+prosperity"
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2.5 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
+                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
                         >
-                          <span>• Kundli & Vedic Rashi Bracelets</span>
+                          <span>• Wealth & Prosperity</span>
+                        </Link>
+                        <Link
+                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Overall+wellness"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
+                        >
+                          <span>• Overall Wellness</span>
+                        </Link>
+                        <Link
+                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Negativity+protection"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
+                        >
+                          <span>• Negativity Protection</span>
                         </Link>
                       </motion.div>
                     )}
@@ -419,7 +431,7 @@ export default function Navbar() {
 
                 {/* Clusters */}
                 <Link
-                  href="/shop?category=Raw+Crystal+Clusters"
+                  href="/shop?category=Clusters"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
                 >
@@ -429,11 +441,21 @@ export default function Navbar() {
 
                 {/* Pendants */}
                 <Link
-                  href="/shop?category=Sacred+Crystal+Pendants"
+                  href="/shop?category=Pendants"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
                 >
-                  <span className="font-semibold text-xs">Sacred Crystal Pendants</span>
+                  <span className="font-semibold text-xs">Sacred Point Pendants</span>
+                  <ArrowRight size={14} className="text-[#C9A24D]" />
+                </Link>
+
+                {/* Gemstones */}
+                <Link
+                  href="/shop?category=Gemstones"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
+                >
+                  <span className="font-semibold text-xs">Loose Gemstones</span>
                   <ArrowRight size={14} className="text-[#C9A24D]" />
                 </Link>
 

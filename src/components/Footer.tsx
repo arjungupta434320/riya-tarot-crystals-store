@@ -163,18 +163,28 @@ export default function Footer() {
             </h5>
             <ul className="space-y-2.5 text-xs text-[#635572]">
               <li>
-                <Link href="/shop?category=Heal+Energized+Bracelets" className="hover:text-[#7B4FC9] transition-colors">
-                  Chakra Bracelets
+                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Love+and+relationship" className="hover:text-[#7B4FC9] transition-colors">
+                  Love & Relationship Bracelets
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=Heal+Energized+Bracelets" className="hover:text-[#7B4FC9] transition-colors">
-                  Mixel Wealth & Protection
+                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Job+and+business" className="hover:text-[#7B4FC9] transition-colors">
+                  Job & Business Bracelets
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=Heal+Energized+Bracelets" className="hover:text-[#7B4FC9] transition-colors">
-                  Kundli-Based Bracelets
+                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Wealth+and+prosperity" className="hover:text-[#7B4FC9] transition-colors">
+                  Wealth & Prosperity Bracelets
+                </Link>
+              </li>
+              <li>
+                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Overall+wellness" className="hover:text-[#7B4FC9] transition-colors">
+                  Overall Wellness Bracelets
+                </Link>
+              </li>
+              <li>
+                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Negativity+protection" className="hover:text-[#7B4FC9] transition-colors">
+                  Negativity Protection Bracelets
                 </Link>
               </li>
               <li>

@@ -4,7 +4,6 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CartDrawer from "@/components/CartDrawer";
-import QuickViewModal from "@/components/QuickViewModal";
 import CheckoutModal from "@/components/CheckoutModal";
 import WhatsAppWidget from "@/components/WhatsAppWidget";
 import StickyMobileCartBar from "@/components/StickyMobileCartBar";
@@ -72,7 +71,6 @@ export default function RootLayout({
             </main>
             <Footer />
             <CartDrawer />
-            <QuickViewModal />
             <CheckoutModal />
             <PolicyModal />
             <QuizModal />

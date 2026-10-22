@@ -10,7 +10,7 @@ import {
   Star, 
   Sparkles, 
   Heart, 
-  Eye, 
+  ArrowRight,
   ShoppingBag, 
   Check, 
   Search, 
@@ -31,20 +31,13 @@ const mainCategories = [
   { id: "Gemstones", label: "Loose Gemstones" },
 ];
 
-const braceletSubCategories = [
+const braceletCategories = [
   { id: "all", label: "All Bracelets" },
-  { id: "Chakra Bracelets", label: "Chakra Bracelets" },
-  { id: "Mixel Bracelets", label: "Mixel Synergy" },
-  { id: "Kundali Bracelets", label: "Kundali & Planetary" },
-];
-
-const purposes = [
-  { id: "all", label: "All Intentions" },
-  { id: "wealth", label: "Wealth & Cashflow", keywords: ["wealth", "abundance", "money", "dhan", "financial", "sales"] },
-  { id: "love", label: "Love & Soulmate", keywords: ["love", "heart", "soulmate", "anahata", "romantic"] },
-  { id: "protection", label: "Protection & Evil Eye", keywords: ["protection", "shield", "evil eye", "nazar", "grounding", "defense"] },
-  { id: "calm", label: "Anxiety Relief & Calm", keywords: ["calm", "anxiety", "peace", "sleep", "clarity", "serenity"] },
-  { id: "career", label: "Career & Confidence", keywords: ["career", "willpower", "confidence", "focus", "leadership", "status"] },
+  { id: "Love and relationship", label: "Love & Relationship" },
+  { id: "Job and business", label: "Job & Business" },
+  { id: "Wealth and prosperity", label: "Wealth & Prosperity" },
+  { id: "Overall wellness", label: "Overall Wellness" },
+  { id: "Negativity protection", label: "Negativity Protection" },
 ];
 
 const chakras = [
@@ -58,16 +51,37 @@ const chakras = [
   { id: "Crown", label: "Crown (Sahasrara)" },
 ];
 
+function normalizeCategoryParam(cat: string | null): string {
+  if (!cat || cat === "all") return "all";
+  const lower = cat.toLowerCase().replace(/\+/g, " ").replace(/-/g, " ");
+  if (lower.includes("bracelet")) return "Heal Energized Bracelets";
+  if (lower.includes("cluster") || lower.includes("geode")) return "Clusters";
+  if (lower.includes("pendant")) return "Pendants";
+  if (lower.includes("gemstone")) return "Gemstones";
+  return cat;
+}
+
+function normalizeSubCategoryParam(sub: string | null): string {
+  if (!sub || sub === "all") return "all";
+  const lower = sub.toLowerCase().replace(/\+/g, " ").replace(/-/g, " ");
+  if (lower.includes("love") || lower.includes("relationship")) return "Love and relationship";
+  if (lower.includes("job") || lower.includes("business")) return "Job and business";
+  if (lower.includes("wealth") || lower.includes("prosperity")) return "Wealth and prosperity";
+  if (lower.includes("wellness") || lower.includes("health")) return "Overall wellness";
+  if (lower.includes("negativity") || lower.includes("protection")) return "Negativity protection";
+  return sub;
+}
+
 function ShopContent() {
   const searchParams = useSearchParams();
-  const initialCategory = searchParams.get("category") || "all";
+  const initialCategory = normalizeCategoryParam(searchParams.get("category"));
+  const initialSubCategory = normalizeSubCategoryParam(searchParams.get("subCategory"));
   const initialSearch = searchParams.get("search") || "";
   const initialChakra = searchParams.get("chakra") || "all";
 
   const [products, setProducts] = useState<Product[]>(fallbackProducts);
   const [activeCategory, setActiveCategory] = useState(initialCategory);
-  const [activeSubCategory, setActiveSubCategory] = useState("all");
-  const [activePurpose, setActivePurpose] = useState("all");
+  const [activeSubCategory, setActiveSubCategory] = useState(initialSubCategory);
   const [activeChakra, setActiveChakra] = useState(initialChakra);
   const [selectedBeadFilter, setSelectedBeadFilter] = useState<"all" | "8mm" | "10mm">("all");
   const [maxPrice, setMaxPrice] = useState<number>(15000);
@@ -80,7 +94,7 @@ function ShopContent() {
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
 
-  const { addToCart, wishlist, toggleWishlist, openQuickView, showToast } = useStore();
+  const { addToCart, wishlist, toggleWishlist, showToast } = useStore();
 
   useEffect(() => {
     fetchProducts().then(setProducts);
@@ -88,7 +102,10 @@ function ShopContent() {
 
   useEffect(() => {
     if (searchParams.get("category")) {
-      setActiveCategory(searchParams.get("category")!);
+      setActiveCategory(normalizeCategoryParam(searchParams.get("category")));
+    }
+    if (searchParams.get("subCategory")) {
+      setActiveSubCategory(normalizeSubCategoryParam(searchParams.get("subCategory")));
     }
     if (searchParams.get("search")) {
       setSearchQuery(searchParams.get("search")!);
@@ -102,11 +119,24 @@ function ShopContent() {
   const filteredProducts = useMemo(() => {
     return products
       .filter((p) => {
-        // 1. Category
+        // 1. Strict Category Isolation
         if (activeCategory !== "all") {
-          if (p.category !== activeCategory) return false;
-          if (activeCategory === "Heal Energized Bracelets" && activeSubCategory !== "all") {
-            if (p.subCategory !== activeSubCategory) return false;
+          if (activeCategory === "Heal Energized Bracelets") {
+            if (p.category !== "Heal Energized Bracelets") return false;
+            if (activeSubCategory !== "all" && p.subCategory !== activeSubCategory) {
+              return false;
+            }
+          } else if (activeCategory === "Clusters") {
+            // Strictly clusters, no bracelets
+            if (p.category !== "Clusters" || p.name.toLowerCase().includes("bracelet")) return false;
+          } else if (activeCategory === "Pendants") {
+            // Strictly pendants, no bracelets
+            if (p.category !== "Pendants" || p.name.toLowerCase().includes("bracelet")) return false;
+          } else if (activeCategory === "Gemstones") {
+            // Strictly loose gemstones, no bracelets
+            if (p.category !== "Gemstones" || p.name.toLowerCase().includes("bracelet")) return false;
+          } else {
+            if (p.category !== activeCategory) return false;
           }
         }
 
@@ -118,26 +148,16 @@ function ShopContent() {
           }
         }
 
-        // 3. Purpose
-        if (activePurpose !== "all") {
-          const purposeConfig = purposes.find((item) => item.id === activePurpose);
-          if (purposeConfig && purposeConfig.keywords) {
-            const textToSearch = `${p.name} ${p.shortIntention} ${p.description} ${(p.benefits || []).join(" ")}`.toLowerCase();
-            const matchesPurpose = purposeConfig.keywords.some((k) => textToSearch.includes(k));
-            if (!matchesPurpose) return false;
-          }
-        }
-
-        // 4. Bead Size Filter (for bracelets)
+        // 3. Bead Size Filter (for bracelets)
         if (selectedBeadFilter !== "all" && p.category === "Heal Energized Bracelets") {
           // All bracelets support 8mm & 10mm
         }
 
-        // 5. Price
+        // 4. Price
         const price = p.salePrice || p.price;
         if (price > maxPrice) return false;
 
-        // 6. Search Query
+        // 5. Search Query
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase().trim();
           const matches =
@@ -164,7 +184,6 @@ function ShopContent() {
     activeCategory,
     activeSubCategory,
     activeChakra,
-    activePurpose,
     selectedBeadFilter,
     maxPrice,
     searchQuery,
@@ -183,18 +202,17 @@ function ShopContent() {
   const handleResetFilters = () => {
     setActiveCategory("all");
     setActiveSubCategory("all");
-    setActivePurpose("all");
     setActiveChakra("all");
     setSelectedBeadFilter("all");
     setMaxPrice(15000);
     setSearchQuery("");
+    setSortBy("featured");
   };
 
   const activeFilterCount =
     (activeCategory !== "all" ? 1 : 0) +
     (activeSubCategory !== "all" ? 1 : 0) +
     (activeChakra !== "all" ? 1 : 0) +
-    (activePurpose !== "all" ? 1 : 0) +
     (selectedBeadFilter !== "all" ? 1 : 0) +
     (maxPrice < 15000 ? 1 : 0) +
     (searchQuery ? 1 : 0);
@@ -258,27 +276,27 @@ function ShopContent() {
           </div>
         </div>
 
-        {/* 2. Subcategory Bar (For Bracelets) */}
+        {/* 2. Subcategory Bar (For Bracelets: Love, Job, Wealth, Wellness, Protection) */}
         <AnimatePresence>
           {activeCategory === "Heal Energized Bracelets" && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden mb-5"
+              className="overflow-hidden mb-8"
             >
-              <div className="p-1.5 sm:p-2 rounded-2xl bg-white border border-[#C9A24D]/35 max-w-xl mx-auto flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar shadow-xs px-2">
-                {braceletSubCategories.map((sub) => {
+              <div className="p-1.5 sm:p-2 rounded-2xl bg-white border border-[#C9A24D]/35 max-w-3xl mx-auto flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar shadow-xs px-2">
+                {braceletCategories.map((sub) => {
                   const isSubActive = activeSubCategory === sub.id;
                   return (
                     <button
                       key={sub.id}
                       type="button"
                       onClick={() => setActiveSubCategory(sub.id)}
-                      className={`px-3 sm:px-4 py-2 rounded-xl text-[11px] font-semibold whitespace-nowrap flex-shrink-0 transition-all cursor-pointer ${
+                      className={`px-3.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all cursor-pointer ${
                         isSubActive
-                          ? "bg-[#F5F0FD] text-[#7B4FC9] border border-[#7B4FC9]/40 shadow-xs font-bold"
-                          : "text-[#635572] hover:text-[#2B1B3D]"
+                          ? "bg-[#7B4FC9] text-white shadow-xs font-bold"
+                          : "text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9]"
                       }`}
                     >
                       {sub.label}
@@ -289,29 +307,6 @@ function ShopContent() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* 3. Purpose Filter Chips (Desktop & Tablet) */}
-        <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-3 mb-6 justify-start lg:justify-center no-scrollbar px-1">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-[#8E6D24] mr-1 flex-shrink-0">
-            Intention:
-          </span>
-          {purposes.map((p) => {
-            const isMatch = activePurpose === p.id;
-            return (
-              <button
-                key={p.id}
-                onClick={() => setActivePurpose(p.id)}
-                className={`px-3 py-1 rounded-full text-[11px] font-medium whitespace-nowrap transition-all cursor-pointer ${
-                  isMatch
-                    ? "bg-[#C9A24D] text-[#2B1B3D] font-bold shadow-xs"
-                    : "bg-white text-[#635572] border border-[#EFE9E2] hover:border-[#C9A24D]/40"
-                }`}
-              >
-                {p.label}
-              </button>
-            );
-          })}
-        </div>
 
         {/* 4A. Desktop Controls Bar */}
         <div className="hidden md:flex p-4 rounded-2xl bg-white border border-[#EFE9E2] mb-8 items-center justify-between gap-3 shadow-xs">
@@ -485,27 +480,29 @@ function ShopContent() {
                     </div>
                   </div>
 
-                  {/* Spiritual Intention */}
-                  <div>
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-[#8E6D24] block mb-2">
-                      Spiritual Purpose / Intention
-                    </label>
-                    <div className="flex flex-wrap gap-1.5">
-                      {purposes.map((p) => (
-                        <button
-                          key={p.id}
-                          onClick={() => setActivePurpose(p.id)}
-                          className={`px-3 py-1.5 rounded-full text-xs transition-all ${
-                            activePurpose === p.id
-                              ? "bg-[#7B4FC9] text-white font-bold shadow-xs"
-                              : "bg-[#FBF8F3] text-[#635572] border border-[#EFE9E2]"
-                          }`}
-                        >
-                          {p.label}
-                        </button>
-                      ))}
+                  {/* Bracelet Sacred Categories */}
+                  {activeCategory === "Heal Energized Bracelets" && (
+                    <div>
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#8E6D24] block mb-2">
+                        Bracelet Category
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {braceletCategories.map((sub) => (
+                          <button
+                            key={sub.id}
+                            onClick={() => setActiveSubCategory(sub.id)}
+                            className={`px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
+                              activeSubCategory === sub.id
+                                ? "bg-[#7B4FC9] text-white font-bold shadow-xs"
+                                : "bg-[#FBF8F3] text-[#635572] border border-[#EFE9E2]"
+                            }`}
+                          >
+                            {sub.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Bottom Sheet Actions */}
@@ -561,162 +558,180 @@ function ShopContent() {
                 : product.image;
 
               return (
-                <div
+                <motion.div
                   key={product.id}
-                  data-cursor="gem"
-                  onMouseEnter={() => setHoveredCardId(product.id)}
-                  onMouseLeave={() => setHoveredCardId(null)}
-                  onClick={() => openQuickView(product)}
-                  className="product-card-target group rounded-2xl sm:rounded-3xl bg-white border border-[#EFE9E2] hover:border-[#C9A24D]/60 overflow-hidden shadow-xs hover:shadow-[0_16px_36px_rgba(123,79,201,0.12)] transition-all duration-300 flex flex-col justify-between cursor-pointer"
+                  layout
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  className="h-full"
                 >
-                  {/* Image Container with Hover Swap */}
-                  <div className="relative aspect-square w-full bg-[#FAF8F3] overflow-hidden">
-                    <Image
-                      src={displayImage}
-                      alt={product.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                    />
+                  <Link
+                    href={`/product?id=${product.id}`}
+                    data-cursor="gem"
+                    onMouseEnter={() => setHoveredCardId(product.id)}
+                    onMouseLeave={() => setHoveredCardId(null)}
+                    className="product-card-target group rounded-2xl sm:rounded-3xl bg-white border border-[#EFE9E2] hover:border-[#C9A24D] overflow-hidden shadow-xs hover:shadow-[0_20px_45px_rgba(123,79,201,0.18)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between cursor-pointer h-full relative block"
+                  >
+                    {/* Image Container with Hover Swap */}
+                    <div className="relative aspect-square w-full bg-[#FAF8F3] overflow-hidden">
+                      <Image
+                        src={displayImage}
+                        alt={product.name}
+                        fill
+                        className="object-cover group-hover:scale-108 transition-transform duration-700 ease-out"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      />
 
-                    {/* Badges */}
-                    <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1 z-10 pointer-events-none">
-                      <span className="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur-md text-[#2B1B3D] border border-[#C9A24D]/50 shadow-2xs">
-                        {product.badge || "Energized & Certified"}
-                      </span>
-                      {discount > 0 && (
-                        <span className="px-1.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold uppercase tracking-wider bg-[#EDF7ED] text-[#2E7D32] border border-[#A5D6A7] self-start shadow-2xs">
-                          {discount}% OFF
+                      {/* Badges */}
+                      <div className="absolute top-2 left-2 sm:top-3 sm:left-3 flex flex-col gap-1 z-10 pointer-events-none">
+                        <span className="px-2 py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold uppercase tracking-wider bg-white/95 backdrop-blur-md text-[#2B1B3D] border border-[#C9A24D]/50 shadow-2xs">
+                          {product.badge || "Energized & Certified"}
                         </span>
-                      )}
-                    </div>
-
-                    {/* Wishlist Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleWishlist(product.id);
-                      }}
-                      className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full border flex items-center justify-center transition-all z-10 shadow-xs touch-press cursor-pointer ${
-                        isWishlisted
-                          ? "bg-[#FDF2F4] text-[#B83D60] border-[#F4C6D0]"
-                          : "bg-white/95 backdrop-blur-md text-[#635572] border-[#EFE9E2] hover:text-[#7B4FC9] hover:bg-white"
-                      }`}
-                      aria-label="Save to Wishlist"
-                    >
-                      <Heart size={14} fill={isWishlisted ? "currentColor" : "none"} />
-                    </button>
-
-                    {/* Quick View Pill */}
-                    <div className="absolute inset-x-3 bottom-3 opacity-0 group-hover:opacity-100 transition-opacity z-10 hidden md:block">
-                      <div className="w-full py-2 rounded-xl bg-white/95 backdrop-blur-md text-[11px] font-semibold text-[#2B1B3D] border border-[#EFE9E2] hover:bg-[#FBF8F3] transition-colors flex items-center justify-center gap-1.5 shadow-md">
-                        <Eye size={13} className="text-[#C9A24D]" />
-                        <span>Inspect & Details</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Content */}
-                  <div className="p-3 sm:p-5 flex flex-col justify-between flex-grow space-y-2 sm:space-y-3">
-                    <div>
-                      <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-[#635572] mb-1">
-                        <div className="flex items-center gap-1 font-bold text-[#2B1B3D]">
-                          <Star size={11} className="fill-[#C9A24D] text-[#C9A24D]" />
-                          <span>{product.rating || 4.9}</span>
-                        </div>
-                        <span className="text-[9px] sm:text-[10px] uppercase font-semibold text-[#8E6D24] tracking-wider truncate max-w-[100px] sm:max-w-[140px]">
-                          {product.chakra || product.rashi || "Vedic Energized"}
-                        </span>
-                      </div>
-
-                      <h3 className="font-serif text-xs sm:text-base font-semibold text-[#2B1B3D] leading-snug group-hover:text-[#7B4FC9] transition-colors line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem]">
-                        {product.name}
-                      </h3>
-
-                      <p className="text-[10px] sm:text-xs text-[#635572] mt-0.5 line-clamp-1 italic">
-                        "{product.shortIntention}"
-                      </p>
-                    </div>
-
-                    {/* Bead Size Selector for Bracelets */}
-                    {product.category === "Heal Energized Bracelets" && (
-                      <div className="pt-1.5 border-t border-[#EFE9E2]">
-                        <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-semibold text-[#635572] uppercase mb-1">
-                          <span>Bead Size:</span>
-                          <span className="text-[#2B1B3D]">{selectedSize}</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-1">
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedCardBeadSizes((prev) => ({ ...prev, [product.id]: "8mm" }));
-                            }}
-                            className={`py-0.5 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-medium border text-center transition-all ${
-                              selectedSize === "8mm"
-                                ? "bg-[#F5F0FD] border-[#7B4FC9] text-[#7B4FC9] font-bold"
-                                : "bg-[#FBF8F3] border-[#EFE9E2] text-[#635572]"
-                            }`}
-                          >
-                            8mm
-                          </button>
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedCardBeadSizes((prev) => ({ ...prev, [product.id]: "10mm" }));
-                            }}
-                            className={`py-0.5 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-medium border text-center transition-all ${
-                              selectedSize === "10mm"
-                                ? "bg-[#F5F0FD] border-[#7B4FC9] text-[#7B4FC9] font-bold"
-                                : "bg-[#FBF8F3] border-[#EFE9E2] text-[#635572]"
-                            }`}
-                          >
-                            10mm
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Price & Action */}
-                    <div className="pt-1">
-                      <div className="flex items-baseline gap-1.5 mb-2">
-                        <span className="text-sm sm:text-lg font-bold text-[#2B1B3D]">
-                          ₹{price.toLocaleString("en-IN")}
-                        </span>
-                        {originalPrice > price && (
-                          <span className="text-[10px] sm:text-xs text-[#9588A3] line-through">
-                            ₹{originalPrice.toLocaleString("en-IN")}
+                        {discount > 0 && (
+                          <span className="px-1.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-bold uppercase tracking-wider bg-[#EDF7ED] text-[#2E7D32] border border-[#A5D6A7] self-start shadow-2xs">
+                            {discount}% OFF
                           </span>
                         )}
-                        <span className="text-[9px] text-[#635572] ml-auto">GST Incl.</span>
                       </div>
 
+                      {/* Wishlist Button */}
                       <button
                         type="button"
-                        onClick={(e) => handleProductAddToCart(product, e)}
-                        disabled={isJustAdded}
-                        className={`w-full py-2 sm:py-2.5 px-3 rounded-full text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs ${
-                          isJustAdded
-                            ? "bg-[#EDF7ED] text-[#2E7D32] border border-[#A5D6A7]"
-                            : "btn-amethyst"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleWishlist(product.id);
+                        }}
+                        className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full border flex items-center justify-center transition-all z-10 shadow-xs touch-press cursor-pointer ${
+                          isWishlisted
+                            ? "bg-[#FDF2F4] text-[#B83D60] border-[#F4C6D0]"
+                            : "bg-white/95 backdrop-blur-md text-[#635572] border-[#EFE9E2] hover:text-[#7B4FC9] hover:bg-white"
                         }`}
+                        aria-label="Save to Wishlist"
                       >
-                        {isJustAdded ? (
-                          <>
-                            <Check size={13} />
-                            <span>Added to Bag!</span>
-                          </>
-                        ) : (
-                          <>
-                            <ShoppingBag size={13} />
-                            <span>Add to Bag</span>
-                          </>
-                        )}
+                        <Heart size={14} fill={isWishlisted ? "currentColor" : "none"} />
                       </button>
+
+                      {/* Direct View Sacred Details Pill */}
+                      <div className="absolute inset-x-3 bottom-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-10 hidden md:block">
+                        <div className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#7B4FC9] to-[#5E37A1] text-white text-[11px] font-bold tracking-wider uppercase border border-[#C9A24D]/60 flex items-center justify-center gap-1.5 shadow-[0_8px_20px_rgba(123,79,201,0.4)]">
+                          <Sparkles size={13} className="text-[#C9A24D]" />
+                          <span>View Sacred Gem</span>
+                          <ArrowRight size={13} />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+
+                    {/* Card Content */}
+                    <div className="p-3 sm:p-5 flex flex-col justify-between flex-grow space-y-2 sm:space-y-3">
+                      <div>
+                        <div className="flex items-center justify-between text-[10px] sm:text-[11px] text-[#635572] mb-1">
+                          <div className="flex items-center gap-1 font-bold text-[#2B1B3D]">
+                            <Star size={11} className="fill-[#C9A24D] text-[#C9A24D]" />
+                            <span>{product.rating || 4.9}</span>
+                          </div>
+                          <span className="text-[9px] sm:text-[10px] uppercase font-semibold text-[#8E6D24] tracking-wider truncate max-w-[100px] sm:max-w-[140px]">
+                            {product.chakra || product.rashi || "Vedic Energized"}
+                          </span>
+                        </div>
+
+                        <h3 className="font-serif text-xs sm:text-base font-semibold text-[#2B1B3D] leading-snug group-hover:text-[#7B4FC9] transition-colors line-clamp-2 min-h-[2rem] sm:min-h-[2.5rem]">
+                          {product.name}
+                        </h3>
+
+                        <p className="text-[10px] sm:text-xs text-[#635572] mt-0.5 line-clamp-1 italic">
+                          "{product.shortIntention}"
+                        </p>
+                      </div>
+
+                      {/* Bead Size Selector for Bracelets */}
+                      {product.category === "Heal Energized Bracelets" && (
+                        <div className="pt-1.5 border-t border-[#EFE9E2]">
+                          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-semibold text-[#635572] uppercase mb-1">
+                            <span>Bead Size:</span>
+                            <span className="text-[#2B1B3D]">{selectedSize}</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-1">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setSelectedCardBeadSizes((prev) => ({ ...prev, [product.id]: "8mm" }));
+                              }}
+                              className={`py-0.5 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-medium border text-center transition-all ${
+                                selectedSize === "8mm"
+                                  ? "bg-[#F5F0FD] border-[#7B4FC9] text-[#7B4FC9] font-bold"
+                                  : "bg-[#FBF8F3] border-[#EFE9E2] text-[#635572]"
+                              }`}
+                            >
+                              8mm
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setSelectedCardBeadSizes((prev) => ({ ...prev, [product.id]: "10mm" }));
+                              }}
+                              className={`py-0.5 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-medium border text-center transition-all ${
+                                selectedSize === "10mm"
+                                  ? "bg-[#F5F0FD] border-[#7B4FC9] text-[#7B4FC9] font-bold"
+                                  : "bg-[#FBF8F3] border-[#EFE9E2] text-[#635572]"
+                              }`}
+                            >
+                              10mm
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Price & Action */}
+                      <div className="pt-1">
+                        <div className="flex items-baseline gap-1.5 mb-2">
+                          <span className="text-sm sm:text-lg font-bold text-[#2B1B3D]">
+                            ₹{price.toLocaleString("en-IN")}
+                          </span>
+                          {originalPrice > price && (
+                            <span className="text-[10px] sm:text-xs text-[#9588A3] line-through">
+                              ₹{originalPrice.toLocaleString("en-IN")}
+                            </span>
+                          )}
+                          <span className="text-[9px] text-[#635572] ml-auto">GST Incl.</span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleProductAddToCart(product, e);
+                          }}
+                          disabled={isJustAdded}
+                          className={`w-full py-2 sm:py-2.5 px-3 rounded-full text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs ${
+                            isJustAdded
+                              ? "bg-[#EDF7ED] text-[#2E7D32] border border-[#A5D6A7]"
+                              : "btn-amethyst hover:scale-[1.02] active:scale-[0.98]"
+                          }`}
+                        >
+                          {isJustAdded ? (
+                            <>
+                              <Check size={13} />
+                              <span>Added to Bag!</span>
+                            </>
+                          ) : (
+                            <>
+                              <ShoppingBag size={13} />
+                              <span>Add to Bag</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </Link>
+                </motion.div>
               );
             })}
           </div>
