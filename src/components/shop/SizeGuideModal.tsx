@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Modal } from "@/components/ui/Modal";
-import { Sparkles, Ruler, CheckCircle2 } from "lucide-react";
+import { Ruler, CheckCircle2 } from "lucide-react";
 
 export function SizeGuideModal({
   isOpen,
@@ -12,7 +12,7 @@ export function SizeGuideModal({
   onClose: () => void;
 }) {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Bracelet Wrist Size & Bead Guide" maxWidth="lg">
+    <Modal isOpen={isOpen} onClose={onClose} title="Bracelet Wrist Size Guide" maxWidth="lg">
       <div className="space-y-6 text-[#2B1B3D]">
         {/* Intro */}
         <p className="text-xs sm:text-sm text-[#635572] leading-relaxed">
@@ -52,28 +52,6 @@ export function SizeGuideModal({
                 </tr>
               </tbody>
             </table>
-          </div>
-        </div>
-
-        {/* 8mm vs 10mm Comparison */}
-        <div>
-          <h4 className="font-serif text-sm font-semibold uppercase tracking-wider text-[#2B1B3D] mb-3 flex items-center gap-2">
-            <Sparkles size={16} className="text-[#C9A24D]" />
-            <span>Choosing Bead Diameter (8mm vs 10mm)</span>
-          </h4>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-            <div className="p-4 rounded-2xl bg-[#FAF8F3] border border-[#EFE9E2]">
-              <span className="font-bold text-[#7B4FC9] block mb-1">8mm Spheres (Most Popular)</span>
-              <p className="text-[#635572] leading-relaxed">
-                Subtle, elegant, ideal for daily office wear and stacking multiple synergy bracelets without heaviness.
-              </p>
-            </div>
-            <div className="p-4 rounded-2xl bg-[#F5F0FD] border border-[#7B4FC9]/30">
-              <span className="font-bold text-[#7B4FC9] block mb-1">10mm Spheres (Bold & Heavy)</span>
-              <p className="text-[#635572] leading-relaxed">
-                Contains ~40% more gemstone mass. Stronger physical presence, higher magnetic resonance, and statement luxury look.
-              </p>
-            </div>
           </div>
         </div>
 
