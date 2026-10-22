@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { 
   X, 
   Minus, 
@@ -17,7 +18,7 @@ import {
   ShieldCheck 
 } from "lucide-react";
 import { useStore, Product } from "@/store/useStore";
-import { cartUpsells } from "@/data/products";
+import { cartUpsells, fetchProducts, fallbackProducts } from "@/data/products";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function CartDrawer() {
@@ -41,6 +42,12 @@ export default function CartDrawer() {
 
   const [couponInput, setCouponInput] = useState("");
   const [isMobile, setIsMobile] = useState(false);
+  const [allProducts, setAllProducts] = useState<Product[]>(fallbackProducts);
+  const [wishlistQuantities, setWishlistQuantities] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    fetchProducts().then(setAllProducts);
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 640);
@@ -385,7 +392,7 @@ export default function CartDrawer() {
                 )
               ) : (
                 /* Wishlist Tab */
-                <div className="space-y-3">
+                <div className="space-y-3.5">
                   {wishlist.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-center text-[#6E6A64] gap-4 py-16">
                       <Heart size={32} strokeWidth={1.5} className="text-[#D4AF37]" />
@@ -397,20 +404,107 @@ export default function CartDrawer() {
                       </p>
                     </div>
                   ) : (
-                    wishlist.map((id) => (
-                      <div
-                        key={id}
-                        className="p-3.5 rounded-2xl bg-[#FFFFFF] border border-[#EAE5DF] flex items-center justify-between gap-3"
-                      >
-                        <span className="text-xs font-semibold text-[#2C2A29] truncate">{id}</span>
-                        <button
-                          onClick={() => toggleWishlist(id)}
-                          className="text-[10px] text-[#6E6A64] hover:text-rose-600"
+                    wishlist.map((id) => {
+                      const product = allProducts.find((p) => p.id === id) || fallbackProducts.find((p) => p.id === id);
+                      if (!product) return null;
+                      const qty = wishlistQuantities[product.id] || 1;
+                      const price = (product.salePrice || product.price) * qty;
+
+                      return (
+                        <div
+                          key={product.id}
+                          className="p-3.5 rounded-2xl bg-[#FFFFFF] border border-[#EAE5DF] shadow-xs flex gap-3.5 items-center group transition-all"
                         >
-                          Remove
-                        </button>
-                      </div>
-                    ))
+                          {/* Image */}
+                          <Link
+                            href={`/product?id=${product.id}`}
+                            onClick={toggleCart}
+                            className="w-18 h-18 bg-[#FAF9F6] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#EAE5DF] cursor-pointer"
+                          >
+                            <Image
+                              src={product.image}
+                              alt={product.name}
+                              fill
+                              className="object-cover group-hover:scale-105 transition-transform"
+                            />
+                          </Link>
+
+                          {/* Content */}
+                          <div className="flex-grow min-w-0">
+                            <Link
+                              href={`/product?id=${product.id}`}
+                              onClick={toggleCart}
+                              className="block"
+                            >
+                              <h4 className="text-xs font-semibold text-[#2C2A29] leading-snug truncate hover:text-[#7B4FC9] transition-colors">
+                                {product.name}
+                              </h4>
+                            </Link>
+
+                            <div className="flex items-center gap-2 mt-1 text-[11px] text-[#6E6A64]">
+                              <span className="px-1.5 py-0.5 rounded bg-[#FAF9F6] border border-[#EAE5DF] font-medium text-[10px]">
+                                8mm
+                              </span>
+                              <span className="text-[#9A7B2C] italic truncate text-[11px] capitalize">
+                                {product.category || product.subCategory || "Vedic Energized"}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center justify-between mt-2.5">
+                              {/* Quantity & Move to bag */}
+                              <div className="flex items-center gap-2">
+                                <div className="flex items-center border border-[#EAE5DF] rounded-lg bg-[#FAF9F6] px-1.5 py-0.5">
+                                  <button
+                                    onClick={() => setWishlistQuantities((prev) => ({ ...prev, [product.id]: Math.max(1, qty - 1) }))}
+                                    className="p-1 text-[#6E6A64] hover:text-[#2C2A29] cursor-pointer"
+                                    aria-label="Decrease quantity"
+                                  >
+                                    <Minus size={11} />
+                                  </button>
+                                  <span className="w-6 text-center text-xs font-bold text-[#2C2A29]">
+                                    {qty}
+                                  </span>
+                                  <button
+                                    onClick={() => setWishlistQuantities((prev) => ({ ...prev, [product.id]: qty + 1 }))}
+                                    className="p-1 text-[#6E6A64] hover:text-[#2C2A29] cursor-pointer"
+                                    aria-label="Increase quantity"
+                                  >
+                                    <Plus size={11} />
+                                  </button>
+                                </div>
+
+                                <button
+                                  onClick={() => {
+                                    addToCart(product, qty);
+                                    showToast(`✨ Moved ${product.name} to sacred bag!`);
+                                  }}
+                                  className="px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider text-[#7B4FC9] bg-[#F5F0FD] border border-[#7B4FC9]/30 hover:bg-[#7B4FC9] hover:text-white transition-all flex items-center gap-1 cursor-pointer"
+                                  title="Add to sacred bag"
+                                >
+                                  <ShoppingBag size={11} />
+                                  <span>Add</span>
+                                </button>
+                              </div>
+
+                              {/* Price & Delete */}
+                              <div className="flex items-center gap-2.5">
+                                <span className="text-xs font-bold text-[#2C2A29]">
+                                  ₹{price.toLocaleString("en-IN")}
+                                </span>
+                                <button
+                                  onClick={() => toggleWishlist(product.id)}
+                                  className="text-[#6E6A64] hover:text-rose-600 p-1 cursor-pointer transition-colors"
+                                  aria-label="Remove from wishlist"
+                                  title="Remove from wishlist"
+                                >
+                                  <Trash2 size={13} />
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
                   )}
                 </div>
               )}
