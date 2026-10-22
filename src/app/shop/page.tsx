@@ -25,14 +25,6 @@ import { TiltCard } from "@/components/animations/TiltCard";
 
 const mainCategories = [
   { id: "all", label: "All Collections" },
-  { id: "Heal Energized Bracelets", label: "Bracelets" },
-  { id: "Clusters", label: "Raw Clusters & Geodes" },
-  { id: "Pendants", label: "Sacred Pendants" },
-  { id: "Gemstones", label: "Loose Gemstones" },
-];
-
-const braceletCategories = [
-  { id: "all", label: "All Bracelets" },
   { id: "Love and relationship", label: "Love & Relationship" },
   { id: "Job and business", label: "Job & Business" },
   { id: "Wealth and prosperity", label: "Wealth & Prosperity" },
@@ -54,34 +46,22 @@ const chakras = [
 function normalizeCategoryParam(cat: string | null): string {
   if (!cat || cat === "all") return "all";
   const lower = cat.toLowerCase().replace(/\+/g, " ").replace(/-/g, " ");
-  if (lower.includes("bracelet")) return "Heal Energized Bracelets";
-  if (lower.includes("cluster") || lower.includes("geode")) return "Clusters";
-  if (lower.includes("pendant")) return "Pendants";
-  if (lower.includes("gemstone")) return "Gemstones";
-  return cat;
-}
-
-function normalizeSubCategoryParam(sub: string | null): string {
-  if (!sub || sub === "all") return "all";
-  const lower = sub.toLowerCase().replace(/\+/g, " ").replace(/-/g, " ");
   if (lower.includes("love") || lower.includes("relationship")) return "Love and relationship";
   if (lower.includes("job") || lower.includes("business")) return "Job and business";
   if (lower.includes("wealth") || lower.includes("prosperity")) return "Wealth and prosperity";
   if (lower.includes("wellness") || lower.includes("health")) return "Overall wellness";
   if (lower.includes("negativity") || lower.includes("protection")) return "Negativity protection";
-  return sub;
+  return "all";
 }
 
 function ShopContent() {
   const searchParams = useSearchParams();
   const initialCategory = normalizeCategoryParam(searchParams.get("category"));
-  const initialSubCategory = normalizeSubCategoryParam(searchParams.get("subCategory"));
   const initialSearch = searchParams.get("search") || "";
   const initialChakra = searchParams.get("chakra") || "all";
 
   const [products, setProducts] = useState<Product[]>(fallbackProducts);
   const [activeCategory, setActiveCategory] = useState(initialCategory);
-  const [activeSubCategory, setActiveSubCategory] = useState(initialSubCategory);
   const [activeChakra, setActiveChakra] = useState(initialChakra);
   const [selectedBeadFilter, setSelectedBeadFilter] = useState<"all" | "8mm" | "10mm">("all");
   const [maxPrice, setMaxPrice] = useState<number>(15000);
@@ -102,9 +82,6 @@ function ShopContent() {
     if (searchParams.get("category")) {
       setActiveCategory(normalizeCategoryParam(searchParams.get("category")));
     }
-    if (searchParams.get("subCategory")) {
-      setActiveSubCategory(normalizeSubCategoryParam(searchParams.get("subCategory")));
-    }
     if (searchParams.get("search")) {
       setSearchQuery(searchParams.get("search")!);
     }
@@ -119,22 +96,8 @@ function ShopContent() {
       .filter((p) => {
         // 1. Strict Category Isolation
         if (activeCategory !== "all") {
-          if (activeCategory === "Heal Energized Bracelets") {
-            if (p.category !== "Heal Energized Bracelets") return false;
-            if (activeSubCategory !== "all" && p.subCategory !== activeSubCategory) {
-              return false;
-            }
-          } else if (activeCategory === "Clusters") {
-            // Strictly clusters, no bracelets
-            if (p.category !== "Clusters" || p.name.toLowerCase().includes("bracelet")) return false;
-          } else if (activeCategory === "Pendants") {
-            // Strictly pendants, no bracelets
-            if (p.category !== "Pendants" || p.name.toLowerCase().includes("bracelet")) return false;
-          } else if (activeCategory === "Gemstones") {
-            // Strictly loose gemstones, no bracelets
-            if (p.category !== "Gemstones" || p.name.toLowerCase().includes("bracelet")) return false;
-          } else {
-            if (p.category !== activeCategory) return false;
+          if (p.category !== activeCategory && p.subCategory !== activeCategory) {
+            return false;
           }
         }
 
@@ -146,16 +109,11 @@ function ShopContent() {
           }
         }
 
-        // 3. Bead Size Filter (for bracelets)
-        if (selectedBeadFilter !== "all" && p.category === "Heal Energized Bracelets") {
-          // All bracelets support 8mm & 10mm
-        }
-
-        // 4. Price
+        // 3. Price
         const price = p.salePrice || p.price;
         if (price > maxPrice) return false;
 
-        // 5. Search Query
+        // 4. Search Query
         if (searchQuery.trim()) {
           const q = searchQuery.toLowerCase().trim();
           const matches =
@@ -180,7 +138,6 @@ function ShopContent() {
   }, [
     products,
     activeCategory,
-    activeSubCategory,
     activeChakra,
     selectedBeadFilter,
     maxPrice,
@@ -198,7 +155,6 @@ function ShopContent() {
 
   const handleResetFilters = () => {
     setActiveCategory("all");
-    setActiveSubCategory("all");
     setActiveChakra("all");
     setSelectedBeadFilter("all");
     setMaxPrice(15000);
@@ -208,7 +164,6 @@ function ShopContent() {
 
   const activeFilterCount =
     (activeCategory !== "all" ? 1 : 0) +
-    (activeSubCategory !== "all" ? 1 : 0) +
     (activeChakra !== "all" ? 1 : 0) +
     (selectedBeadFilter !== "all" ? 1 : 0) +
     (maxPrice < 15000 ? 1 : 0) +
@@ -247,19 +202,14 @@ function ShopContent() {
         </div>
 
         {/* 1. Category Bar */}
-        <div className="w-full max-w-full overflow-hidden mb-4">
+        <div className="w-full max-w-full overflow-hidden mb-8">
           <div className="flex gap-2 overflow-x-auto pb-2 justify-start sm:justify-center no-scrollbar px-1">
             {mainCategories.map((cat) => {
               const isActive = activeCategory === cat.id;
               return (
                 <button
                   key={cat.id}
-                  onClick={() => {
-                    setActiveCategory(cat.id);
-                    if (cat.id !== "Heal Energized Bracelets") {
-                      setActiveSubCategory("all");
-                    }
-                  }}
+                  onClick={() => setActiveCategory(cat.id)}
                   className={`px-4 sm:px-6 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border flex-shrink-0 cursor-pointer touch-press ${
                     isActive
                       ? "bg-[#7B4FC9] text-white border-[#7B4FC9] shadow-md font-bold"
@@ -272,38 +222,6 @@ function ShopContent() {
             })}
           </div>
         </div>
-
-        {/* 2. Subcategory Bar (For Bracelets: Love, Job, Wealth, Wellness, Protection) */}
-        <AnimatePresence>
-          {activeCategory === "Heal Energized Bracelets" && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="overflow-hidden mb-8"
-            >
-              <div className="p-1.5 sm:p-2 rounded-2xl bg-white border border-[#C9A24D]/35 max-w-3xl mx-auto flex items-center justify-start sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar shadow-xs px-2">
-                {braceletCategories.map((sub) => {
-                  const isSubActive = activeSubCategory === sub.id;
-                  return (
-                    <button
-                      key={sub.id}
-                      type="button"
-                      onClick={() => setActiveSubCategory(sub.id)}
-                      className={`px-3.5 sm:px-4 py-2 rounded-xl text-[11px] sm:text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all cursor-pointer ${
-                        isSubActive
-                          ? "bg-[#7B4FC9] text-white shadow-xs font-bold"
-                          : "text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9]"
-                      }`}
-                    >
-                      {sub.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* 4A. Desktop Controls Bar */}
         <div className="hidden md:flex p-4 rounded-2xl bg-white border border-[#EFE9E2] mb-8 items-center justify-between gap-3 shadow-xs">
@@ -477,29 +395,27 @@ function ShopContent() {
                     </div>
                   </div>
 
-                  {/* Bracelet Sacred Categories */}
-                  {activeCategory === "Heal Energized Bracelets" && (
-                    <div>
-                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#8E6D24] block mb-2">
-                        Bracelet Category
-                      </label>
-                      <div className="flex flex-wrap gap-1.5">
-                        {braceletCategories.map((sub) => (
-                          <button
-                            key={sub.id}
-                            onClick={() => setActiveSubCategory(sub.id)}
-                            className={`px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
-                              activeSubCategory === sub.id
-                                ? "bg-[#7B4FC9] text-white font-bold shadow-xs"
-                                : "bg-[#FBF8F3] text-[#635572] border border-[#EFE9E2]"
-                            }`}
-                          >
-                            {sub.label}
-                          </button>
-                        ))}
-                      </div>
+                  {/* Sacred Collections */}
+                  <div>
+                    <label className="text-[11px] font-bold uppercase tracking-wider text-[#8E6D24] block mb-2">
+                      Sacred Intention & Category
+                    </label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {mainCategories.map((cat) => (
+                        <button
+                          key={cat.id}
+                          onClick={() => setActiveCategory(cat.id)}
+                          className={`px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
+                            activeCategory === cat.id
+                              ? "bg-[#7B4FC9] text-white font-bold shadow-xs"
+                              : "bg-[#FBF8F3] text-[#635572] border border-[#EFE9E2]"
+                          }`}
+                        >
+                          {cat.label}
+                        </button>
+                      ))}
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 {/* Bottom Sheet Actions */}

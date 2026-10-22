@@ -218,97 +218,183 @@ export default function HomePage() {
               Sacred Collections
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#2B1B3D] font-bold tracking-tight mb-3">
-              Curated for Divine Resonance
+              Curated by Sacred Intention
             </h2>
             <p className="text-xs sm:text-sm text-[#635572] leading-relaxed">
-              Explore our laboratory-certified gemstone talismans organized by format and intention.
+              Explore our laboratory-certified gemstone bracelets consecrated with 108 Vedic mantras for specific life transformations.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            {/* 1. Bracelets */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {/* 1. Love and relationship */}
             <TiltCard>
               <Link
-                href="/shop?category=Heal+Energized+Bracelets"
+                href="/shop?category=Love+and+relationship"
+                className="group relative h-96 rounded-3xl overflow-hidden block border border-[#EFE9E2] shadow-sm hover:shadow-2xl transition-all"
+              >
+                <Image
+                  src="/images/products/love-peace-metal.jpg"
+                  alt="Love & Relationship Bracelets"
+                  fill
+                  className="object-cover group-hover:scale-108 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2B1B3D]/85 via-[#2B1B3D]/30 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#F4C6D0] block">
+                    Heart Chakra Sacred Frequency
+                  </span>
+                  <h3 className="font-serif text-2xl font-bold">Love & Relationship</h3>
+                  <p className="text-xs text-white/80 line-clamp-2">
+                    Soulmate alignment, unconditional compassion, inner child healing, and partner trust.
+                  </p>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C9A24D] group-hover:translate-x-1 transition-transform pt-1">
+                    <span>Explore Love Collection</span>
+                    <ArrowRight size={13} />
+                  </span>
+                </div>
+              </Link>
+            </TiltCard>
+
+            {/* 2. Job and business */}
+            <TiltCard>
+              <Link
+                href="/shop?category=Job+and+business"
+                className="group relative h-96 rounded-3xl overflow-hidden block border border-[#EFE9E2] shadow-sm hover:shadow-2xl transition-all"
+              >
+                <Image
+                  src="/images/products/citrine-new.jpg"
+                  alt="Job & Business Bracelets"
+                  fill
+                  className="object-cover group-hover:scale-108 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2B1B3D]/85 via-[#2B1B3D]/30 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#CDB9F5] block">
+                    Solar Plexus & Mercury Power
+                  </span>
+                  <h3 className="font-serif text-2xl font-bold">Job & Business</h3>
+                  <p className="text-xs text-white/80 line-clamp-2">
+                    Executive courage, trading acumen, salary promotions, and persuasive public communication.
+                  </p>
+                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C9A24D] group-hover:translate-x-1 transition-transform pt-1">
+                    <span>Explore Career Collection</span>
+                    <ArrowRight size={13} />
+                  </span>
+                </div>
+              </Link>
+            </TiltCard>
+
+            {/* 3. Wealth and prosperity */}
+            <TiltCard>
+              <Link
+                href="/shop?category=Wealth+and+prosperity"
                 className="group relative h-96 rounded-3xl overflow-hidden block border border-[#EFE9E2] shadow-sm hover:shadow-2xl transition-all"
               >
                 <Image
                   src="/images/products/money-maker.jpg"
-                  alt="Healed Bracelets"
+                  alt="Wealth & Prosperity Bracelets"
                   fill
                   className="object-cover group-hover:scale-108 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2B1B3D]/85 via-[#2B1B3D]/30 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#CDB9F5] block">
-                    Core Collection
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#C9A24D] block">
+                    Lakshmi Gayatri Energized
                   </span>
-                  <h3 className="font-serif text-2xl font-bold">Healed & Energized Bracelets</h3>
+                  <h3 className="font-serif text-2xl font-bold">Wealth & Prosperity</h3>
                   <p className="text-xs text-white/80 line-clamp-2">
-                    Chakra, Mixel Wealth, and personalized Kundali curations hand-strung on durable elastic.
+                    Triple synergy cashflow magnet, financial breakthroughs, and lasting generational luck.
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C9A24D] group-hover:translate-x-1 transition-transform pt-1">
-                    <span>Explore Bracelets</span>
+                    <span>Explore Wealth Collection</span>
                     <ArrowRight size={13} />
                   </span>
                 </div>
               </Link>
             </TiltCard>
 
-            {/* 2. Raw Clusters */}
+            {/* 4. Overall wellness */}
             <TiltCard>
               <Link
-                href="/shop?category=Clusters"
+                href="/shop?category=Overall+wellness"
                 className="group relative h-96 rounded-3xl overflow-hidden block border border-[#EFE9E2] shadow-sm hover:shadow-2xl transition-all"
               >
                 <Image
                   src="/images/products/amethyst-new.jpg"
-                  alt="Raw Clusters and Geodes"
+                  alt="Overall Wellness Bracelets"
                   fill
                   className="object-cover group-hover:scale-108 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2B1B3D]/85 via-[#2B1B3D]/30 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#CDB9F5] block">
-                    Sanctuary & Vastu
+                    7-Chakra Mind-Body Equilibrium
                   </span>
-                  <h3 className="font-serif text-2xl font-bold">Raw Clusters & Geodes</h3>
+                  <h3 className="font-serif text-2xl font-bold">Overall Wellness</h3>
                   <p className="text-xs text-white/80 line-clamp-2">
-                    Purify living rooms and meditation sanctuaries with Uruguayan Amethyst and Selenite caves.
+                    Cooling mental stress relief, tranquil sleep cycles, and revitalized physical Prana energy.
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C9A24D] group-hover:translate-x-1 transition-transform pt-1">
-                    <span>Explore Clusters</span>
+                    <span>Explore Wellness Collection</span>
                     <ArrowRight size={13} />
                   </span>
                 </div>
               </Link>
             </TiltCard>
 
-            {/* 3. Sacred Pendants */}
+            {/* 5. Negativity protection */}
             <TiltCard>
               <Link
-                href="/shop?category=Pendants"
+                href="/shop?category=Negativity+protection"
                 className="group relative h-96 rounded-3xl overflow-hidden block border border-[#EFE9E2] shadow-sm hover:shadow-2xl transition-all"
               >
                 <Image
-                  src="/images/products/fluorite.jpg"
-                  alt="Sacred Pendants"
+                  src="/images/products/black-tourmaline.jpg"
+                  alt="Negativity Protection Bracelets"
                   fill
                   className="object-cover group-hover:scale-108 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#2B1B3D]/85 via-[#2B1B3D]/30 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#CDB9F5] block">
-                    Wearable Talismans
+                    Root Chakra Defense Shield
                   </span>
-                  <h3 className="font-serif text-2xl font-bold">Sacred Point Pendants</h3>
+                  <h3 className="font-serif text-2xl font-bold">Negativity Protection</h3>
                   <p className="text-xs text-white/80 line-clamp-2">
-                    Hexagonal generator crystals set in gold to focus frequency directly over the heart and throat.
+                    Psychic body armor, Buri Nazar evil-eye deflection, and grounding against toxic environments.
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-xs font-bold text-[#C9A24D] group-hover:translate-x-1 transition-transform pt-1">
-                    <span>Explore Pendants</span>
+                    <span>Explore Protection Collection</span>
                     <ArrowRight size={13} />
                   </span>
+                </div>
+              </Link>
+            </TiltCard>
+
+            {/* 6. Crystal Energy Quiz Callout Bento Card */}
+            <TiltCard>
+              <Link
+                href="/quiz"
+                className="group relative h-96 rounded-3xl overflow-hidden block border border-[#C9A24D]/40 bg-gradient-to-br from-[#F5F0FD] via-[#FAF8F3] to-[#FFFDF9] shadow-sm hover:shadow-2xl transition-all p-8 flex flex-col justify-between"
+              >
+                <div className="space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-[#7B4FC9]/15 border border-[#7B4FC9]/30 flex items-center justify-center text-[#7B4FC9]">
+                    <Sparkles size={24} className="text-[#C9A24D]" />
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#7B4FC9] block">
+                    60-Second Aura Matching
+                  </span>
+                  <h3 className="font-serif text-2xl font-bold text-[#2B1B3D]">
+                    Unsure Which Intention to Choose?
+                  </h3>
+                  <p className="text-xs text-[#635572] leading-relaxed">
+                    Answer 4 quick questions about your current life goals to receive your personalized astrological crystal recommendation.
+                  </p>
+                </div>
+
+                <div className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-[#7B4FC9] text-white text-xs font-semibold uppercase tracking-wider group-hover:bg-[#5E37A1] transition-colors self-start shadow-sm">
+                  <span>Take Free Aura Quiz</span>
+                  <ArrowRight size={13} />
                 </div>
               </Link>
             </TiltCard>

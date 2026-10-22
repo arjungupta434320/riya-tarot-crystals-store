@@ -213,7 +213,7 @@ function ProductContent() {
         >
           <Link href="/" className="hover:text-[#7B4FC9] transition-colors whitespace-nowrap">Home</Link>
           <span>/</span>
-          <Link href="/shop" className="hover:text-[#7B4FC9] transition-colors whitespace-nowrap">{product.category}</Link>
+          <Link href={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-[#7B4FC9] transition-colors whitespace-nowrap capitalize">{product.category}</Link>
           <span>/</span>
           <span className="text-[#7B4FC9] font-semibold whitespace-nowrap truncate max-w-[200px] sm:max-w-none">
             {product.name}

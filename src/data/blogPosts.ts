@@ -49,7 +49,7 @@ export const blogPosts: BlogPost[] = [
       origin: "Uruguay, Madagascar & Brazil",
       primaryVibration: "Serenity, Mental Stillness & Spiritual Protection",
     },
-    relatedProductIds: ["mixel-crown-clarity-focus", "kundali-shani-blue-sapphire-amethyst", "cluster-raw-amethyst-geode"],
+    relatedProductIds: ["mixel-crown-clarity-focus", "kundali-shani-blue-sapphire-amethyst", "bracelet-amethyst-stress-relief"],
     seoDescription: "Comprehensive spiritual and metaphysical guide to natural Amethyst crystal: benefits, chakras, how to wear, and Vedic consecration practices.",
     content: `
 ## Introduction to the Violet Flame
@@ -126,7 +126,7 @@ Because quartz crystals are piezoelectric resonators, they absorb vibrational st
       origin: "Brazil, Peru & India",
       primaryVibration: "Financial Abundance, Commercial Victory & Sovereign Willpower",
     },
-    relatedProductIds: ["mixel-triple-abundance", "kundali-surya-dhan-yog-pyrite", "gemstone-natural-yellow-sapphire"],
+    relatedProductIds: ["mixel-triple-abundance", "kundali-surya-dhan-yog-pyrite", "bracelet-citrine-career-elevation"],
     seoDescription: "The ultimate guide to using Pyrite and Citrine crystals for wealth attraction, cashflow manifestation, business luck, and Solar Plexus chakra activation.",
     content: `
 ## The Golden Alchemy of Wealth Crystals
@@ -205,7 +205,7 @@ To attune your abundance bracelet to your specific enterprise or income goals:
       origin: "Madagascar & Brazil",
       primaryVibration: "Unconditional Love, Forgiveness & Emotional Gentle Healing",
     },
-    relatedProductIds: ["mixel-love-protection-synergy", "chakra-heart-rose-quartz", "pendant-rose-quartz-point"],
+    relatedProductIds: ["mixel-love-protection-synergy", "chakra-heart-rose-quartz", "kundali-shukra-venus-opal-quartz"],
     seoDescription: "An in-depth metaphysical exploration of Madagascar Rose Quartz for heart chakra healing, soulmate alignment, self-love, and overcoming heartbreak.",
     content: `
 ## The Softest Stone of the Crystalline Kingdom
@@ -374,7 +374,7 @@ Wearing a 7-chakra bracelet crafted from authentic, untreated gemstones provides
       origin: "Vedic Temple Traditions",
       primaryVibration: "Purity, Reset & Divine Re-Activation",
     },
-    relatedProductIds: ["chakra-7-harmony-bracelet", "mixel-love-protection-synergy", "cluster-raw-amethyst-geode"],
+    relatedProductIds: ["chakra-7-harmony-bracelet", "mixel-love-protection-synergy", "bracelet-black-tourmaline-protection"],
     seoDescription: "Step-by-step master guide to cleansing and charging spiritual crystal bracelets using sage smudging, moonlight, sound bowls, and Vedic mantras.",
     content: `
 ## Why Crystals Require Regular Cleansing

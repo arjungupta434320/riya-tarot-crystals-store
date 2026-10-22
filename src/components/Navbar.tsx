@@ -24,7 +24,6 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isBraceletsOpen, setIsBraceletsOpen] = useState(true);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -135,12 +134,57 @@ export default function Navbar() {
             >
               Shop All
             </Link>
-            <Link
-              href="/shop?category=Heal+Energized+Bracelets"
-              className="hover:text-[#7B4FC9] transition-colors relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-[#7B4FC9] hover:after:w-full after:transition-all"
-            >
-              Bracelets
-            </Link>
+            
+            {/* Sacred Categories Dropdown */}
+            <div className="relative group py-1">
+              <button
+                type="button"
+                className="hover:text-[#7B4FC9] transition-colors flex items-center gap-1 cursor-pointer select-none"
+              >
+                <span>Collections</span>
+                <ChevronDown size={13} className="group-hover:rotate-180 transition-transform duration-200" />
+              </button>
+              <div className="absolute top-full left-0 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
+                <div className="w-60 p-2.5 rounded-2xl bg-white/95 backdrop-blur-xl border border-[#EFE9E2] shadow-[0_12px_32px_rgba(43,27,61,0.12)] space-y-1">
+                  <Link
+                    href="/shop?category=Love+and+relationship"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-[#2B1B3D] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors font-medium"
+                  >
+                    <span>Love & Relationship</span>
+                    <ArrowRight size={11} className="text-[#C9A24D]" />
+                  </Link>
+                  <Link
+                    href="/shop?category=Job+and+business"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-[#2B1B3D] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors font-medium"
+                  >
+                    <span>Job & Business</span>
+                    <ArrowRight size={11} className="text-[#C9A24D]" />
+                  </Link>
+                  <Link
+                    href="/shop?category=Wealth+and+prosperity"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-[#2B1B3D] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors font-medium"
+                  >
+                    <span>Wealth & Prosperity</span>
+                    <ArrowRight size={11} className="text-[#C9A24D]" />
+                  </Link>
+                  <Link
+                    href="/shop?category=Overall+wellness"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-[#2B1B3D] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors font-medium"
+                  >
+                    <span>Overall Wellness</span>
+                    <ArrowRight size={11} className="text-[#C9A24D]" />
+                  </Link>
+                  <Link
+                    href="/shop?category=Negativity+protection"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-[#2B1B3D] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors font-medium"
+                  >
+                    <span>Negativity Protection</span>
+                    <ArrowRight size={11} className="text-[#C9A24D]" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+
             <Link
               href="/quiz"
               className="hover:text-[#7B4FC9] transition-colors relative py-1 flex items-center gap-1.5 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-[#7B4FC9] hover:after:w-full after:transition-all text-[#7B4FC9]"
@@ -354,110 +398,57 @@ export default function Navbar() {
                   <ArrowRight size={14} className="text-[#C9A24D]" />
                 </Link>
 
-                {/* Bracelets Accordion */}
-                <div className="rounded-2xl border border-[#EFE9E2] bg-[#FAF8F3] overflow-hidden">
-                  <button
-                    type="button"
-                    onClick={() => setIsBraceletsOpen(!isBraceletsOpen)}
-                    className="w-full flex items-center justify-between p-3.5 min-h-[48px] text-left text-[#2B1B3D] font-semibold text-xs cursor-pointer select-none"
+                {/* 5 Main Sacred Categories */}
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#8E6D24] block mb-1 px-1">
+                    Shop by Sacred Intention
+                  </span>
+
+                  <Link
+                    href="/shop?category=Love+and+relationship"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
                   >
-                    <span className="flex items-center gap-2">
-                      <Sparkles size={14} className="text-[#C9A24D]" />
-                      <span>Healed Bracelets</span>
-                    </span>
-                    <ChevronDown
-                      size={16}
-                      className={`text-[#635572] transition-transform duration-200 ${
-                        isBraceletsOpen ? "rotate-180 text-[#7B4FC9]" : ""
-                      }`}
-                    />
-                  </button>
+                    <span className="font-medium text-xs">💖 Love & Relationship</span>
+                    <ArrowRight size={13} className="text-[#C9A24D]" />
+                  </Link>
 
-                  <AnimatePresence>
-                    {isBraceletsOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="border-t border-[#EFE9E2] bg-white px-3 py-2 space-y-1"
-                      >
-                        <Link
-                          href="/shop?category=Heal+Energized+Bracelets"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2.5 px-3 rounded-xl text-xs text-[#2B1B3D] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
-                        >
-                          <span className="font-semibold">All Healed Bracelets</span>
-                          <span className="text-[10px] text-[#8E6D24]">View all →</span>
-                        </Link>
-                        <Link
-                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Love+and+relationship"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
-                        >
-                          <span>• Love & Relationship</span>
-                        </Link>
-                        <Link
-                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Job+and+business"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
-                        >
-                          <span>• Job & Business</span>
-                        </Link>
-                        <Link
-                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Wealth+and+prosperity"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
-                        >
-                          <span>• Wealth & Prosperity</span>
-                        </Link>
-                        <Link
-                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Overall+wellness"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
-                        >
-                          <span>• Overall Wellness</span>
-                        </Link>
-                        <Link
-                          href="/shop?category=Heal+Energized+Bracelets&subCategory=Negativity+protection"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="flex items-center justify-between py-2 px-3 rounded-xl text-xs text-[#635572] hover:bg-[#F5F0FD] hover:text-[#7B4FC9] transition-colors"
-                        >
-                          <span>• Negativity Protection</span>
-                        </Link>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <Link
+                    href="/shop?category=Job+and+business"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                  >
+                    <span className="font-medium text-xs">💼 Job & Business</span>
+                    <ArrowRight size={13} className="text-[#C9A24D]" />
+                  </Link>
+
+                  <Link
+                    href="/shop?category=Wealth+and+prosperity"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                  >
+                    <span className="font-medium text-xs">💰 Wealth & Prosperity</span>
+                    <ArrowRight size={13} className="text-[#C9A24D]" />
+                  </Link>
+
+                  <Link
+                    href="/shop?category=Overall+wellness"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                  >
+                    <span className="font-medium text-xs">🌿 Overall Wellness</span>
+                    <ArrowRight size={13} className="text-[#C9A24D]" />
+                  </Link>
+
+                  <Link
+                    href="/shop?category=Negativity+protection"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                  >
+                    <span className="font-medium text-xs">🛡️ Negativity Protection</span>
+                    <ArrowRight size={13} className="text-[#C9A24D]" />
+                  </Link>
                 </div>
-
-                {/* Clusters */}
-                <Link
-                  href="/shop?category=Clusters"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
-                >
-                  <span className="font-semibold text-xs">Raw Clusters & Geodes</span>
-                  <ArrowRight size={14} className="text-[#C9A24D]" />
-                </Link>
-
-                {/* Pendants */}
-                <Link
-                  href="/shop?category=Pendants"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
-                >
-                  <span className="font-semibold text-xs">Sacred Point Pendants</span>
-                  <ArrowRight size={14} className="text-[#C9A24D]" />
-                </Link>
-
-                {/* Gemstones */}
-                <Link
-                  href="/shop?category=Gemstones"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
-                >
-                  <span className="font-semibold text-xs">Loose Gemstones</span>
-                  <ArrowRight size={14} className="text-[#C9A24D]" />
-                </Link>
 
                 {/* Crystal Quiz Highlight */}
                 <Link

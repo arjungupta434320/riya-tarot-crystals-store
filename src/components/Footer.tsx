@@ -101,44 +101,34 @@ export default function Footer() {
             </h5>
             <ul className="space-y-2.5 text-xs text-[#635572]">
               <li>
-                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Love+and+relationship" className="hover:text-[#7B4FC9] transition-colors">
-                  Love & Relationship Bracelets
+                <Link href="/shop?category=Love+and+relationship" className="hover:text-[#7B4FC9] transition-colors">
+                  Love & Relationship
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Job+and+business" className="hover:text-[#7B4FC9] transition-colors">
-                  Job & Business Bracelets
+                <Link href="/shop?category=Job+and+business" className="hover:text-[#7B4FC9] transition-colors">
+                  Job & Business
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Wealth+and+prosperity" className="hover:text-[#7B4FC9] transition-colors">
-                  Wealth & Prosperity Bracelets
+                <Link href="/shop?category=Wealth+and+prosperity" className="hover:text-[#7B4FC9] transition-colors">
+                  Wealth & Prosperity
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Overall+wellness" className="hover:text-[#7B4FC9] transition-colors">
-                  Overall Wellness Bracelets
+                <Link href="/shop?category=Overall+wellness" className="hover:text-[#7B4FC9] transition-colors">
+                  Overall Wellness
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=Heal+Energized+Bracelets&subCategory=Negativity+protection" className="hover:text-[#7B4FC9] transition-colors">
-                  Negativity Protection Bracelets
+                <Link href="/shop?category=Negativity+protection" className="hover:text-[#7B4FC9] transition-colors">
+                  Negativity Protection
                 </Link>
               </li>
               <li>
-                <Link href="/shop?category=Clusters" className="hover:text-[#7B4FC9] transition-colors">
-                  Raw Crystal Clusters & Geodes
-                </Link>
-              </li>
-              <li>
-                <Link href="/shop?category=Pendants" className="hover:text-[#7B4FC9] transition-colors">
-                  Sacred Point Pendants
-                </Link>
-              </li>
-              <li>
-                <Link href="/quiz" className="hover:text-[#7B4FC9] transition-colors font-medium text-[#7B4FC9] flex items-center gap-1">
+                <Link href="/quiz" className="hover:text-[#7B4FC9] transition-colors font-medium text-[#7B4FC9] flex items-center gap-1 pt-1">
                   <Sparkles size={11} className="text-[#C9A24D]" />
-                  <span>Find My Bracelet Quiz</span>
+                  <span>Crystal Energy Quiz ✨</span>
                 </Link>
               </li>
             </ul>
