@@ -89,8 +89,6 @@ function ShopContent() {
   const [sortBy, setSortBy] = useState("featured");
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
 
-  // Per-card selected bead size
-  const [selectedCardBeadSizes, setSelectedCardBeadSizes] = useState<Record<string, "8mm" | "10mm">>({});
   const [hoveredCardId, setHoveredCardId] = useState<string | null>(null);
   const [justAddedId, setJustAddedId] = useState<string | null>(null);
 
@@ -192,10 +190,9 @@ function ShopContent() {
 
   const handleProductAddToCart = (product: Product, e?: React.MouseEvent) => {
     e?.stopPropagation();
-    const beadSize = selectedCardBeadSizes[product.id] || "8mm";
-    addToCart(product, 1, beadSize);
+    addToCart(product, 1);
     setJustAddedId(product.id);
-    showToast(`✨ Added ${product.name} (${beadSize}) to sacred bag!`);
+    showToast(`✨ Added ${product.name} to sacred bag!`);
     setTimeout(() => setJustAddedId(null), 1200);
   };
 
@@ -546,7 +543,6 @@ function ShopContent() {
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
             {filteredProducts.map((product) => {
               const isWishlisted = wishlist.includes(product.id);
-              const selectedSize = selectedCardBeadSizes[product.id] || "8mm";
               const isJustAdded = justAddedId === product.id;
               const price = product.salePrice || product.price;
               const originalPrice = product.price;
@@ -645,48 +641,6 @@ function ShopContent() {
                           "{product.shortIntention}"
                         </p>
                       </div>
-
-                      {/* Bead Size Selector for Bracelets */}
-                      {product.category === "Heal Energized Bracelets" && (
-                        <div className="pt-1.5 border-t border-[#EFE9E2]">
-                          <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-semibold text-[#635572] uppercase mb-1">
-                            <span>Bead Size:</span>
-                            <span className="text-[#2B1B3D]">{selectedSize}</span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-1">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setSelectedCardBeadSizes((prev) => ({ ...prev, [product.id]: "8mm" }));
-                              }}
-                              className={`py-0.5 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-medium border text-center transition-all ${
-                                selectedSize === "8mm"
-                                  ? "bg-[#F5F0FD] border-[#7B4FC9] text-[#7B4FC9] font-bold"
-                                  : "bg-[#FBF8F3] border-[#EFE9E2] text-[#635572]"
-                              }`}
-                            >
-                              8mm
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setSelectedCardBeadSizes((prev) => ({ ...prev, [product.id]: "10mm" }));
-                              }}
-                              className={`py-0.5 sm:py-1 rounded-md text-[9px] sm:text-[10px] font-medium border text-center transition-all ${
-                                selectedSize === "10mm"
-                                  ? "bg-[#F5F0FD] border-[#7B4FC9] text-[#7B4FC9] font-bold"
-                                  : "bg-[#FBF8F3] border-[#EFE9E2] text-[#635572]"
-                              }`}
-                            >
-                              10mm
-                            </button>
-                          </div>
-                        </div>
-                      )}
 
                       {/* Price & Action */}
                       <div className="pt-1">

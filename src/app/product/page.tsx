@@ -20,8 +20,6 @@ import {
   Lock, 
   ShoppingBag,
   Compass,
-  Ruler,
-  MessageCircle,
   HelpCircle,
   CheckCircle2,
   Calendar,
@@ -32,7 +30,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Image360Viewer } from "@/components/shop/Image360Viewer";
-import { SizeGuideModal } from "@/components/shop/SizeGuideModal";
 
 function ProductContent() {
   const router = useRouter();
@@ -46,10 +43,7 @@ function ProductContent() {
   const [allProducts, setAllProducts] = useState<Product[]>(fallbackProducts);
   
   const [quantity, setQuantity] = useState(1);
-  const [selectedBeadSize, setSelectedBeadSize] = useState<"8mm" | "10mm">("8mm");
-  const [selectedWristSize, setSelectedWristSize] = useState<string>('Standard Elastic (6.5" - 7.5")');
-  const [activeTab, setActiveTab] = useState<"about" | "wearCare" | "energizing">("about");
-  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<"about" | "wearCare">("about");
   const [justAdded, setJustAdded] = useState(false);
   const [showStickyAdd, setShowStickyAdd] = useState(false);
 
@@ -134,11 +128,9 @@ function ProductContent() {
     product.name.toLowerCase().includes("shani") ||
     product.name.toLowerCase().includes("surya");
 
-  // Price adjustment for 10mm beads
   const basePrice = product.salePrice || product.price;
-  const beadPriceModifier = selectedBeadSize === "10mm" ? 300 : 0;
-  const currentPrice = basePrice + beadPriceModifier;
-  const originalPrice = (product.price || basePrice) + beadPriceModifier;
+  const currentPrice = basePrice;
+  const originalPrice = product.price || basePrice;
   const discount = originalPrice > currentPrice ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
 
   const handleAddToCart = () => {
@@ -153,7 +145,7 @@ function ProductContent() {
       };
     }
 
-    addToCart(product, quantity, selectedBeadSize, selectedWristSize, customKundli);
+    addToCart(product, quantity, "8mm", 'Standard Elastic (6.5" - 7.5")', customKundli);
     setJustAdded(true);
     showToast(`✨ Added ${product.name} to your sacred bag!`);
     setTimeout(() => {
@@ -173,7 +165,7 @@ function ProductContent() {
         intention: kundliIntention,
       };
     }
-    addToCart(product, quantity, selectedBeadSize, selectedWristSize, customKundli);
+    addToCart(product, quantity, "8mm", 'Standard Elastic (6.5" - 7.5")', customKundli);
     router.push("/checkout");
   };
 
@@ -259,9 +251,6 @@ function ProductContent() {
             <div>
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wider bg-[#F5F0FD] text-[#7B4FC9] border border-[#7B4FC9]/30">
-                    {product.badge || "Vedic Energized"}
-                  </span>
                   {discount > 0 && (
                     <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-[#EDF7ED] text-[#2E7D32] border border-[#A5D6A7]">
                       {discount}% OFF
@@ -330,91 +319,6 @@ function ProductContent() {
               </div>
               <span className="text-[11px] text-[#635572]">All taxes & GST included</span>
             </div>
-
-            {/* Bead Size Selector (for Bracelets) */}
-            {product.category === "Heal Energized Bracelets" && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#2B1B3D] uppercase tracking-wider text-[11px]">
-                    Select Gemstone Bead Diameter
-                  </span>
-                  <span className="text-[#7B4FC9] font-bold">{selectedBeadSize} Spheres</span>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedBeadSize("8mm")}
-                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                      selectedBeadSize === "8mm"
-                        ? "bg-[#F5F0FD] border-[#7B4FC9] shadow-xs"
-                        : "bg-white border-[#EFE9E2] hover:border-[#C9A24D]/40"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-xs text-[#2B1B3D]">8mm Classical</span>
-                      <span className="text-[10px] text-[#8E6D24] font-semibold">Standard</span>
-                    </div>
-                    <p className="text-[11px] text-[#635572]">Delicate & comfortable for daily wear / stacking</p>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setSelectedBeadSize("10mm")}
-                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                      selectedBeadSize === "10mm"
-                        ? "bg-[#F5F0FD] border-[#7B4FC9] shadow-xs"
-                        : "bg-white border-[#EFE9E2] hover:border-[#C9A24D]/40"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-xs text-[#2B1B3D]">10mm Sovereign (+₹300)</span>
-                      <span className="text-[10px] text-[#7B4FC9] font-semibold">Heavy Weight</span>
-                    </div>
-                    <p className="text-[11px] text-[#635572]">Bold luxury mass, strong planetary resonance</p>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Wrist Size Selector with Guide */}
-            {product.category === "Heal Energized Bracelets" && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#2B1B3D] uppercase tracking-wider text-[11px]">
-                    Wrist Size
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setIsSizeGuideOpen(true)}
-                    className="text-[#7B4FC9] hover:underline flex items-center gap-1 font-semibold text-[11px] cursor-pointer"
-                  >
-                    <Ruler size={13} />
-                    <span>Size Guide Modal</span>
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-3 gap-2 text-xs">
-                  {[
-                    'Small (6.0" - 6.5")',
-                    'Standard Elastic (6.5" - 7.5")',
-                    'Large (7.5" - 8.5")',
-                  ].map((size) => (
-                    <button
-                      key={size}
-                      type="button"
-                      onClick={() => setSelectedWristSize(size)}
-                      className={`py-2 px-2.5 rounded-xl border text-center transition-all cursor-pointer text-[11px] ${
-                        selectedWristSize === size
-                          ? "bg-[#7B4FC9] text-white border-[#7B4FC9] font-bold shadow-xs"
-                          : "bg-white text-[#635572] border-[#EFE9E2] hover:border-[#C9A24D]/40"
-                      }`}
-                    >
-                      {size.split(" ")[0]}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Bespoke Kundali Customization Form */}
             {isKundaliProduct && (
@@ -526,25 +430,15 @@ function ProductContent() {
                 </button>
               </div>
 
-              {/* Buy Now & WhatsApp */}
-              <div className="grid grid-cols-2 gap-3">
+              {/* Buy Now (Instant Checkout) */}
+              <div className="w-full">
                 <button
                   type="button"
                   onClick={handleBuyNow}
-                  className="w-full py-3 px-4 rounded-full text-xs font-semibold uppercase tracking-wider text-[#2B1B3D] btn-gold-shimmer cursor-pointer shadow-sm text-center"
+                  className="w-full py-3.5 px-4 rounded-full text-xs font-semibold uppercase tracking-wider text-[#2B1B3D] btn-gold-shimmer cursor-pointer shadow-sm text-center"
                 >
                   Buy Now (Instant Checkout)
                 </button>
-
-                <a
-                  href={`https://wa.me/917889001587?text=Hello%20Riya,%20I%20am%20interested%20in%20the%20${encodeURIComponent(product.name)}.%20Can%20you%20guide%20me%20on%20its%20astrological%20alignment?`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full py-3 px-4 rounded-full text-xs font-semibold uppercase tracking-wider text-[#2B1B3D] bg-white border border-[#25D366]/50 hover:bg-[#25D366]/10 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs text-center"
-                >
-                  <MessageCircle size={15} className="text-[#25D366]" />
-                  <span>Ask Riya on WhatsApp</span>
-                </a>
               </div>
             </div>
 
@@ -552,7 +446,7 @@ function ProductContent() {
 
         </div>
 
-        {/* Informational Tabs: About, Wear & Care, Energizing */}
+        {/* Informational Tabs: About, Wear & Care */}
         <div className="mb-16">
           <div className="flex border-b border-[#EFE9E2] mb-6 justify-center gap-6 sm:gap-10 text-xs sm:text-sm font-semibold uppercase tracking-wider">
             <button
@@ -578,18 +472,6 @@ function ProductContent() {
                 <motion.div layoutId="tabLine" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#7B4FC9]" />
               )}
             </button>
-
-            <button
-              onClick={() => setActiveTab("energizing")}
-              className={`pb-3 relative transition-colors cursor-pointer ${
-                activeTab === "energizing" ? "text-[#7B4FC9] font-bold" : "text-[#635572] hover:text-[#2B1B3D]"
-              }`}
-            >
-              Our Energizing Ritual
-              {activeTab === "energizing" && (
-                <motion.div layoutId="tabLine" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#7B4FC9]" />
-              )}
-            </button>
           </div>
 
           {/* Tab Content */}
@@ -601,26 +483,6 @@ function ProductContent() {
                     Spiritual Origin & Gemological Description
                   </h3>
                   <p>{product.description}</p>
-                </div>
-
-                {/* Astrological & Metaphysical Grid */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2]">
-                    <span className="text-[10px] uppercase font-bold text-[#8E6D24] block">Chakra</span>
-                    <span className="font-semibold text-xs text-[#2B1B3D]">{product.chakra || "Universal"}</span>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2]">
-                    <span className="text-[10px] uppercase font-bold text-[#8E6D24] block">Planet</span>
-                    <span className="font-semibold text-xs text-[#2B1B3D]">{product.planet || "Navagraha"}</span>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2]">
-                    <span className="text-[10px] uppercase font-bold text-[#8E6D24] block">Rashi / Zodiac</span>
-                    <span className="font-semibold text-xs text-[#2B1B3D]">{product.rashi || product.zodiac || "Universal"}</span>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2]">
-                    <span className="text-[10px] uppercase font-bold text-[#8E6D24] block">Hardness (Mohs)</span>
-                    <span className="font-semibold text-xs text-[#2B1B3D]">{product.hardness || "7.0 (Natural Quartz)"}</span>
-                  </div>
                 </div>
 
                 {/* Authentic Benefits List */}
@@ -660,33 +522,6 @@ function ProductContent() {
                     <p className="text-xs leading-relaxed">
                       Wear on your right wrist for outward manifestation, closing high-value sales deals, public speaking confidence, and psychic defense against evil eye.
                     </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {activeTab === "energizing" && (
-              <div className="space-y-6 text-xs sm:text-sm text-[#635572] leading-relaxed">
-                <p>
-                  At Riya Tarot Crystals, we never ship raw, un-energized stones straight out of warehouse boxes. Every bracelet undergoes a 4-stage Vedic consecration before it reaches your hands:
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2]">
-                    <span className="font-bold text-[#8E6D24] block mb-1">1. Purification</span>
-                    <p className="text-[11px]">Himalayan rock salt and running pure water cleanse prior handling.</p>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2]">
-                    <span className="font-bold text-[#8E6D24] block mb-1">2. Cosmic Charge</span>
-                    <p className="text-[11px]">Placed under peak Surya or Full Moon light for vibrational activation.</p>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2]">
-                    <span className="font-bold text-[#7B4FC9] block mb-1">3. 108 Mantra Japa</span>
-                    <p className="text-[11px]">Consecrated by certified Vedic priests with deity Beej Mantras.</p>
-                  </div>
-                  <div className="p-3.5 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2]">
-                    <span className="font-bold text-[#8E6D24] block mb-1">4. Sacred Packaging</span>
-                    <p className="text-[11px]">Sealed airtight with holy Raksha Sutra thread and vibhuti.</p>
                   </div>
                 </div>
               </div>
@@ -842,9 +677,6 @@ function ProductContent() {
                   <span className="text-base font-bold text-[#2B1B3D]">
                     ₹{currentPrice.toLocaleString("en-IN")}
                   </span>
-                  <span className="text-[10px] text-[#8E6D24] font-semibold uppercase">
-                    • {selectedBeadSize}
-                  </span>
                 </div>
               </div>
 
@@ -874,9 +706,6 @@ function ProductContent() {
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Size Guide Modal */}
-      <SizeGuideModal isOpen={isSizeGuideOpen} onClose={() => setIsSizeGuideOpen(false)} />
 
     </div>
   );
