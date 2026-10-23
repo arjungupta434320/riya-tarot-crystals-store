@@ -24,8 +24,8 @@ export default function StickyMobileCartBar() {
     }
   }, [totalQuantity]);
 
-  // Hide on checkout or product page to avoid collision with their dedicated action bars
-  if (pathname === "/checkout" || pathname?.startsWith("/product")) return null;
+  // ONLY allow on the product page (/product). Strictly removed from the home page and all other routes.
+  if (!pathname?.startsWith("/product")) return null;
 
   // Hide if cart is empty or user dismissed the floating bar
   if (totalQuantity === 0 || dismissed) return null;
@@ -50,8 +50,8 @@ export default function StickyMobileCartBar() {
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 80, opacity: 0 }}
         transition={{ type: "spring", stiffness: 350, damping: 30 }}
-        className="md:hidden fixed left-3 right-3 z-30 bg-white/98 backdrop-blur-xl border border-[#C9A24D]/40 rounded-2xl shadow-[0_8px_30px_rgba(43,27,61,0.18)] px-3.5 py-2.5"
-        style={{ bottom: "calc(54px + max(env(safe-area-inset-bottom, 0px), 8px))" }}
+        className="md:hidden fixed left-3 right-3 z-45 bg-white/98 backdrop-blur-xl border border-[#C9A24D]/40 rounded-2xl shadow-[0_8px_30px_rgba(43,27,61,0.18)] px-3.5 py-2.5"
+        style={{ bottom: "max(env(safe-area-inset-bottom, 0px), 12px)" }}
       >
         <div className="flex items-center justify-between gap-2.5">
           {/* Left: Item Count & Live Subtotal & Savings Badge */}
