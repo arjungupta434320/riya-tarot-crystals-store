@@ -126,6 +126,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/shop?category=Oils" className="hover:text-[#7B4FC9] transition-colors font-medium text-[#8E6D24]">
+                  Sacred Chakra Oils 🪔
+                </Link>
+              </li>
+              <li>
                 <Link href="/quiz" className="hover:text-[#7B4FC9] transition-colors font-medium text-[#7B4FC9] flex items-center gap-1 pt-1">
                   <Sparkles size={11} className="text-[#C9A24D]" />
                   <span>Crystal Energy Quiz ✨</span>

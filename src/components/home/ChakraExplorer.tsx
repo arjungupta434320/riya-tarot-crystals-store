@@ -246,10 +246,10 @@ export function ChakraExplorer() {
               {/* CTA Link to filtered shop */}
               <div className="pt-4">
                 <Link
-                  href={`/shop?chakra=${encodeURIComponent(selectedChakra.filterParam)}`}
+                  href={`/shop?category=Oils&chakra=${encodeURIComponent(selectedChakra.filterParam)}`}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-semibold uppercase tracking-wider text-white btn-amethyst shadow-md"
                 >
-                  <span>Shop {selectedChakra.englishName} Crystals</span>
+                  <span>Explore {selectedChakra.englishName} Chakra Oils</span>
                   <ArrowRight size={14} />
                 </Link>
               </div>

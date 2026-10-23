@@ -366,28 +366,28 @@ export default function HomePage() {
               </Link>
             </TiltCard>
 
-            {/* 6. Crystal Energy Quiz Callout */}
+            {/* 6. Sacred Chakra Oils */}
             <TiltCard>
               <Link
-                href="/quiz"
-                className="group h-full p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-[#C9A24D]/40 bg-gradient-to-br from-[#F5F0FD] via-[#FAF8F3] to-[#FFFDF9] hover:shadow-xl transition-all flex flex-col justify-between block cursor-pointer"
+                href="/shop?category=Oils"
+                className="group h-full p-4 sm:p-7 rounded-2xl sm:rounded-3xl border border-[#C9A24D]/50 bg-gradient-to-b from-[#FFFDF9] via-white to-[#FAF6EE] hover:border-[#C9A24D] hover:shadow-xl transition-all flex flex-col justify-between block cursor-pointer"
               >
                 <div>
-                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-[#7B4FC9]/15 border border-[#7B4FC9]/30 flex items-center justify-center text-[#7B4FC9] shadow-2xs group-hover:scale-110 transition-transform">
-                    <Compass size={20} className="sm:w-6 sm:h-6 text-[#C9A24D]" />
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-[#8E6D24] shadow-2xs group-hover:scale-110 transition-transform">
+                    <Droplet size={20} className="sm:w-6 sm:h-6 fill-amber-500/20 text-[#C9A24D]" />
                   </div>
-                  <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider text-[#7B4FC9] block mt-3 mb-1 line-clamp-1">
-                    60-Sec Aura Matching
+                  <span className="text-[8px] sm:text-[10px] font-bold uppercase tracking-wider text-[#8E6D24] block mt-3 mb-1 line-clamp-1">
+                    7 Chakras • Botanical Infusions
                   </span>
                   <h3 className="font-serif text-sm sm:text-xl font-bold text-[#2B1B3D] leading-snug group-hover:text-[#7B4FC9] transition-colors">
-                    Unsure Which to Choose?
+                    Sacred Chakra Oils
                   </h3>
                   <p className="text-[11px] sm:text-xs text-[#635572] leading-relaxed line-clamp-2 mt-1.5 hidden sm:block">
-                    Answer 4 quick questions about your goals to receive your personalized crystal recommendation.
+                    Pure therapeutic essential oils infused with real crushed gemstones and sealed with 108 Vedic mantras.
                   </p>
                 </div>
                 <div className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-bold text-[#7B4FC9] group-hover:text-[#C9A24D] transition-colors mt-3">
-                  <span>Take Free Aura Quiz</span>
+                  <span>Explore Sacred Oils</span>
                   <ArrowRight size={11} className="sm:w-3 sm:h-3 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>

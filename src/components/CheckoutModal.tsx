@@ -89,7 +89,7 @@ export default function CheckoutModal() {
   let couponDiscount = 0;
   if (appliedCoupon === "RIYA10") couponDiscount = Math.round(rawSubtotal * 0.10);
   else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15") couponDiscount = Math.round(rawSubtotal * 0.15);
-  else if (appliedCoupon === "KUNDALI20") couponDiscount = Math.round(rawSubtotal * 0.20);
+  else if (appliedCoupon === "DIVINE20" || appliedCoupon === "KUNDALI20") couponDiscount = Math.round(rawSubtotal * 0.20);
 
   const totalDiscount = tieredDiscount + couponDiscount;
 

@@ -181,6 +181,13 @@ export default function Navbar() {
                     <span>Negativity Protection</span>
                     <ArrowRight size={11} className="text-[#C9A24D]" />
                   </Link>
+                  <Link
+                    href="/shop?category=Oils"
+                    className="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-[#7B4FC9] bg-[#FDFBF7] hover:bg-[#F5F0FD] transition-colors font-semibold border-t border-[#EFE9E2] mt-1 pt-2"
+                  >
+                    <span>🪔 Sacred Chakra Oils</span>
+                    <ArrowRight size={11} className="text-[#C9A24D]" />
+                  </Link>
                 </div>
               </div>
             </div>
@@ -446,6 +453,15 @@ export default function Navbar() {
                     className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
                   >
                     <span className="font-medium text-xs">🛡️ Negativity Protection</span>
+                    <ArrowRight size={13} className="text-[#C9A24D]" />
+                  </Link>
+
+                  <Link
+                    href="/shop?category=Oils"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-[#FAF6EE] border border-[#C9A24D]/50 text-[#7B4FC9] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                  >
+                    <span className="font-semibold text-xs text-[#2B1B3D]">🪔 Sacred Chakra Oils</span>
                     <ArrowRight size={13} className="text-[#C9A24D]" />
                   </Link>
                 </div>

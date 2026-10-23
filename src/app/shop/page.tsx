@@ -30,22 +30,23 @@ const mainCategories = [
   { id: "Wealth and prosperity", label: "Wealth & Prosperity" },
   { id: "Overall wellness", label: "Overall Wellness" },
   { id: "Negativity protection", label: "Negativity Protection" },
+  { id: "Oils", label: "Oils" },
 ];
 
-const chakras = [
-  { id: "all", label: "All Chakras" },
-  { id: "Root", label: "Root (Muladhara)" },
-  { id: "Sacral", label: "Sacral (Svadhisthana)" },
-  { id: "Solar Plexus", label: "Solar Plexus (Manipura)" },
-  { id: "Heart", label: "Heart (Anahata)" },
-  { id: "Throat", label: "Throat (Vishuddha)" },
-  { id: "Third Eye", label: "Third Eye (Ajna)" },
-  { id: "Crown", label: "Crown (Sahasrara)" },
+const chakraOils = [
+  { id: "all", label: "All Chakras", dot: "✨" },
+  { id: "Root", label: "Root (Muladhara)", dot: "🔴" },
+  { id: "Sacral", label: "Sacral (Svadhisthana)", dot: "🟠" },
+  { id: "Solar Plexus", label: "Solar Plexus (Manipura)", dot: "🟡" },
+  { id: "Heart", label: "Heart (Anahata)", dot: "🟢" },
+  { id: "Throat", label: "Throat (Vishuddha)", dot: "🔵" },
+  { id: "Third Eye", label: "Third Eye & Crown", dot: "🟣" },
 ];
 
 function normalizeCategoryParam(cat: string | null): string {
   if (!cat || cat === "all") return "all";
   const lower = cat.toLowerCase().replace(/\+/g, " ").replace(/-/g, " ");
+  if (lower.includes("oil")) return "Oils";
   if (lower.includes("love") || lower.includes("relationship")) return "Love and relationship";
   if (lower.includes("job") || lower.includes("business")) return "Job and business";
   if (lower.includes("wealth") || lower.includes("prosperity")) return "Wealth and prosperity";
@@ -101,10 +102,16 @@ function ShopContent() {
           }
         }
 
-        // 2. Chakra
-        if (activeChakra !== "all") {
+        // 2. Chakra (Strictly for Oils category)
+        if (activeCategory === "Oils" && activeChakra !== "all") {
           const chakraString = (p.chakra || "").toLowerCase();
-          if (!chakraString.includes(activeChakra.toLowerCase()) && !chakraString.includes("all 7")) {
+          const subCatString = (p.subCategory || "").toLowerCase();
+          const target = activeChakra.toLowerCase();
+          if (
+            !chakraString.includes(target) &&
+            !subCatString.includes(target) &&
+            !chakraString.includes("all 7")
+          ) {
             return false;
           }
         }
@@ -164,7 +171,7 @@ function ShopContent() {
 
   const activeFilterCount =
     (activeCategory !== "all" ? 1 : 0) +
-    (activeChakra !== "all" ? 1 : 0) +
+    (activeCategory === "Oils" && activeChakra !== "all" ? 1 : 0) +
     (selectedBeadFilter !== "all" ? 1 : 0) +
     (maxPrice < 15000 ? 1 : 0) +
     (searchQuery ? 1 : 0);
@@ -209,7 +216,12 @@ function ShopContent() {
               return (
                 <button
                   key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
+                  onClick={() => {
+                    setActiveCategory(cat.id);
+                    if (cat.id !== "Oils") {
+                      setActiveChakra("all");
+                    }
+                  }}
                   className={`px-4 sm:px-6 py-2.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border flex-shrink-0 cursor-pointer touch-press ${
                     isActive
                       ? "bg-[#7B4FC9] text-white border-[#7B4FC9] shadow-md font-bold"
@@ -222,6 +234,53 @@ function ShopContent() {
             })}
           </div>
         </div>
+
+        {/* 2. Dedicated Chakra Sub-Category Bar - ONLY Under OILS */}
+        {activeCategory === "Oils" && (
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-gradient-to-r from-[#FAF6ED] via-white to-[#F5F0FD] border border-[#C9A24D]/40 shadow-xs"
+          >
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 mb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="text-xl">🪔</span>
+                <div>
+                  <h3 className="text-xs sm:text-sm font-bold text-[#2B1B3D]">
+                    Botanical Chakra Anointing Oils
+                  </h3>
+                  <p className="text-[11px] text-[#635572]">
+                    Therapeutic blends infused with real crystal gemstones & sealed with 108 Vedic mantras
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold text-[#8E6D24] uppercase tracking-wider">
+                Filter by Chakra Energy:
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {chakraOils.map((c) => {
+                const isChakraActive = activeChakra === c.id;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setActiveChakra(c.id)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs whitespace-nowrap transition-all flex items-center gap-1.5 cursor-pointer touch-press ${
+                      isChakraActive
+                        ? "bg-[#7B4FC9] text-white shadow-sm font-bold border border-[#7B4FC9]"
+                        : "bg-white text-[#635572] border border-[#EFE9E2] hover:border-[#C9A24D] hover:text-[#2B1B3D]"
+                    }`}
+                  >
+                    <span>{c.dot}</span>
+                    <span>{c.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
 
         {/* 4A. Desktop Controls Bar */}
         <div className="hidden md:flex p-4 rounded-2xl bg-white border border-[#EFE9E2] mb-8 items-center justify-between gap-3 shadow-xs">
@@ -237,19 +296,21 @@ function ShopContent() {
             />
           </div>
 
-          {/* Chakra Dropdown & Price & Sort */}
+          {/* Controls: Price, Sort, Reset & Chakra (only for Oils) */}
           <div className="flex flex-wrap items-center justify-end gap-2.5 text-xs">
-            <select
-              value={activeChakra}
-              onChange={(e) => setActiveChakra(e.target.value)}
-              className="px-3 py-1.5 text-xs rounded-full bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] focus:outline-none focus:border-[#C9A24D] cursor-pointer"
-            >
-              {chakras.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
+            {activeCategory === "Oils" && (
+              <select
+                value={activeChakra}
+                onChange={(e) => setActiveChakra(e.target.value)}
+                className="px-3 py-1.5 text-xs rounded-full bg-[#FAF6EE] border border-[#C9A24D]/60 text-[#2B1B3D] font-semibold focus:outline-none focus:border-[#C9A24D] cursor-pointer"
+              >
+                {chakraOils.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.dot} {c.label}
+                  </option>
+                ))}
+              </select>
+            )}
 
             <select
               value={sortBy}
@@ -373,28 +434,6 @@ function ShopContent() {
                     </div>
                   </div>
 
-                  {/* Chakra Filter */}
-                  <div>
-                    <label className="text-[11px] font-bold uppercase tracking-wider text-[#8E6D24] block mb-2">
-                      Chakra Energy Vortex
-                    </label>
-                    <div className="flex flex-wrap gap-1.5">
-                      {chakras.map((c) => (
-                        <button
-                          key={c.id}
-                          onClick={() => setActiveChakra(c.id)}
-                          className={`px-3 py-1.5 rounded-full text-xs transition-all ${
-                            activeChakra === c.id
-                              ? "bg-[#C9A24D] text-[#2B1B3D] font-bold shadow-xs"
-                              : "bg-[#FBF8F3] text-[#635572] border border-[#EFE9E2]"
-                          }`}
-                        >
-                          {c.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   {/* Sacred Collections */}
                   <div>
                     <label className="text-[11px] font-bold uppercase tracking-wider text-[#8E6D24] block mb-2">
@@ -404,7 +443,13 @@ function ShopContent() {
                       {mainCategories.map((cat) => (
                         <button
                           key={cat.id}
-                          onClick={() => setActiveCategory(cat.id)}
+                          type="button"
+                          onClick={() => {
+                            setActiveCategory(cat.id);
+                            if (cat.id !== "Oils") {
+                              setActiveChakra("all");
+                            }
+                          }}
                           className={`px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
                             activeCategory === cat.id
                               ? "bg-[#7B4FC9] text-white font-bold shadow-xs"
@@ -416,6 +461,31 @@ function ShopContent() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Chakra Filter - ONLY Under OILS category */}
+                  {activeCategory === "Oils" && (
+                    <div>
+                      <label className="text-[11px] font-bold uppercase tracking-wider text-[#8E6D24] block mb-2">
+                        Chakra Energy Oil
+                      </label>
+                      <div className="flex flex-wrap gap-1.5">
+                        {chakraOils.map((c) => (
+                          <button
+                            key={c.id}
+                            type="button"
+                            onClick={() => setActiveChakra(c.id)}
+                            className={`px-3 py-1.5 rounded-full text-xs transition-all cursor-pointer ${
+                              activeChakra === c.id
+                                ? "bg-[#7B4FC9] text-white font-bold shadow-xs"
+                                : "bg-[#FBF8F3] text-[#635572] border border-[#EFE9E2]"
+                            }`}
+                          >
+                            {c.dot} {c.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Bottom Sheet Actions */}
