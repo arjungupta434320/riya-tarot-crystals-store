@@ -125,7 +125,10 @@ function ProductContent() {
   const discount = originalPrice > currentPrice ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
 
   const handleAddToCart = () => {
-    addToCart(product, quantity, "8mm", selectedWristSize);
+    const itemSize = product.category === "Oils" 
+      ? (product.id === "oil-7-chakra-master-box" ? "7x10ml Master Box" : "15ml Dropper")
+      : selectedWristSize;
+    addToCart(product, quantity, "8mm", itemSize);
     setJustAdded(true);
     showToast(`✨ Added ${product.name} to your sacred bag!`);
     setTimeout(() => {
@@ -135,7 +138,10 @@ function ProductContent() {
   };
 
   const handleBuyNow = () => {
-    addToCart(product, quantity, "8mm", selectedWristSize);
+    const itemSize = product.category === "Oils" 
+      ? (product.id === "oil-7-chakra-master-box" ? "7x10ml Master Box" : "15ml Dropper")
+      : selectedWristSize;
+    addToCart(product, quantity, "8mm", itemSize);
     router.push("/checkout");
   };
 
@@ -274,43 +280,72 @@ function ProductContent() {
               <span className="text-[11px] text-[#635572]">All taxes & GST included</span>
             </div>
 
-            {/* Wrist Size Selector with Guide */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-semibold text-[#2B1B3D] uppercase tracking-wider text-[11px]">
-                  Wrist Size
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setIsSizeGuideOpen(true)}
-                  className="text-[#7B4FC9] hover:underline flex items-center gap-1 font-semibold text-[11px] cursor-pointer"
-                >
-                  <Ruler size={13} />
-                  <span>Size Guide Modal</span>
-                </button>
+            {/* Bottle Volume Specification for Oils vs Wrist Size for Bracelets */}
+            {product.category === "Oils" ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-[#2B1B3D] uppercase tracking-wider text-[11px]">
+                    Sacred Formulation & Size
+                  </span>
+                  <span className="text-[#8E6D24] font-semibold text-[11px]">
+                    100% Pure Botanical Essential Oil
+                  </span>
+                </div>
+                <div className="p-3.5 rounded-2xl border border-[#C9A24D]/40 bg-[#FAF6EE] flex items-center justify-between">
+                  <div>
+                    <span className="text-xs font-bold text-[#2B1B3D] block">
+                      {product.id === "oil-7-chakra-master-box"
+                        ? "Master Set of 7 Bottles (10ml each)"
+                        : "15ml Amber Glass Dropper Bottle"}
+                    </span>
+                    <span className="text-[11px] text-[#635572]">
+                      Infused with genuine crushed gemstones & therapeutic carrier oils
+                    </span>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#EDF7ED] text-[#2E7D32] border border-[#A5D6A7]">
+                    Vedic Sealed
+                  </span>
+                </div>
               </div>
-
-              <div className="grid grid-cols-3 gap-2 text-xs">
-                {[
-                  'Small (6.0" - 6.5")',
-                  'Standard Elastic (6.5" - 7.5")',
-                  'Large (7.5" - 8.5")',
-                ].map((size) => (
+            ) : (
+              /* Wrist Size Selector with Guide */
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold text-[#2B1B3D] uppercase tracking-wider text-[11px]">
+                    Wrist Size
+                  </span>
                   <button
-                    key={size}
                     type="button"
-                    onClick={() => setSelectedWristSize(size)}
-                    className={`py-2 px-3 rounded-xl border text-center font-medium transition-all cursor-pointer ${
-                      selectedWristSize === size
-                        ? "bg-[#7B4FC9] text-white border-[#7B4FC9] shadow-xs font-semibold"
-                        : "bg-white border-[#EFE9E2] text-[#635572] hover:border-[#C9A24D]/40"
-                    }`}
+                    onClick={() => setIsSizeGuideOpen(true)}
+                    className="text-[#7B4FC9] hover:underline flex items-center gap-1 font-semibold text-[11px] cursor-pointer"
                   >
-                    {size.split(" ")[0]}
+                    <Ruler size={13} />
+                    <span>Size Guide Modal</span>
                   </button>
-                ))}
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 text-xs">
+                  {[
+                    'Small (6.0" - 6.5")',
+                    'Standard Elastic (6.5" - 7.5")',
+                    'Large (7.5" - 8.5")',
+                  ].map((size) => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => setSelectedWristSize(size)}
+                      className={`py-2 px-3 rounded-xl border text-center font-medium transition-all cursor-pointer ${
+                        selectedWristSize === size
+                          ? "bg-[#7B4FC9] text-white border-[#7B4FC9] shadow-xs font-semibold"
+                          : "bg-white border-[#EFE9E2] text-[#635572] hover:border-[#C9A24D]/40"
+                      }`}
+                    >
+                      {size.split(" ")[0]}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
 
 
@@ -433,24 +468,45 @@ function ProductContent() {
 
             {activeTab === "wearCare" && (
               <div className="space-y-6 text-xs sm:text-sm text-[#635572] leading-relaxed">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-[#F5F0FD] border border-[#7B4FC9]/30">
-                    <span className="font-bold text-[#7B4FC9] text-xs uppercase tracking-wider block mb-1">
-                      Left Wrist: Receptive Energy
-                    </span>
-                    <p className="text-xs leading-relaxed">
-                      Wear on your left wrist when you wish to internalize healing, dissolve stress, invite love, and absorb the calming vibrations into your personal aura.
-                    </p>
+                {product.category === "Oils" ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-[#F5F0FD] border border-[#7B4FC9]/30">
+                      <span className="font-bold text-[#7B4FC9] text-xs uppercase tracking-wider block mb-1">
+                        Pulse-Point Anointing Ritual
+                      </span>
+                      <p className="text-xs leading-relaxed">
+                        Dispense 2-3 drops onto your wrists, hollow of neck, and temples. Inhale deeply 3 times to harmonize your bio-field with pure natural gemstone and essential oil frequencies.
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[#C9A24D]/40">
+                      <span className="font-bold text-[#8E6D24] text-xs uppercase tracking-wider block mb-1">
+                        Chakra Meditation Activation
+                      </span>
+                      <p className="text-xs leading-relaxed">
+                        Anoint the corresponding bodily chakra center before japa meditation, yoga, or restorative sleep. Safe for topical dermal contact and sacred oil diffusers.
+                      </p>
+                    </div>
                   </div>
-                  <div className="p-4 rounded-2xl bg-[#FDF2F4] border border-[#F4C6D0]">
-                    <span className="font-bold text-[#B83D60] text-xs uppercase tracking-wider block mb-1">
-                      Right Wrist: Projective Energy
-                    </span>
-                    <p className="text-xs leading-relaxed">
-                      Wear on your right wrist for outward manifestation, closing high-value sales deals, public speaking confidence, and psychic defense against evil eye.
-                    </p>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-[#F5F0FD] border border-[#7B4FC9]/30">
+                      <span className="font-bold text-[#7B4FC9] text-xs uppercase tracking-wider block mb-1">
+                        Left Wrist: Receptive Energy
+                      </span>
+                      <p className="text-xs leading-relaxed">
+                        Wear on your left wrist when you wish to internalize healing, dissolve stress, invite love, and absorb the calming vibrations into your personal aura.
+                      </p>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-[#FDF2F4] border border-[#F4C6D0]">
+                      <span className="font-bold text-[#B83D60] text-xs uppercase tracking-wider block mb-1">
+                        Right Wrist: Projective Energy
+                      </span>
+                      <p className="text-xs leading-relaxed">
+                        Wear on your right wrist for outward manifestation, closing high-value sales deals, public speaking confidence, and psychic defense against evil eye.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>
@@ -553,7 +609,7 @@ function ProductContent() {
         {relatedProducts.length > 0 && (
           <div className="mb-14">
             <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#2B1B3D] text-center mb-6">
-              Complementary Synergy Crystals
+              {product.category === "Oils" ? "Complementary Chakra Botanical Oils" : "Complementary Synergy Crystals"}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               {relatedProducts.map((rel) => (

@@ -254,7 +254,9 @@ export default function CheckoutModal() {
                         <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                           {cart.map((item) => (
                             <div key={item.cartKey || item.id} className="flex items-center justify-between gap-2 text-[11px]">
-                              <span className="text-[#2C2A29] truncate flex-1">{item.name} × {item.quantity} ({item.selectedBeadSize || "8mm"})</span>
+                              <span className="text-[#2C2A29] truncate flex-1">
+                                {item.name} × {item.quantity} {item.category === "Oils" ? "(Sacred Oil)" : `(${item.selectedBeadSize || "8mm"})`}
+                              </span>
                               <span className="font-bold text-[#2C2A29] flex-shrink-0">₹{((item.salePrice || item.price) * item.quantity).toLocaleString("en-IN")}</span>
                             </div>
                           ))}
@@ -516,7 +518,7 @@ export default function CheckoutModal() {
                           <div className="flex-grow min-w-0">
                             <h5 className="font-semibold text-[#2C2A29] truncate">{item.name}</h5>
                             <span className="text-[10px] text-[#6E6A64]">
-                              Qty: {item.quantity} • {item.selectedBeadSize || "8mm"}
+                              Qty: {item.quantity} • {item.category === "Oils" ? "Sacred Oil" : (item.selectedBeadSize || "8mm")}
                             </span>
                           </div>
                           <span className="font-bold text-[#2C2A29] flex-shrink-0">

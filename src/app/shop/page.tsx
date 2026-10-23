@@ -95,10 +95,15 @@ function ShopContent() {
   const filteredProducts = useMemo(() => {
     return products
       .filter((p) => {
-        // 1. Strict Category Isolation
+        // 1. Strict Category Isolation (Zero bracelets in Oils, Zero oils in bracelets)
         if (activeCategory !== "all") {
-          if (p.category !== activeCategory && p.subCategory !== activeCategory) {
-            return false;
+          if (activeCategory === "Oils") {
+            if (p.category !== "Oils") return false;
+          } else {
+            if (p.category === "Oils") return false;
+            if (p.category !== activeCategory && p.subCategory !== activeCategory) {
+              return false;
+            }
           }
         }
 
@@ -600,7 +605,7 @@ function ShopContent() {
                       <div className="absolute inset-x-3 bottom-3 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 z-10 hidden md:block">
                         <div className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#7B4FC9] to-[#5E37A1] text-white text-[11px] font-bold tracking-wider uppercase border border-[#C9A24D]/60 flex items-center justify-center gap-1.5 shadow-[0_8px_20px_rgba(123,79,201,0.4)]">
                           <Sparkles size={13} className="text-[#C9A24D]" />
-                          <span>View Sacred Gem</span>
+                          <span>{product.category === "Oils" ? "View Sacred Oil" : "View Sacred Gem"}</span>
                           <ArrowRight size={13} />
                         </div>
                       </div>

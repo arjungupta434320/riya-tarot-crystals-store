@@ -242,7 +242,9 @@ export default function CartDrawer() {
 
                               <div className="flex items-center gap-2 mt-1 text-[11px] text-[#6E6A64]">
                                 <span className="px-1.5 py-0.5 rounded bg-[#FAF9F6] border border-[#EAE5DF] font-medium">
-                                  {item.selectedBeadSize || "8mm"}
+                                  {item.category === "Oils" 
+                                    ? (item.id === "oil-7-chakra-master-box" ? "7x10ml Master Box" : "15ml Dropper")
+                                    : (item.selectedBeadSize || "8mm")}
                                 </span>
                                 <span className="text-[#9A7B2C] italic truncate">
                                   {item.subCategory || "Energized"}
