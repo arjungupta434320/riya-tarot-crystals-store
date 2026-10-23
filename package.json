@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "deploy": "next build && npx wrangler pages deploy out --project-name=riya-tarot-crystals-store",
+    "test:db": "node scripts/test-database.mjs",
     "start": "next start",
     "lint": "eslint"
   },
