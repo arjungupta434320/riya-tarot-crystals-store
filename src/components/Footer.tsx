@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -18,9 +19,15 @@ import {
 import { useStore } from "@/store/useStore";
 
 export default function Footer() {
+  const pathname = usePathname();
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const { showToast } = useStore();
+
+  // Do not display the footer on the checkout page
+  if (pathname === "/checkout" || pathname?.startsWith("/checkout")) {
+    return null;
+  }
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
