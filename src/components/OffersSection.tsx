@@ -59,7 +59,7 @@ export default function OffersSection() {
   const promoCodes = [
     { code: "RIYA10", desc: "10% Off Any Order", min: "No Minimum" },
     { code: "LUXURY15", desc: "15% Off Cart Above ₹1,499", min: "Cart ₹1,499+" },
-    { code: "KUNDALI20", desc: "20% Off Kundali Curation", min: "Cart ₹2,499+" },
+    { code: "DIVINE20", desc: "20% Off Orders Above ₹2,499", min: "Cart ₹2,499+" },
   ];
 
   return (

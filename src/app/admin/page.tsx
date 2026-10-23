@@ -186,14 +186,7 @@ export default function AdminDashboard() {
         {
           name: "Triple Synergy Mixel Abundance Bracelet",
           size: "8mm",
-          qty: 1,
-          kundliDetails: {
-            fullName: "Ananya Sharma",
-            dob: "1994-08-14",
-            tob: "08:15 AM",
-            pob: "Varanasi, UP",
-            intention: "Career promotion & financial luck",
-          }
+          qty: 1
         }
       ]
     },
@@ -833,7 +826,7 @@ export default function AdminDashboard() {
             }`}
           >
             <ShoppingBag size={15} />
-            <span>Orders & Kundali ({ordersList.length})</span>
+            <span>Customer Orders ({ordersList.length})</span>
           </button>
 
           <button
@@ -1590,7 +1583,7 @@ export default function AdminDashboard() {
         )}
 
         {/* ========================================================= */}
-        {/* TAB 3: ORDERS & KUNDALI DATA                               */}
+        {/* TAB 3: CUSTOMER ORDERS                                     */}
         {/* ========================================================= */}
         {activeTab === "orders" && (
           <div className="space-y-4">
@@ -1634,21 +1627,6 @@ export default function AdminDashboard() {
                     </select>
                   </div>
                 </div>
-
-                {/* Kundali Details Display */}
-                {order.items[0]?.kundliDetails && (
-                  <div className="p-3.5 rounded-2xl bg-[#FFFDF9] border border-[#C9A24D]/40 text-xs space-y-1">
-                    <span className="font-bold text-[#8E6D24] uppercase text-[10px] flex items-center gap-1">
-                      <Sparkles size={11} /> Bespoke Birth Consecration Data:
-                    </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-[#2B1B3D] pt-1">
-                      <div><strong>Wearer:</strong> {order.items[0].kundliDetails.fullName}</div>
-                      <div><strong>DOB:</strong> {order.items[0].kundliDetails.dob}</div>
-                      <div><strong>Time:</strong> {order.items[0].kundliDetails.tob || "N/A"}</div>
-                      <div><strong>Birth Place:</strong> {order.items[0].kundliDetails.pob || "N/A"}</div>
-                    </div>
-                  </div>
-                )}
               </div>
             ))}
           </div>

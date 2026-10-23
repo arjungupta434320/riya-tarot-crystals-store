@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useStore, Product, KundliDetails } from "@/store/useStore";
+import { useStore, Product } from "@/store/useStore";
 import { fetchProducts, fallbackProducts } from "@/data/products";
 import { 
   Star, 
@@ -51,13 +51,6 @@ function ProductContent() {
   const [justAdded, setJustAdded] = useState(false);
   const [showStickyAdd, setShowStickyAdd] = useState(false);
 
-  // Kundli customization form
-  const [kundliName, setKundliName] = useState("");
-  const [kundliDob, setKundliDob] = useState("");
-  const [kundliTob, setKundliTob] = useState("");
-  const [kundliPob, setKundliPob] = useState("");
-  const [kundliIntention, setKundliIntention] = useState("");
-
   // Customer Reviews
   const [reviewName, setReviewName] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
@@ -89,7 +82,7 @@ function ProductContent() {
       city: "New Delhi",
       rating: 5,
       date: "29 Sep 2026",
-      text: "I provided my birth details for the Kundali consecration. The bracelet arrived charged and aligned. Sleeping with it on my bedside table has completely cured my late-night anxiety cycles.",
+      text: "The bracelet arrived beautifully energized and aligned. Sleeping with it on my bedside table has completely cured my late-night anxiety cycles.",
       verified: true,
     }
   ];
@@ -126,30 +119,13 @@ function ProductContent() {
   }
 
   const galleryImages = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
-  const isKundaliProduct =
-    product.subCategory === "Kundali Bracelets" ||
-    product.name.toLowerCase().includes("kundali") ||
-    product.name.toLowerCase().includes("shani") ||
-    product.name.toLowerCase().includes("surya");
-
   const basePrice = product.salePrice || product.price;
   const currentPrice = basePrice;
   const originalPrice = product.price || basePrice;
   const discount = originalPrice > currentPrice ? Math.round(((originalPrice - currentPrice) / originalPrice) * 100) : 0;
 
   const handleAddToCart = () => {
-    let customKundli: KundliDetails | undefined = undefined;
-    if (isKundaliProduct && kundliName.trim()) {
-      customKundli = {
-        fullName: kundliName.trim(),
-        dob: kundliDob,
-        tob: kundliTob,
-        pob: kundliPob,
-        intention: kundliIntention,
-      };
-    }
-
-    addToCart(product, quantity, "8mm", selectedWristSize, customKundli);
+    addToCart(product, quantity, "8mm", selectedWristSize);
     setJustAdded(true);
     showToast(`✨ Added ${product.name} to your sacred bag!`);
     setTimeout(() => {
@@ -159,17 +135,7 @@ function ProductContent() {
   };
 
   const handleBuyNow = () => {
-    let customKundli: KundliDetails | undefined = undefined;
-    if (isKundaliProduct && kundliName.trim()) {
-      customKundli = {
-        fullName: kundliName.trim(),
-        dob: kundliDob,
-        tob: kundliTob,
-        pob: kundliPob,
-        intention: kundliIntention,
-      };
-    }
-    addToCart(product, quantity, "8mm", selectedWristSize, customKundli);
+    addToCart(product, quantity, "8mm", selectedWristSize);
     router.push("/checkout");
   };
 
@@ -346,72 +312,7 @@ function ProductContent() {
               </div>
             </div>
 
-            {/* Bespoke Kundali Customization Form */}
-            {isKundaliProduct && (
-              <div className="p-4 sm:p-5 rounded-2xl bg-[#FFFDF9] border border-[#C9A24D]/40 space-y-3 shadow-xs">
-                <div className="flex items-center gap-2">
-                  <Sparkles size={16} className="text-[#C9A24D]" />
-                  <h4 className="font-serif text-sm font-bold text-[#2B1B3D] uppercase tracking-wider">
-                    Bespoke Kundali & Birth Consecration
-                  </h4>
-                </div>
-                <p className="text-[11px] text-[#635572]">
-                  This bracelet will be ritually consecrated with a personalized Vedic Sankalpa in your name and birth planetary chart:
-                </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-                  <div>
-                    <label className="text-[10px] font-semibold text-[#635572] uppercase block mb-1">
-                      Full Name of Wearer *
-                    </label>
-                    <input
-                      type="text"
-                      value={kundliName}
-                      onChange={(e) => setKundliName(e.target.value)}
-                      placeholder="e.g. Ananya Sharma"
-                      className="w-full px-3 py-2 text-xs rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] focus:outline-none focus:border-[#C9A24D]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] font-semibold text-[#635572] uppercase block mb-1">
-                      Date of Birth *
-                    </label>
-                    <input
-                      type="date"
-                      value={kundliDob}
-                      onChange={(e) => setKundliDob(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] focus:outline-none focus:border-[#C9A24D]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] font-semibold text-[#635572] uppercase block mb-1">
-                      Time of Birth (Optional)
-                    </label>
-                    <input
-                      type="time"
-                      value={kundliTob}
-                      onChange={(e) => setKundliTob(e.target.value)}
-                      className="w-full px-3 py-2 text-xs rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] focus:outline-none focus:border-[#C9A24D]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-[10px] font-semibold text-[#635572] uppercase block mb-1">
-                      Place of Birth (City, State)
-                    </label>
-                    <input
-                      type="text"
-                      value={kundliPob}
-                      onChange={(e) => setKundliPob(e.target.value)}
-                      placeholder="e.g. Pune, Maharashtra"
-                      className="w-full px-3 py-2 text-xs rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] focus:outline-none focus:border-[#C9A24D]"
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Quantity & CTA Buttons */}
             <div className="space-y-3 pt-2">

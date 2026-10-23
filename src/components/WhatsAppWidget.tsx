@@ -44,7 +44,7 @@ export default function WhatsAppWidget() {
 
   const openWhatsApp = () => {
     const text = encodeURIComponent(
-      "Hi Riya Tarot Crystals, I would like to inquire about certified energized bracelets and bespoke Kundali curation..."
+      "Hi Riya Tarot Crystals, I would like to inquire about authentically sourced energized bracelets and sacred intention curations..."
     );
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
     window.open(url, "_blank", "noopener,noreferrer");

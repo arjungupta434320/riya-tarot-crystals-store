@@ -244,9 +244,9 @@ export const useStore = create<StoreState>()(
           set({ appliedCoupon: clean });
           return { success: true, message: `✨ ${clean} applied: 15% Off your order!`, discountPercent: 15 };
         }
-        if (clean === 'KUNDALI20') {
-          set({ appliedCoupon: 'KUNDALI20' });
-          return { success: true, message: '✨ KUNDALI20 applied: 20% Off your order!', discountPercent: 20 };
+        if (clean === 'DIVINE20' || clean === 'KUNDALI20') {
+          set({ appliedCoupon: 'DIVINE20' });
+          return { success: true, message: '✨ DIVINE20 applied: 20% Off your order!', discountPercent: 20 };
         }
         return { success: false, message: 'Invalid promo code. Try RIYA15 or LUXURY15.', discountPercent: 0 };
       },

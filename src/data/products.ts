@@ -388,7 +388,7 @@ export const fallbackProducts: Product[] = [
     rating: 4.97,
     reviewCount: 340,
     benefits: [
-      "Custom consecrated for the wearer's Janam Kundali upon order placement",
+      "Individually consecrated with sacred Vedic mantras upon order placement",
       "Softens harsh Saturnian transits (Sade Sati, Kantaka Shani, Ashtama Shani)",
       "Bestows deep patience, legal protection, and long-term business stability",
       "Sealed with 108 repetitions of the Shani Gayatri Mantra"

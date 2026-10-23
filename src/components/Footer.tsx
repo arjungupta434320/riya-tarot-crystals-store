@@ -60,7 +60,7 @@ export default function Footer() {
             </div>
 
             <p className="text-xs text-[#635572] leading-relaxed max-w-sm">
-              We handcraft authentic, energetically charged gemstone bracelets, sacred raw clusters, and Kundli-aligned talisman jewelry. Consecrated with holy Himalayan sage and blessed with 108 Vedic Beej Mantras before reaching your sanctuary.
+              We handcraft authentic, energetically charged gemstone bracelets, sacred raw clusters, and consecrated talisman jewelry. Consecrated with holy Himalayan sage and blessed with 108 Vedic Beej Mantras before reaching your sanctuary.
             </p>
 
             {/* Newsletter Box */}

@@ -70,7 +70,7 @@ export default function CartDrawer() {
   let couponDiscount = 0;
   if (appliedCoupon === "RIYA10") couponDiscount = Math.round(rawSubtotal * 0.10);
   else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15") couponDiscount = Math.round(rawSubtotal * 0.15);
-  else if (appliedCoupon === "KUNDALI20") couponDiscount = Math.round(rawSubtotal * 0.20);
+  else if (appliedCoupon === "DIVINE20" || appliedCoupon === "KUNDALI20") couponDiscount = Math.round(rawSubtotal * 0.20);
 
   const totalDiscount = tieredDiscount + couponDiscount;
 
@@ -249,12 +249,6 @@ export default function CartDrawer() {
                                 </span>
                               </div>
 
-                              {item.kundliDetails && (
-                                <div className="mt-1 px-2 py-0.5 rounded bg-[#FFFDF9] border border-[#C9A24D]/35 text-[10px] text-[#8E6D24] font-medium truncate">
-                                  ★ Consecrated for: {item.kundliDetails.fullName} ({item.kundliDetails.dob})
-                                </div>
-                              )}
-
                               <div className="flex items-center justify-between mt-2.5">
                                 <div className="flex items-center border border-[#EAE5DF] rounded-lg bg-[#FAF9F6] px-1.5 py-0.5">
                                   <button
@@ -367,7 +361,7 @@ export default function CartDrawer() {
 
                         {/* Available coupon chips */}
                         <div className="flex flex-wrap gap-1.5 pt-1">
-                          {["RIYA10", "LUXURY15", "KUNDALI20"].map((code) => {
+                          {["RIYA10", "LUXURY15", "DIVINE20"].map((code) => {
                             const isSelected = appliedCoupon === code;
                             return (
                               <button

@@ -595,11 +595,6 @@ export default function CheckoutPage() {
                         <span>•</span>
                         <span>{item.selectedBeadSize || "8mm"}</span>
                       </div>
-                      {item.kundliDetails && (
-                        <span className="text-[9px] text-[#8E6D24] font-semibold block truncate">
-                          ★ For {item.kundliDetails.fullName}
-                        </span>
-                      )}
                     </div>
                     <span className="font-bold text-xs text-[#2B1B3D]">
                       ₹{((item.salePrice || item.price) * item.quantity).toLocaleString("en-IN")}

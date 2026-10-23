@@ -122,7 +122,7 @@ export default function HomePage() {
                 <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
                   <Compass size={18} className="mx-auto text-[#7B4FC9] mb-1" />
                   <span className="block text-xs sm:text-sm font-bold text-[#2B1B3D]">Bespoke</span>
-                  <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Kundali & Chakra</span>
+                  <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Vedic Consecration</span>
                 </div>
 
                 <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
