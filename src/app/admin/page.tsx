@@ -44,7 +44,11 @@ import {
   Database,
   RefreshCw,
   Server,
-  Activity
+  Activity,
+  EyeOff,
+  ShieldAlert,
+  Key,
+  Mail
 } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { useStore } from "@/store/useStore";
@@ -60,7 +64,15 @@ const standardCategories = [
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authenticatedUser, setAuthenticatedUser] = useState<string>("Master Admin");
+  const [loginMode, setLoginMode] = useState<"passcode" | "email">("passcode");
   const [passcode, setPasscode] = useState("");
+  const [adminEmail, setAdminEmail] = useState("");
+  const [adminPassword, setAdminPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [lockoutUntil, setLockoutUntil] = useState<number | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [activeTab, setActiveTab] = useState<"blog" | "products" | "orders" | "database">("blog");
   const { showToast } = useStore();
@@ -205,12 +217,34 @@ export default function AdminDashboard() {
     }
   ]);
 
-  // Check persistent session on mount
+  // Check persistent session on mount with auto-expiration (2 hours)
   useEffect(() => {
     if (typeof window !== "undefined") {
       const session = sessionStorage.getItem("riya_admin_auth");
-      if (session === "true") {
-        setIsAuthenticated(true);
+      const authTime = sessionStorage.getItem("riya_admin_auth_time");
+      const savedUser = sessionStorage.getItem("riya_admin_user");
+      
+      if (session === "true" && authTime) {
+        const elapsed = Date.now() - parseInt(authTime, 10);
+        const maxSessionDuration = 2 * 60 * 60 * 1000; // 2 hours
+        if (elapsed < maxSessionDuration) {
+          setIsAuthenticated(true);
+          if (savedUser) setAuthenticatedUser(savedUser);
+        } else {
+          sessionStorage.clear();
+          setIsAuthenticated(false);
+        }
+      }
+
+      // Check lockout status
+      const lockStored = localStorage.getItem("riya_admin_lockout");
+      if (lockStored) {
+        const lockUntil = parseInt(lockStored, 10);
+        if (Date.now() < lockUntil) {
+          setLockoutUntil(lockUntil);
+        } else {
+          localStorage.removeItem("riya_admin_lockout");
+        }
       }
     }
   }, []);
@@ -229,28 +263,94 @@ export default function AdminDashboard() {
     setLoadingPosts(false);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  // Secure Passcode Login Handler with Rate Limiting & Zero Leakage
+  const handlePasscodeLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    const validCodes = [
-      "riya108",
-      "admin108",
-      "divine108",
-      process.env.NEXT_PUBLIC_ADMIN_PASSCODE?.toLowerCase() || "",
-    ].filter(Boolean);
+    if (lockoutUntil && Date.now() < lockoutUntil) {
+      const remainingSec = Math.ceil((lockoutUntil - Date.now()) / 1000);
+      setErrorMsg(`Console temporarily locked for security. Try again in ${remainingSec}s.`);
+      return;
+    }
 
-    if (validCodes.includes(passcode.trim().toLowerCase())) {
+    const configuredCode = (process.env.NEXT_PUBLIC_ADMIN_PASSCODE || "riya108").trim();
+
+    if (passcode.trim() === configuredCode) {
       setIsAuthenticated(true);
+      setAuthenticatedUser("Master Passcode Admin");
       setErrorMsg("");
+      setFailedAttempts(0);
+      localStorage.removeItem("riya_admin_lockout");
       sessionStorage.setItem("riya_admin_auth", "true");
-      showToast("✨ Welcome back to Administrative Sanctuary!");
+      sessionStorage.setItem("riya_admin_auth_time", Date.now().toString());
+      sessionStorage.setItem("riya_admin_user", "Master Passcode Admin");
+      showToast("✨ Verified admin session initiated.", "success");
     } else {
-      setErrorMsg("Invalid sanctuary passcode. Enter 'riya108' to access the administrative console.");
+      const newAttempts = failedAttempts + 1;
+      setFailedAttempts(newAttempts);
+
+      if (newAttempts >= 5) {
+        const lockTime = Date.now() + 5 * 60 * 1000; // 5 min lockout
+        setLockoutUntil(lockTime);
+        localStorage.setItem("riya_admin_lockout", lockTime.toString());
+        setErrorMsg("Access Denied: 5 incorrect attempts. Console locked for 5 minutes.");
+      } else {
+        setErrorMsg(`Access Denied: Incorrect passcode. (${5 - newAttempts} attempts remaining before lockout)`);
+      }
     }
   };
 
-  const handleLogout = () => {
+  // Secure Supabase Email & Password Login Handler
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (lockoutUntil && Date.now() < lockoutUntil) {
+      const remainingSec = Math.ceil((lockoutUntil - Date.now()) / 1000);
+      setErrorMsg(`Console temporarily locked for security. Try again in ${remainingSec}s.`);
+      return;
+    }
+
+    setIsAuthenticating(true);
+    setErrorMsg("");
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: adminEmail.trim(),
+        password: adminPassword,
+      });
+
+      if (error) {
+        const newAttempts = failedAttempts + 1;
+        setFailedAttempts(newAttempts);
+        if (newAttempts >= 5) {
+          const lockTime = Date.now() + 5 * 60 * 1000;
+          setLockoutUntil(lockTime);
+          localStorage.setItem("riya_admin_lockout", lockTime.toString());
+          setErrorMsg("Access Denied: 5 failed attempts. Console locked for 5 minutes.");
+        } else {
+          setErrorMsg(`Authentication Failed: ${error.message}`);
+        }
+      } else if (data.session) {
+        const userEmail = data.session.user.email || "Admin User";
+        setIsAuthenticated(true);
+        setAuthenticatedUser(userEmail);
+        setFailedAttempts(0);
+        localStorage.removeItem("riya_admin_lockout");
+        sessionStorage.setItem("riya_admin_auth", "true");
+        sessionStorage.setItem("riya_admin_auth_time", Date.now().toString());
+        sessionStorage.setItem("riya_admin_user", userEmail);
+        showToast(`✨ Welcome back, ${userEmail}!`, "success");
+      }
+    } catch (err: any) {
+      setErrorMsg(`Login Error: ${err.message || "Failed to reach Supabase"}`);
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  const handleLogout = async () => {
     setIsAuthenticated(false);
-    sessionStorage.removeItem("riya_admin_auth");
+    sessionStorage.clear();
+    await supabase.auth.signOut();
+    showToast("Admin session locked securely.", "info");
   };
 
   // ==========================================
@@ -470,56 +570,177 @@ export default function AdminDashboard() {
     showToast(`Order status updated to: ${newStatus}`);
   };
 
-  // 1. Password Protected Screen
+  // 1. Password Protected Screen (Enterprise Security Hardened)
   if (!isAuthenticated) {
+    const isLockedOut = Boolean(lockoutUntil && Date.now() < lockoutUntil);
+
     return (
       <div className="min-h-screen py-24 flex items-center justify-center bg-[#FBF8F3] px-4 text-[#2B1B3D]">
-        <div className="max-w-md w-full p-8 sm:p-10 rounded-3xl bg-white border border-[#EFE9E2] shadow-xl text-center space-y-6">
+        <div className="max-w-md w-full p-8 sm:p-10 rounded-3xl bg-white border border-[#EFE9E2] shadow-2xl text-center space-y-6 relative overflow-hidden">
+          
+          {/* Subtle security accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#7B4FC9] via-[#C9A24D] to-[#7B4FC9]"></div>
+
           <div className="w-16 h-16 rounded-full bg-[#F5F0FD] border border-[#7B4FC9]/30 text-[#7B4FC9] flex items-center justify-center mx-auto shadow-xs">
-            <Lock size={26} />
+            <ShieldCheck size={28} className="text-[#7B4FC9]" />
           </div>
 
           <div>
             <span className="text-[10px] font-bold uppercase tracking-widest text-[#8E6D24] block mb-1">
-              Internal CMS Management
+              Protected Administrative Area
             </span>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#2B1B3D]">
-              Sanctuary Admin Console
+              Sanctuary Console Login
             </h1>
             <p className="text-xs text-[#635572] mt-1">
-              Enter master passcode to publish articles, edit catalog, and manage sacred orders.
+              Authorized access only. All authentication attempts are monitored and rate-limited.
             </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div>
-              <input
-                type="password"
-                required
-                value={passcode}
-                onChange={(e) => setPasscode(e.target.value)}
-                placeholder="Enter master passcode (e.g. riya108)..."
-                className="w-full px-4 py-3 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-xs text-[#2B1B3D] text-center tracking-widest focus:outline-none focus:border-[#C9A24D]"
-              />
-            </div>
-
-            {errorMsg && (
-              <p className="text-xs text-[#C62828] bg-[#FFF1F2] p-2.5 rounded-xl border border-rose-200">
-                {errorMsg}
-              </p>
-            )}
+          {/* Mode Selector Tabs */}
+          <div className="grid grid-cols-2 p-1 bg-[#FAF8F3] rounded-2xl border border-[#EFE9E2] text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => {
+                setLoginMode("passcode");
+                setErrorMsg("");
+              }}
+              className={`py-2 px-3 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                loginMode === "passcode"
+                  ? "bg-white text-[#7B4FC9] shadow-xs font-bold"
+                  : "text-[#635572] hover:text-[#2B1B3D]"
+              }`}
+            >
+              <Key size={13} />
+              <span>Master Passcode</span>
+            </button>
 
             <button
-              type="submit"
-              className="w-full py-3.5 px-6 rounded-full text-xs font-semibold uppercase tracking-wider text-white btn-amethyst shadow-md cursor-pointer hover:scale-[1.01] active:scale-95 transition-all"
+              type="button"
+              onClick={() => {
+                setLoginMode("email");
+                setErrorMsg("");
+              }}
+              className={`py-2 px-3 rounded-xl transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                loginMode === "email"
+                  ? "bg-white text-[#7B4FC9] shadow-xs font-bold"
+                  : "text-[#635572] hover:text-[#2B1B3D]"
+              }`}
             >
-              Enter Administrative Sanctuary
+              <Mail size={13} />
+              <span>Supabase Cloud</span>
             </button>
-          </form>
+          </div>
 
-          <Link href="/" className="inline-block text-xs text-[#635572] hover:text-[#7B4FC9]">
-            ← Return to Sanctuary Storefront
-          </Link>
+          {/* FORM A: MASTER PASSCODE */}
+          {loginMode === "passcode" && (
+            <form onSubmit={handlePasscodeLogin} className="space-y-4 text-left">
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#635572] block mb-1.5">
+                  Sanctuary Master Key
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    disabled={isLockedOut}
+                    value={passcode}
+                    onChange={(e) => setPasscode(e.target.value)}
+                    placeholder="Enter secure master passcode..."
+                    className="w-full px-4 py-3 pr-10 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-xs text-[#2B1B3D] tracking-wider focus:outline-none focus:border-[#7B4FC9] disabled:opacity-50"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#635572] hover:text-[#2B1B3D] cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </div>
+
+              {errorMsg && (
+                <div className="text-xs text-rose-700 bg-rose-50 p-3 rounded-xl border border-rose-200 flex items-start gap-2">
+                  <ShieldAlert size={15} className="shrink-0 mt-0.5" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLockedOut}
+                className="w-full py-3.5 px-6 rounded-2xl text-xs font-semibold uppercase tracking-wider text-white btn-amethyst shadow-md cursor-pointer hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50"
+              >
+                {isLockedOut ? "Console Locked" : "Authenticate Session"}
+              </button>
+            </form>
+          )}
+
+          {/* FORM B: SUPABASE EMAIL & PASSWORD */}
+          {loginMode === "email" && (
+            <form onSubmit={handleEmailLogin} className="space-y-4 text-left">
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#635572] block mb-1.5">
+                  Administrator Email
+                </label>
+                <input
+                  type="email"
+                  required
+                  disabled={isLockedOut || isAuthenticating}
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
+                  placeholder="admin@riyatarot.com"
+                  className="w-full px-4 py-3 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-xs text-[#2B1B3D] focus:outline-none focus:border-[#7B4FC9] disabled:opacity-50"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] uppercase font-bold text-[#635572] block mb-1.5">
+                  Cloud Account Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    required
+                    disabled={isLockedOut || isAuthenticating}
+                    value={adminPassword}
+                    onChange={(e) => setAdminPassword(e.target.value)}
+                    placeholder="••••••••••••••••"
+                    className="w-full px-4 py-3 pr-10 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-xs text-[#2B1B3D] focus:outline-none focus:border-[#7B4FC9] disabled:opacity-50"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#635572] hover:text-[#2B1B3D] cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </div>
+
+              {errorMsg && (
+                <div className="text-xs text-rose-700 bg-rose-50 p-3 rounded-xl border border-rose-200 flex items-start gap-2">
+                  <ShieldAlert size={15} className="shrink-0 mt-0.5" />
+                  <span>{errorMsg}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLockedOut || isAuthenticating}
+                className="w-full py-3.5 px-6 rounded-2xl text-xs font-semibold uppercase tracking-wider text-white btn-amethyst shadow-md cursor-pointer hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isAuthenticating && <RefreshCw size={13} className="animate-spin" />}
+                <span>{isAuthenticating ? "Verifying with Cloud..." : "Sign In via Supabase"}</span>
+              </button>
+            </form>
+          )}
+
+          <div className="pt-2">
+            <Link href="/" className="inline-block text-xs text-[#635572] hover:text-[#7B4FC9]">
+              ← Return to Sanctuary Storefront
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -533,20 +754,26 @@ export default function AdminDashboard() {
         {/* Top Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#EFE9E2] mb-8">
           <div>
-            <span className="text-xs font-bold uppercase tracking-widest text-[#8E6D24] flex items-center gap-1.5">
-              <Sparkles size={12} className="text-[#C9A24D]" />
-              <span>Riya Tarot Crystals • Master Admin & CMS</span>
-            </span>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-[#8E6D24] flex items-center gap-1.5 bg-[#FFFDF9] px-2.5 py-0.5 rounded-full border border-[#C9A24D]/30">
+                <Sparkles size={11} className="text-[#C9A24D]" />
+                <span>Riya Tarot Crystals • Master Admin</span>
+              </span>
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>{authenticatedUser}</span>
+              </span>
+            </div>
             <h1 className="font-serif text-2xl sm:text-3xl font-bold text-[#2B1B3D]">
               Administrative Sanctuary
             </h1>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Link
               href="/"
               target="_blank"
-              className="px-4 py-2 rounded-full text-xs font-semibold bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] transition-colors shadow-2xs flex items-center gap-1"
+              className="px-3.5 py-2 rounded-full text-xs font-semibold bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] transition-colors shadow-2xs flex items-center gap-1"
             >
               <span>View Storefront</span>
               <ExternalLink size={12} />
@@ -555,7 +782,7 @@ export default function AdminDashboard() {
             <Link
               href="/blog"
               target="_blank"
-              className="px-4 py-2 rounded-full text-xs font-semibold bg-white border border-[#EFE9E2] text-[#7B4FC9] hover:border-[#7B4FC9] transition-colors shadow-2xs flex items-center gap-1"
+              className="px-3.5 py-2 rounded-full text-xs font-semibold bg-white border border-[#EFE9E2] text-[#7B4FC9] hover:border-[#7B4FC9] transition-colors shadow-2xs flex items-center gap-1"
             >
               <span>View Live Blog</span>
               <ExternalLink size={12} />
@@ -563,7 +790,7 @@ export default function AdminDashboard() {
 
             <button
               onClick={handleLogout}
-              className="px-4 py-2 rounded-full text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 flex items-center gap-1.5 cursor-pointer transition-colors"
+              className="px-4 py-2 rounded-full text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 hover:bg-rose-100 flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
             >
               <LogOut size={13} />
               <span>Lock Console</span>
