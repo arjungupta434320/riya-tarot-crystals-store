@@ -1,18 +1,34 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { useStore } from "@/store/useStore";
-import { ShoppingBag, ArrowRight, Sparkles } from "lucide-react";
+import { ShoppingBag, ArrowRight, Sparkles, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function StickyMobileCartBar() {
+  const pathname = usePathname();
   const { cart, toggleCart, appliedCoupon } = useStore();
+  const [dismissed, setDismissed] = useState(false);
 
   const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
   const rawSubtotal = cart.reduce(
     (sum, item) => sum + (item.salePrice || item.price) * item.quantity,
     0
   );
+
+  // Reset dismissed state whenever totalQuantity changes
+  useEffect(() => {
+    if (totalQuantity > 0) {
+      setDismissed(false);
+    }
+  }, [totalQuantity]);
+
+  // Hide on checkout or product page to avoid collision with their dedicated action bars
+  if (pathname === "/checkout" || pathname?.startsWith("/product")) return null;
+
+  // Hide if cart is empty or user dismissed the floating bar
+  if (totalQuantity === 0 || dismissed) return null;
 
   // Automatic tiered discount (15% when 2 or more items)
   const isTieredQualified = totalQuantity >= 2;
@@ -27,23 +43,21 @@ export default function StickyMobileCartBar() {
   const totalSavings = tieredDiscount + couponDiscount;
   const finalSubtotal = Math.max(0, rawSubtotal - totalSavings);
 
-  if (totalQuantity === 0) return null;
-
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 100, opacity: 0 }}
+        initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
+        exit={{ y: 80, opacity: 0 }}
         transition={{ type: "spring", stiffness: 350, damping: 30 }}
-        className="md:hidden fixed bottom-0 left-0 right-0 z-[55] bg-[#FFFFFF]/95 backdrop-blur-xl border-t border-[#D4AF37]/40 shadow-[0_-8px_30px_rgba(212,175,55,0.22)] px-4 py-3"
-        style={{ paddingBottom: "max(env(safe-area-inset-bottom, 0px), 12px)" }}
+        className="md:hidden fixed left-3 right-3 z-30 bg-white/98 backdrop-blur-xl border border-[#C9A24D]/40 rounded-2xl shadow-[0_8px_30px_rgba(43,27,61,0.18)] px-3.5 py-2.5"
+        style={{ bottom: "calc(54px + max(env(safe-area-inset-bottom, 0px), 8px))" }}
       >
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2.5">
           {/* Left: Item Count & Live Subtotal & Savings Badge */}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-1.5">
-              <span className="text-[11px] font-semibold text-[#6E6A64] uppercase tracking-wider">
+              <span className="text-[10px] font-semibold text-[#6E6A64] uppercase tracking-wider">
                 {totalQuantity} {totalQuantity === 1 ? "Item" : "Items"}
               </span>
               {totalSavings > 0 && (
@@ -55,26 +69,36 @@ export default function StickyMobileCartBar() {
             </div>
 
             <div className="flex items-baseline gap-1.5 mt-0.5">
-              <span className="text-base font-bold text-[#2C2A29]">
+              <span className="text-sm font-bold text-[#2C2A29]">
                 ₹{finalSubtotal.toLocaleString("en-IN")}
               </span>
               {totalSavings > 0 && (
-                <span className="text-xs text-[#6E6A64] line-through">
+                <span className="text-[11px] text-[#6E6A64] line-through">
                   ₹{rawSubtotal.toLocaleString("en-IN")}
                 </span>
               )}
             </div>
           </div>
 
-          {/* Right: Instant View Cart / Checkout Button */}
-          <button
-            onClick={toggleCart}
-            className="px-5 py-3 rounded-full text-xs font-semibold tracking-wider uppercase text-[#2C2A29] btn-gold-shimmer flex items-center gap-2 flex-shrink-0 cursor-pointer shadow-md"
-          >
-            <ShoppingBag size={14} className="text-[#2C2A29]" />
-            <span>View Cart</span>
-            <ArrowRight size={13} />
-          </button>
+          {/* Right: Instant View Cart Button + Dismiss X */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={toggleCart}
+              className="px-4 py-2.5 rounded-xl text-xs font-semibold tracking-wider uppercase text-[#2C2A29] btn-gold-shimmer flex items-center gap-1.5 flex-shrink-0 cursor-pointer shadow-xs"
+            >
+              <ShoppingBag size={13} className="text-[#2C2A29]" />
+              <span>View Cart</span>
+              <ArrowRight size={12} />
+            </button>
+
+            <button
+              onClick={() => setDismissed(true)}
+              aria-label="Dismiss cart bar"
+              className="w-7 h-7 rounded-lg bg-[#FAF8F3] hover:bg-[#F3EFEA] text-[#6E6A64] hover:text-[#2C2A29] flex items-center justify-center cursor-pointer transition-colors"
+            >
+              <X size={13} />
+            </button>
+          </div>
         </div>
       </motion.div>
     </AnimatePresence>
