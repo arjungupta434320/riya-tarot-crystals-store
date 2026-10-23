@@ -105,7 +105,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-xs sm:text-base text-[#635572] leading-relaxed max-w-xl mx-auto lg:mx-0 font-light">
-                100% authentic, lab-certified Grade-A gemstones and healing bracelets. Purified in Himalayan waters and consecrated with 108 Vedic Beej Mantras for wealth manifestation, soulmate love, and impenetrable evil-eye defense.
+                100% authentic, ethically and authentically sourced Grade-A gemstones and healing bracelets. Purified in Himalayan waters and consecrated with 108 Vedic Beej Mantras for wealth manifestation, soulmate love, and impenetrable evil-eye defense.
               </p>
 
               {/* Trust Indicators */}
@@ -113,7 +113,7 @@ export default function HomePage() {
                 <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
                   <Award size={18} className="mx-auto text-[#C9A24D] mb-1" />
                   <span className="block text-xs sm:text-sm font-bold text-[#2B1B3D]">100% Natural</span>
-                  <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Lab Certified</span>
+                  <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Authentically Sourced</span>
                 </div>
 
                 <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">

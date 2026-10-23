@@ -44,7 +44,7 @@ export async function getProducts(): Promise<Product[]> {
         gallery: item.gallery && item.gallery.length > 0 ? item.gallery : fallback?.gallery || [item.image || "/images/products/rose-quartz-new.jpg"],
         category: item.category || fallback?.category || "Heal Energized Bracelets",
         subCategory: item.subCategory || fallback?.subCategory || "Mixel Bracelets",
-        badge: item.badge || fallback?.badge || "Energized & Lab Certified",
+        badge: item.badge || fallback?.badge || "Energized & Authentically Sourced",
         chakra: item.chakra || fallback?.chakra || "Heart & Solar Plexus",
         planet: item.planet || fallback?.planet || "Venus & Jupiter",
         zodiac: item.zodiac || fallback?.zodiac || "All Signs",

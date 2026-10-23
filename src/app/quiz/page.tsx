@@ -33,7 +33,7 @@ export default function QuizPage() {
         <div className="mt-8 text-center text-xs text-[#635572] flex items-center justify-center gap-4">
           <span className="flex items-center gap-1">
             <ShieldCheck size={14} className="text-[#C9A24D]" />
-            <span>100% Lab-Certified Natural Crystals</span>
+            <span>100% Authentically Sourced Natural Crystals</span>
           </span>
           <span>•</span>
           <span>108 Mantra Japa Prana Pratishtha</span>

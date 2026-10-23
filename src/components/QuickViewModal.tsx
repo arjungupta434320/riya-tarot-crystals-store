@@ -92,7 +92,7 @@ export default function QuickViewModal() {
               <div className="flex items-center justify-between mb-3">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[#FFFFFF] text-[#9A7B2C] border border-[#D4AF37]/40 shadow-xs">
                   <Sparkles size={11} className="text-[#D4AF37]" />
-                  {quickViewProduct.badge || "Energized & Lab Certified"}
+                  {quickViewProduct.badge || "Energized & Authentically Sourced"}
                 </span>
 
                 <button

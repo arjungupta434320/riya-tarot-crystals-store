@@ -574,7 +574,7 @@ export default function CheckoutPage() {
                   Order Items ({totalQuantity})
                 </h3>
                 <span className="text-xs text-[#8E6D24] font-semibold">
-                  Lab Certified
+                  Authentically Sourced
                 </span>
               </div>
 

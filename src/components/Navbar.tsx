@@ -76,7 +76,7 @@ export default function Navbar() {
             <span className="flex items-center gap-2">
               <Sparkles size={12} className="text-[#C9A24D]" />
               <span>108 Mantra Japa Prana Pratishtha by Vedic Priests</span>
-              <span className="text-[#8E6D24] font-bold">| 100% Authentic Lab Certified Gemstones</span>
+              <span className="text-[#8E6D24] font-bold">| 100% Authentically Sourced Gemstones</span>
               <span className="text-[#C9A24D]">| Pan-India Express Delivery</span>
               <Sparkles size={12} className="text-[#C9A24D]" />
             </span>
@@ -501,7 +501,7 @@ export default function Navbar() {
               </div>
 
               <div className="p-4 border-t border-[#EFE9E2] bg-[#FBF8F3] text-center text-[11px] text-[#635572]">
-                100% Lab-Certified Natural Stones • Free Shipping Above ₹999
+                100% Authentically Sourced Natural Stones • Free Shipping Above ₹999
               </div>
             </motion.div>
           </>

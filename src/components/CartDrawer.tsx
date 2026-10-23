@@ -203,7 +203,7 @@ export default function CartDrawer() {
                         Your Sacred Bag is Empty
                       </h4>
                       <p className="text-xs text-[#6E6A64] max-w-xs leading-relaxed">
-                        Explore our lab-certified healed crystal bracelets to awaken abundance, love, and protection.
+                        Explore our authentically sourced healed crystal bracelets to awaken abundance, love, and protection.
                       </p>
                     </div>
                     <button
