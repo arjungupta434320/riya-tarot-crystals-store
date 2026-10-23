@@ -490,72 +490,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. HOW WE HEAL & ENERGIZE: 4-STEP TIMELINE */}
-      <section className="py-16 sm:py-24 bg-white border-b border-[#EFE9E2]">
-        <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#8E6D24] mb-2 block">
-              Sacred Vedic Tradition
-            </span>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif text-[#2B1B3D] font-bold tracking-tight mb-3">
-              How We Heal & Energize
-            </h2>
-            <p className="text-xs sm:text-sm text-[#635572] leading-relaxed">
-              We never ship raw, un-consecrated warehouse stones. Every single crystal passes through four sacred phases of Vedic purification.
-            </p>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="p-6 rounded-3xl bg-[#FBF8F3] border border-[#EFE9E2] space-y-3 shadow-2xs">
-              <div className="w-12 h-12 rounded-2xl bg-white border border-[#C9A24D]/40 flex items-center justify-center text-[#C9A24D] font-bold text-base shadow-xs">
-                1
-              </div>
-              <h4 className="font-serif text-base font-bold text-[#2B1B3D]">
-                Himalayan Purification
-              </h4>
-              <p className="text-xs text-[#635572] leading-relaxed">
-                Raw crystals are cleansed in pure mountain salt and running water to dissolve accumulated human static.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-[#FBF8F3] border border-[#EFE9E2] space-y-3 shadow-2xs">
-              <div className="w-12 h-12 rounded-2xl bg-white border border-[#C9A24D]/40 flex items-center justify-center text-[#C9A24D] font-bold text-base shadow-xs">
-                2
-              </div>
-              <h4 className="font-serif text-base font-bold text-[#2B1B3D]">
-                Cosmic Light Charging
-              </h4>
-              <p className="text-xs text-[#635572] leading-relaxed">
-                Solar stones are exposed to peak Surya rays; lunar quartz is consecrated under full moon illumination.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-[#F5F0FD] border border-[#7B4FC9]/30 space-y-3 shadow-2xs">
-              <div className="w-12 h-12 rounded-2xl bg-[#7B4FC9] text-white flex items-center justify-center font-bold text-base shadow-xs">
-                3
-              </div>
-              <h4 className="font-serif text-base font-bold text-[#7B4FC9]">
-                108 Mantra Japa
-              </h4>
-              <p className="text-xs text-[#635572] leading-relaxed">
-                Certified Vedic priests chant 108 deity Beej Mantras, invoking Prana Pratishtha into each bead.
-              </p>
-            </div>
-
-            <div className="p-6 rounded-3xl bg-[#FBF8F3] border border-[#EFE9E2] space-y-3 shadow-2xs">
-              <div className="w-12 h-12 rounded-2xl bg-white border border-[#C9A24D]/40 flex items-center justify-center text-[#C9A24D] font-bold text-base shadow-xs">
-                4
-              </div>
-              <h4 className="font-serif text-base font-bold text-[#2B1B3D]">
-                Sacred Packaging
-              </h4>
-              <p className="text-xs text-[#635572] leading-relaxed">
-                Sealed airtight with holy Raksha Sutra thread, sacred vibhuti, and your personalized consecration note.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* 7. CLIENT FAQ ACCORDION */}
       <section className="py-16 sm:py-24 bg-[#FBF8F3] border-b border-[#EFE9E2]">

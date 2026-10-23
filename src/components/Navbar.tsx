@@ -139,9 +139,9 @@ export default function Navbar() {
             <div className="relative group py-1">
               <button
                 type="button"
-                className="hover:text-[#7B4FC9] transition-colors flex items-center gap-1 cursor-pointer select-none"
+                className="hover:text-[#7B4FC9] transition-colors flex items-center gap-1 cursor-pointer select-none uppercase tracking-wider font-semibold"
               >
-                <span>Collections</span>
+                <span>COLLECTIONS</span>
                 <ChevronDown size={13} className="group-hover:rotate-180 transition-transform duration-200" />
               </button>
               <div className="absolute top-full left-0 pt-2 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200 z-50">
@@ -394,7 +394,7 @@ export default function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
                 >
-                  <span className="font-semibold text-xs">All Collections</span>
+                  <span className="font-semibold text-xs uppercase tracking-wider">ALL COLLECTIONS</span>
                   <ArrowRight size={14} className="text-[#C9A24D]" />
                 </Link>
 
