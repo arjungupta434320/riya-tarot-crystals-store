@@ -17,11 +17,9 @@ import {
   Tag, 
   Check, 
   ShieldCheck,
-  Lock,
-  Flame,
   CheckCircle2
 } from "lucide-react";
-import { useStore, Product, CartItem } from "@/store/useStore";
+import { useStore, Product } from "@/store/useStore";
 import { cartUpsells, fetchProducts, fallbackProducts } from "@/data/products";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -134,7 +132,7 @@ export default function CartDrawer() {
   const freeGiftSavings = isTier2Unlocked ? FREE_GIFT_VALUE : 0;
   const totalSacredSavings = catalogMrpDiscount + couponDiscount + freeGiftSavings;
 
-  // Shipping Fee Logic
+  // Shipping Fee Logic (Free above ₹999)
   const shippingFee = isTier1Unlocked || cart.length === 0 ? 0 : 79;
   const grandTotal = Math.max(0, rawSubtotal - couponDiscount + shippingFee);
 
@@ -183,35 +181,35 @@ export default function CartDrawer() {
     <AnimatePresence>
       {isCartOpen && (
         <div className="fixed inset-0 z-[80] overflow-hidden">
-          {/* Backdrop */}
+          {/* Backdrop with soft sanctuary tint */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/65 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-[#2B1B3D]/40 backdrop-blur-xs transition-opacity"
             onClick={toggleCart}
           />
 
-          {/* Luxury Slide-Over Cart Drawer */}
+          {/* Luxury Light Theme Slide-Over Cart Drawer */}
           <motion.div
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 320 }}
-            className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-[#0D0A14] text-[#FBF8F3] shadow-[0_0_50px_rgba(0,0,0,0.8)] z-10 flex flex-col border-l border-[#2D2244]"
+            className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-[#FBF8F3] text-[#2B1B3D] shadow-[0_12px_45px_rgba(43,27,61,0.18)] z-10 flex flex-col border-l border-[#EFE9E2]"
           >
-            {/* Header: Title, Tab Switcher & Close */}
-            <div className="p-4 sm:p-5 border-b border-[#251B38] bg-[#161122] flex items-center justify-between flex-shrink-0">
+            {/* Header: Title, Tab Switcher & Close Button */}
+            <div className="p-4 sm:p-5 border-b border-[#EFE9E2] bg-white flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-6">
                 <button
                   onClick={() => setDrawerTab("cart")}
                   className={`font-serif tracking-widest text-xs sm:text-sm uppercase pb-1 transition-all cursor-pointer flex items-center gap-1.5 ${
                     activeDrawerTab === "cart"
-                      ? "border-b-2 border-[#F59E0B] text-[#FBF8F3] font-bold"
-                      : "text-[#A79DB8] hover:text-[#FBF8F3]"
+                      ? "border-b-2 border-[#7B4FC9] text-[#7B4FC9] font-bold"
+                      : "text-[#635572] hover:text-[#2B1B3D]"
                   }`}
                 >
-                  <ShoppingBag size={14} className={activeDrawerTab === "cart" ? "text-[#F59E0B]" : "text-[#A79DB8]"} />
+                  <ShoppingBag size={14} className={activeDrawerTab === "cart" ? "text-[#7B4FC9]" : "text-[#635572]"} />
                   <span>YOUR BAG ({totalQuantity})</span>
                 </button>
 
@@ -219,30 +217,30 @@ export default function CartDrawer() {
                   onClick={() => setDrawerTab("wishlist")}
                   className={`font-serif tracking-widest text-xs sm:text-sm uppercase pb-1 transition-all cursor-pointer flex items-center gap-1.5 ${
                     activeDrawerTab === "wishlist"
-                      ? "border-b-2 border-[#F59E0B] text-[#FBF8F3] font-bold"
-                      : "text-[#A79DB8] hover:text-[#FBF8F3]"
+                      ? "border-b-2 border-[#7B4FC9] text-[#7B4FC9] font-bold"
+                      : "text-[#635572] hover:text-[#2B1B3D]"
                   }`}
                 >
-                  <Heart size={14} className={activeDrawerTab === "wishlist" ? "text-[#F59E0B]" : "text-[#A79DB8]"} />
+                  <Heart size={14} className={activeDrawerTab === "wishlist" ? "text-[#7B4FC9]" : "text-[#635572]"} />
                   <span>WISHLIST ({wishlist.length})</span>
                 </button>
               </div>
 
               <button
                 onClick={toggleCart}
-                className="w-8 h-8 rounded-full bg-[#201831] border border-[#3A2A57] flex items-center justify-center text-[#A79DB8] hover:text-[#FBF8F3] hover:border-[#F59E0B]/50 transition-colors cursor-pointer"
+                className="w-8 h-8 rounded-full bg-[#FBF8F3] border border-[#EFE9E2] flex items-center justify-center text-[#635572] hover:text-[#2B1B3D] hover:bg-white hover:border-[#C9A24D]/50 transition-colors cursor-pointer"
                 aria-label="Close cart drawer"
               >
                 <X size={16} />
               </button>
             </div>
 
-            {/* 1. 2-TIER GAMIFIED MILESTONE PROGRESS BAR (TOP OF DRAWER) */}
+            {/* 1. 2-TIER GAMIFIED MILESTONE PROGRESS BAR (LIGHT SANCTUARY THEME) */}
             {activeDrawerTab === "cart" && (
-              <div className="bg-[#130E1F] p-4 border-b border-[#251B38] space-y-3 flex-shrink-0">
+              <div className="bg-gradient-to-b from-white to-[#FAF6EE] p-4 border-b border-[#EFE9E2] space-y-2.5 flex-shrink-0">
                 {/* Dynamic Copy */}
-                <div className="flex items-center justify-between text-xs min-h-[22px]">
-                  <p className="text-[11px] sm:text-xs font-semibold text-[#FBF8F3] leading-snug">
+                <div className="flex items-center justify-between text-xs min-h-[20px]">
+                  <p className="text-[11px] sm:text-xs font-semibold text-[#2B1B3D] leading-snug">
                     {milestoneCopy}
                   </p>
                 </div>
@@ -250,9 +248,9 @@ export default function CartDrawer() {
                 {/* Progress Bar Track with Milestone Nodes */}
                 <div className="relative pt-1 pb-4">
                   {/* Track line */}
-                  <div className="w-full h-2.5 bg-[#201831] rounded-full overflow-hidden border border-[#3A2A57]/60">
+                  <div className="w-full h-2.5 bg-[#EFE9E2] rounded-full overflow-hidden border border-[#E2DDD5]">
                     <div
-                      className="h-full bg-gradient-to-r from-[#D97706] via-[#F59E0B] to-[#FBBF24] transition-all duration-500 ease-out shadow-[0_0_12px_rgba(245,158,11,0.6)]"
+                      className="h-full bg-gradient-to-r from-[#C9A24D] via-[#DFBA67] to-[#7B4FC9] transition-all duration-500 ease-out shadow-[0_0_8px_rgba(201,162,77,0.35)]"
                       style={{ width: `${progressPercent}%` }}
                     />
                   </div>
@@ -262,15 +260,15 @@ export default function CartDrawer() {
                     className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
                     style={{ marginTop: "-2px" }}
                   >
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-sm ${
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-xs ${
                       isTier1Unlocked 
-                        ? "bg-[#F59E0B] border-[#FDE68A] text-[#0D0A14] scale-110 shadow-[0_0_10px_rgba(245,158,11,0.8)]"
-                        : "bg-[#1E1630] border-[#3A2A57] text-[#A79DB8]"
+                        ? "bg-[#7B4FC9] border-[#CDB9F5] text-white scale-110 shadow-sm"
+                        : "bg-white border-[#D6CEC4] text-[#9588A3]"
                     }`}>
                       <Truck size={11} strokeWidth={isTier1Unlocked ? 2.5 : 2} />
                     </div>
                     <span className={`text-[9px] font-bold uppercase tracking-wider mt-1.5 whitespace-nowrap transition-colors ${
-                      isTier1Unlocked ? "text-[#F59E0B]" : "text-[#746988]"
+                      isTier1Unlocked ? "text-[#7B4FC9]" : "text-[#9588A3]"
                     }`}>
                       ₹999 Free Ship
                     </span>
@@ -281,15 +279,15 @@ export default function CartDrawer() {
                     className="absolute top-1/2 -translate-y-1/2 right-0 flex flex-col items-center pointer-events-none"
                     style={{ marginTop: "-2px" }}
                   >
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-sm ${
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-xs ${
                       isTier2Unlocked 
-                        ? "bg-[#10B981] border-[#A7F3D0] text-[#0D0A14] scale-110 shadow-[0_0_12px_rgba(16,185,129,0.8)]"
-                        : "bg-[#1E1630] border-[#3A2A57] text-[#A79DB8]"
+                        ? "bg-[#10B981] border-[#A7F3D0] text-white scale-110 shadow-sm"
+                        : "bg-white border-[#D6CEC4] text-[#9588A3]"
                     }`}>
                       <Gift size={11} strokeWidth={isTier2Unlocked ? 2.5 : 2} />
                     </div>
                     <span className={`text-[9px] font-bold uppercase tracking-wider mt-1.5 whitespace-nowrap transition-colors ${
-                      isTier2Unlocked ? "text-[#10B981]" : "text-[#746988]"
+                      isTier2Unlocked ? "text-[#10B981]" : "text-[#9588A3]"
                     }`}>
                       ₹1,999 Free Gift
                     </span>
@@ -299,26 +297,26 @@ export default function CartDrawer() {
             )}
 
             {/* Scrollable Body: Cart Items, Free Gift, Upsell & Promo Code */}
-            <div className="flex-grow overflow-y-auto p-4 sm:p-5 space-y-4">
+            <div className="flex-grow overflow-y-auto p-4 sm:p-5 space-y-3.5">
               {activeDrawerTab === "cart" ? (
                 cart.length === 0 ? (
                   /* Empty State */
-                  <div className="flex flex-col items-center justify-center h-full text-center text-[#A79DB8] gap-4 py-16">
-                    <div className="w-16 h-16 rounded-full bg-[#161122] border border-[#2D2244] flex items-center justify-center text-[#F59E0B] shadow-inner">
+                  <div className="flex flex-col items-center justify-center h-full text-center text-[#635572] gap-4 py-16">
+                    <div className="w-16 h-16 rounded-full bg-white border border-[#EFE9E2] flex items-center justify-center text-[#C9A24D] shadow-xs">
                       <ShoppingBag size={28} strokeWidth={1.5} />
                     </div>
                     <div>
-                      <h4 className="font-serif text-lg font-bold text-[#FBF8F3] mb-1">
+                      <h4 className="font-serif text-lg font-bold text-[#2B1B3D] mb-1">
                         Your Sacred Bag is Empty
                       </h4>
-                      <p className="text-xs text-[#A79DB8] max-w-xs leading-relaxed mx-auto">
-                        Invite authentic Vedic blessings, abundance, love, and psychic protection into your sanctuary.
+                      <p className="text-xs text-[#635572] max-w-xs leading-relaxed mx-auto">
+                        Explore authentic gemstone talismans and consecrated chakra oils to awaken abundance, love, and protection.
                       </p>
                     </div>
                     <Link
                       href="/shop"
                       onClick={toggleCart}
-                      className="mt-2 px-6 py-3 rounded-full text-xs font-bold tracking-wider uppercase text-[#0D0A14] bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#F59E0B] hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all"
+                      className="mt-2 px-6 py-3 rounded-full text-xs font-bold tracking-wider uppercase text-white btn-amethyst shadow-md"
                     >
                       Explore Sacred Collections
                     </Link>
@@ -335,10 +333,10 @@ export default function CartDrawer() {
                         return (
                           <div
                             key={itemKey}
-                            className="p-3.5 rounded-2xl bg-[#161122] border border-[#2D2244] hover:border-[#F59E0B]/40 transition-all flex gap-3.5 items-center group shadow-xs"
+                            className="p-3.5 rounded-2xl bg-white border border-[#EFE9E2] hover:border-[#C9A24D]/60 transition-all flex gap-3.5 items-center group shadow-2xs"
                           >
                             {/* Product Thumbnail */}
-                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#201831] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#3A2A57]">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#FBF8F3] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#EFE9E2]">
                               <Image
                                 src={item.image}
                                 alt={item.name}
@@ -349,25 +347,25 @@ export default function CartDrawer() {
 
                             {/* Details */}
                             <div className="flex-grow min-w-0">
-                              <h4 className="text-xs sm:text-sm font-serif font-bold text-[#FBF8F3] leading-snug truncate">
+                              <h4 className="text-xs sm:text-sm font-serif font-bold text-[#2B1B3D] leading-snug truncate">
                                 {item.name}
                               </h4>
 
                               {/* Subtle Sacred Trust Badge */}
                               <div className="mt-1">
-                                <span className="inline-flex items-center gap-1 text-[9px] text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/25 px-2 py-0.5 rounded-full font-medium">
+                                <span className="inline-flex items-center gap-1 text-[9px] text-[#7B4FC9] bg-[#F5F0FD] border border-[#7B4FC9]/25 px-2 py-0.5 rounded-full font-medium">
                                   ✨ 108 Mantra Japa + Sacred Thread Included
                                 </span>
                               </div>
 
                               {/* Item Spec Info */}
-                              <div className="flex items-center gap-2 mt-1 text-[11px] text-[#A79DB8]">
-                                <span className="px-1.5 py-0.2 rounded bg-[#201831] border border-[#3A2A57] text-[10px] text-[#FBF8F3]">
+                              <div className="flex items-center gap-2 mt-1 text-[11px] text-[#635572]">
+                                <span className="px-1.5 py-0.5 rounded bg-[#FBF8F3] border border-[#EFE9E2] text-[10px] text-[#2B1B3D] font-medium">
                                   {item.category === "Oils"
                                     ? (item.id === "oil-7-chakra-master-box" ? "7x10ml Master Box" : "15ml Dropper")
                                     : (item.selectedBeadSize || "8mm Beads")}
                                 </span>
-                                <span className="text-[#F59E0B] italic truncate text-[10px]">
+                                <span className="text-[#8E6D24] italic truncate text-[10px]">
                                   {item.subCategory || "Consecrated"}
                                 </span>
                               </div>
@@ -375,20 +373,20 @@ export default function CartDrawer() {
                               {/* Stepper & Price */}
                               <div className="flex items-center justify-between mt-2.5">
                                 {/* Quantity Stepper */}
-                                <div className="flex items-center border border-[#3A2A57] rounded-lg bg-[#201831] px-1 py-0.5">
+                                <div className="flex items-center border border-[#EFE9E2] rounded-lg bg-[#FBF8F3] px-1 py-0.5">
                                   <button
                                     onClick={() => updateQuantity(itemKey, item.quantity - 1)}
-                                    className="p-1 text-[#A79DB8] hover:text-[#FBF8F3] transition-colors cursor-pointer"
+                                    className="p-1 text-[#635572] hover:text-[#2B1B3D] transition-colors cursor-pointer"
                                     aria-label="Decrease quantity"
                                   >
                                     <Minus size={11} />
                                   </button>
-                                  <span className="w-6 text-center text-xs font-bold text-[#FBF8F3]">
+                                  <span className="w-6 text-center text-xs font-bold text-[#2B1B3D]">
                                     {item.quantity}
                                   </span>
                                   <button
                                     onClick={() => updateQuantity(itemKey, item.quantity + 1)}
-                                    className="p-1 text-[#A79DB8] hover:text-[#FBF8F3] transition-colors cursor-pointer"
+                                    className="p-1 text-[#635572] hover:text-[#2B1B3D] transition-colors cursor-pointer"
                                     aria-label="Increase quantity"
                                   >
                                     <Plus size={11} />
@@ -398,18 +396,18 @@ export default function CartDrawer() {
                                 {/* Price & Remove */}
                                 <div className="flex items-center gap-2.5">
                                   <div className="text-right">
-                                    <span className="text-xs sm:text-sm font-bold text-[#FBF8F3] block">
+                                    <span className="text-xs sm:text-sm font-bold text-[#2B1B3D] block">
                                       ₹{linePrice.toLocaleString("en-IN")}
                                     </span>
                                     {originalPrice > linePrice && (
-                                      <span className="text-[10px] text-[#746988] line-through">
+                                      <span className="text-[10px] text-[#9588A3] line-through">
                                         ₹{originalPrice.toLocaleString("en-IN")}
                                       </span>
                                     )}
                                   </div>
                                   <button
                                     onClick={() => removeFromCart(itemKey)}
-                                    className="text-[#746988] hover:text-rose-400 p-1 cursor-pointer transition-colors"
+                                    className="text-[#9588A3] hover:text-rose-600 p-1 cursor-pointer transition-colors"
                                     aria-label="Remove item"
                                   >
                                     <Trash2 size={13} />
@@ -427,42 +425,42 @@ export default function CartDrawer() {
                           initial={{ opacity: 0, scale: 0.95, y: 8 }}
                           animate={{ opacity: 1, scale: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.95 }}
-                          className="p-3.5 rounded-2xl bg-gradient-to-r from-[#17221D] via-[#141C1A] to-[#1E2824] border-2 border-[#10B981]/60 shadow-[0_4px_20px_rgba(16,185,129,0.2)] flex gap-3.5 items-center relative overflow-hidden"
+                          className="p-3.5 rounded-2xl bg-gradient-to-r from-[#F0FDF4] via-white to-[#F5F0FD] border-2 border-[#10B981]/50 shadow-xs flex gap-3.5 items-center relative overflow-hidden"
                         >
-                          <div className="w-16 h-16 sm:w-18 sm:h-18 bg-[#0D1411] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#10B981]/40">
+                          <div className="w-16 h-16 sm:w-18 sm:h-18 bg-[#FBF8F3] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#10B981]/35">
                             <Image
                               src="/images/products/selenite-new.jpg"
                               alt="Raw Selenite Energy Charging Plate"
                               fill
                               className="object-cover"
                             />
-                            <div className="absolute top-1 left-1 bg-[#10B981] text-white text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full tracking-wider shadow-sm">
+                            <div className="absolute top-1 left-1 bg-[#10B981] text-white text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full tracking-wider shadow-2xs">
                               FREE
                             </div>
                           </div>
 
                           <div className="flex-grow min-w-0">
                             <div className="flex items-center gap-1.5 mb-0.5">
-                              <span className="text-[9px] font-bold uppercase tracking-wider text-[#10B981] bg-[#10B981]/15 px-2 py-0.5 rounded-full border border-[#10B981]/30 flex items-center gap-1">
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-[#065F46] bg-[#EDF7ED] px-2 py-0.5 rounded-full border border-[#A5D6A7] flex items-center gap-1">
                                 <Gift size={10} /> Auto-Added Free Gift
                               </span>
                             </div>
 
-                            <h4 className="text-xs sm:text-sm font-serif font-bold text-[#FBF8F3] leading-snug truncate">
+                            <h4 className="text-xs sm:text-sm font-serif font-bold text-[#2B1B3D] leading-snug truncate">
                               Raw Selenite Energy Charging Plate
                             </h4>
 
-                            <p className="text-[10px] text-[#A7F3D0]/80 truncate mt-0.5">
+                            <p className="text-[10px] text-[#635572] truncate mt-0.5">
                               Overnight crystal cleansing & lunar frequency charger
                             </p>
 
                             <div className="flex items-center justify-between mt-2">
                               <div className="flex items-baseline gap-1.5">
                                 <span className="text-xs font-bold text-[#10B981]">FREE</span>
-                                <span className="text-[10px] text-[#746988] line-through">₹699</span>
+                                <span className="text-[10px] text-[#9588A3] line-through">₹699</span>
                               </div>
-                              <span className="text-[9px] font-semibold text-[#10B981] flex items-center gap-1">
-                                <CheckCircle2 size={11} /> Unlocked
+                              <span className="text-[10px] font-semibold text-[#10B981] flex items-center gap-1">
+                                <CheckCircle2 size={12} /> Unlocked
                               </span>
                             </div>
                           </div>
@@ -472,20 +470,20 @@ export default function CartDrawer() {
 
                     {/* 3. 1-CLICK PRIEST-RECOMMENDED UPSELL WIDGET */}
                     {!isCleansingBowlInCart && (
-                      <div className="pt-2">
-                        <div className="p-3.5 rounded-2xl bg-[#161122] border-2 border-dashed border-[#F59E0B]/50 hover:border-[#F59E0B] transition-all space-y-2.5 relative">
+                      <div className="pt-1">
+                        <div className="p-3.5 rounded-2xl bg-gradient-to-r from-[#FFFDF9] via-white to-[#FAF6EE] border-2 border-dashed border-[#C9A24D]/60 hover:border-[#C9A24D] transition-all space-y-2.5 relative shadow-2xs">
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] uppercase font-bold tracking-wider text-[#F59E0B] flex items-center gap-1">
-                              <Sparkles size={11} /> Priest-Recommended In-Cart Add-on
+                            <span className="text-[10px] uppercase font-bold tracking-wider text-[#8E6D24] flex items-center gap-1">
+                              <Sparkles size={11} className="text-[#C9A24D]" /> Priest-Recommended In-Cart Add-on
                             </span>
-                            <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase bg-emerald-500/20 text-[#10B981] border border-emerald-500/40">
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase bg-[#EDF7ED] text-[#2E7D32] border border-[#A5D6A7]">
                               Save 62%
                             </span>
                           </div>
 
                           <div className="flex items-center justify-between gap-3">
                             <div className="flex items-center gap-3 min-w-0">
-                              <div className="w-14 h-14 rounded-xl overflow-hidden relative flex-shrink-0 bg-[#201831] border border-[#3A2A57]">
+                              <div className="w-14 h-14 rounded-xl overflow-hidden relative flex-shrink-0 bg-[#FBF8F3] border border-[#EFE9E2]">
                                 <Image
                                   src="/images/products/selenite-new.jpg"
                                   alt="Himalayan Selenite Cleansing Bowl"
@@ -494,15 +492,15 @@ export default function CartDrawer() {
                                 />
                               </div>
                               <div className="min-w-0">
-                                <h5 className="text-xs font-serif font-bold text-[#FBF8F3] truncate">
+                                <h5 className="text-xs font-serif font-bold text-[#2B1B3D] truncate">
                                   Himalayan Selenite Cleansing Bowl
                                 </h5>
-                                <p className="text-[10px] text-[#A79DB8] truncate mt-0.5">
+                                <p className="text-[10px] text-[#635572] truncate mt-0.5">
                                   Pure lunar salt to clear & recharge crystals
                                 </p>
                                 <div className="flex items-baseline gap-1.5 mt-1">
-                                  <span className="text-xs font-bold text-[#F59E0B]">₹299</span>
-                                  <span className="text-[10px] text-[#746988] line-through">₹799</span>
+                                  <span className="text-xs font-bold text-[#7B4FC9]">₹299</span>
+                                  <span className="text-[10px] text-[#9588A3] line-through">₹799</span>
                                 </div>
                               </div>
                             </div>
@@ -510,7 +508,7 @@ export default function CartDrawer() {
                             <button
                               type="button"
                               onClick={handleAddCleansingBowlUpsell}
-                              className="px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-[#0D0A14] bg-gradient-to-r from-[#F59E0B] to-[#FBBF24] hover:shadow-[0_0_15px_rgba(245,158,11,0.5)] active:scale-95 transition-all flex-shrink-0 cursor-pointer flex items-center gap-1"
+                              className="btn-amethyst px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-white shadow-xs active:scale-95 transition-all flex-shrink-0 cursor-pointer flex items-center gap-1"
                             >
                               <Plus size={13} strokeWidth={2.5} />
                               <span>Add</span>
@@ -522,16 +520,16 @@ export default function CartDrawer() {
 
                     {/* 4. PROMO CODE BOX & CLICKABLE CHIPS */}
                     <div className="pt-1">
-                      <div className="p-3.5 rounded-2xl bg-[#161122] border border-[#2D2244] space-y-2.5">
+                      <div className="p-3.5 rounded-2xl bg-white border border-[#EFE9E2] space-y-2.5 shadow-2xs">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-semibold text-[#FBF8F3] flex items-center gap-1.5">
-                            <Tag size={13} className="text-[#F59E0B]" />
+                          <span className="font-semibold text-[#2B1B3D] flex items-center gap-1.5">
+                            <Tag size={13} className="text-[#7B4FC9]" />
                             Sacred Coupon Code
                           </span>
                           {appliedCoupon && (
                             <button
                               onClick={removeCoupon}
-                              className="text-[10px] text-rose-400 hover:underline cursor-pointer font-semibold"
+                              className="text-[10px] text-rose-600 hover:underline cursor-pointer font-semibold"
                             >
                               Remove ({appliedCoupon})
                             </button>
@@ -544,11 +542,11 @@ export default function CartDrawer() {
                             placeholder="Enter code (e.g. DIVINE10)"
                             value={couponInput}
                             onChange={(e) => setCouponInput(e.target.value)}
-                            className="flex-grow px-3 py-2 text-xs rounded-xl bg-[#201831] border border-[#3A2A57] uppercase text-[#FBF8F3] placeholder-[#746988] focus:outline-none focus:border-[#F59E0B]"
+                            className="flex-grow px-3 py-2 text-xs rounded-xl bg-[#FBF8F3] border border-[#EFE9E2] uppercase text-[#2B1B3D] placeholder-[#9588A3] focus:outline-none focus:border-[#7B4FC9]"
                           />
                           <button
                             type="submit"
-                            className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-[#0D0A14] bg-[#F59E0B] hover:bg-[#FBBF24] transition-colors cursor-pointer"
+                            className="btn-amethyst px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-white cursor-pointer shadow-xs"
                           >
                             Apply
                           </button>
@@ -569,11 +567,11 @@ export default function CartDrawer() {
                                 onClick={() => handleChipCoupon(c.code)}
                                 className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors flex items-center gap-1 cursor-pointer ${
                                   isSelected
-                                    ? "bg-emerald-500/20 border-emerald-500 text-emerald-300"
-                                    : "bg-[#201831] border-[#3A2A57] text-[#A79DB8] hover:border-[#F59E0B]/50 hover:text-[#FBF8F3]"
+                                    ? "bg-[#EDF7ED] border-[#A5D6A7] text-[#2E7D32]"
+                                    : "bg-[#FBF8F3] border-[#EFE9E2] text-[#635572] hover:border-[#7B4FC9] hover:text-[#2B1B3D]"
                                 }`}
                               >
-                                {isSelected && <Check size={10} className="text-emerald-400" />}
+                                {isSelected && <Check size={10} className="text-[#2E7D32]" />}
                                 <span>{c.code} ({c.label})</span>
                               </button>
                             );
@@ -587,12 +585,12 @@ export default function CartDrawer() {
                 /* Wishlist Tab */
                 <div className="space-y-3">
                   {wishlist.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center text-[#A79DB8] gap-4 py-16">
-                      <Heart size={32} strokeWidth={1.5} className="text-[#F59E0B]" />
-                      <h4 className="font-serif text-lg font-bold text-[#FBF8F3]">
+                    <div className="flex flex-col items-center justify-center h-full text-center text-[#635572] gap-4 py-16">
+                      <Heart size={32} strokeWidth={1.5} className="text-[#C9A24D]" />
+                      <h4 className="font-serif text-lg font-bold text-[#2B1B3D]">
                         No saved crystals yet
                       </h4>
-                      <p className="text-xs text-[#A79DB8] max-w-xs">
+                      <p className="text-xs text-[#635572] max-w-xs">
                         Tap the heart icon on any gemstone card to save it to your sacred wishlist.
                       </p>
                     </div>
@@ -606,12 +604,12 @@ export default function CartDrawer() {
                       return (
                         <div
                           key={product.id}
-                          className="p-3.5 rounded-2xl bg-[#161122] border border-[#2D2244] flex gap-3.5 items-center group transition-all"
+                          className="p-3.5 rounded-2xl bg-white border border-[#EFE9E2] flex gap-3.5 items-center group transition-all shadow-2xs"
                         >
                           <Link
                             href={`/product?id=${product.id}`}
                             onClick={toggleCart}
-                            className="w-16 h-16 bg-[#201831] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#3A2A57] cursor-pointer"
+                            className="w-16 h-16 bg-[#FBF8F3] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#EFE9E2] cursor-pointer"
                           >
                             <Image
                               src={product.image}
@@ -627,13 +625,13 @@ export default function CartDrawer() {
                               onClick={toggleCart}
                               className="block"
                             >
-                              <h4 className="text-xs sm:text-sm font-serif font-bold text-[#FBF8F3] leading-snug truncate hover:text-[#F59E0B] transition-colors">
+                              <h4 className="text-xs sm:text-sm font-serif font-bold text-[#2B1B3D] leading-snug truncate hover:text-[#7B4FC9] transition-colors">
                                 {product.name}
                               </h4>
                             </Link>
 
-                            <div className="flex items-center gap-2 mt-1 text-[11px] text-[#A79DB8]">
-                              <span className="text-[#F59E0B] italic truncate text-[10px]">
+                            <div className="flex items-center gap-2 mt-1 text-[11px] text-[#635572]">
+                              <span className="text-[#8E6D24] italic truncate text-[10px]">
                                 {product.chakra || product.category || "Vedic Energized"}
                               </span>
                             </div>
@@ -644,19 +642,19 @@ export default function CartDrawer() {
                                   addToCart(product, qty);
                                   showToast(`✨ Moved ${product.name} to sacred bag!`);
                                 }}
-                                className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-[#0D0A14] bg-[#F59E0B] hover:bg-[#FBBF24] transition-all flex items-center gap-1 cursor-pointer"
+                                className="btn-amethyst px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-white transition-all flex items-center gap-1 cursor-pointer shadow-xs"
                               >
                                 <ShoppingBag size={11} />
                                 <span>Move to Bag</span>
                               </button>
 
                               <div className="flex items-center gap-2.5">
-                                <span className="text-xs font-bold text-[#FBF8F3]">
+                                <span className="text-xs font-bold text-[#2B1B3D]">
                                   ₹{price.toLocaleString("en-IN")}
                                 </span>
                                 <button
                                   onClick={() => toggleWishlist(product.id)}
-                                  className="text-[#746988] hover:text-rose-400 p-1 cursor-pointer transition-colors"
+                                  className="text-[#9588A3] hover:text-rose-600 p-1 cursor-pointer transition-colors"
                                   aria-label="Remove from wishlist"
                                 >
                                   <Trash2 size={13} />
@@ -672,31 +670,31 @@ export default function CartDrawer() {
               )}
             </div>
 
-            {/* 4. HIGH-CONVERTING CHECKOUT FOOTER */}
+            {/* 4. HIGH-CONVERTING CHECKOUT FOOTER (LIGHT THEME) */}
             {activeDrawerTab === "cart" && cart.length > 0 && (
-              <div className="p-4 sm:p-5 border-t border-[#251B38] bg-[#161122] space-y-3 flex-shrink-0">
+              <div className="p-4 sm:p-5 border-t border-[#EFE9E2] bg-white space-y-3 flex-shrink-0 shadow-lg">
                 {/* Total Sacred Savings Banner */}
                 {totalSacredSavings > 0 && (
-                  <div className="p-2.5 rounded-xl bg-gradient-to-r from-[#10B981]/15 via-[#F59E0B]/10 to-[#10B981]/15 border border-[#10B981]/35 flex items-center justify-between text-xs">
-                    <span className="text-[#10B981] font-semibold flex items-center gap-1.5 text-[11px]">
-                      <Sparkles size={12} className="text-[#F59E0B]" />
+                  <div className="p-2.5 rounded-xl bg-gradient-to-r from-[#EDF7ED] via-white to-[#F5F0FD] border border-[#A5D6A7] flex items-center justify-between text-xs">
+                    <span className="text-[#1B5E20] font-semibold flex items-center gap-1.5 text-[11px]">
+                      <Sparkles size={12} className="text-[#C9A24D]" />
                       Total Sacred Savings Included:
                     </span>
-                    <span className="font-extrabold text-[#10B981] text-xs">
+                    <span className="font-extrabold text-[#1B5E20] text-xs sm:text-sm">
                       ₹{totalSacredSavings.toLocaleString("en-IN")}
                     </span>
                   </div>
                 )}
 
                 {/* Subtotal, Shipping & Total Calculation */}
-                <div className="space-y-1.5 text-xs text-[#A79DB8]">
+                <div className="space-y-1.5 text-xs text-[#635572]">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span className="text-[#FBF8F3] font-semibold">₹{rawSubtotal.toLocaleString("en-IN")}</span>
+                    <span className="text-[#2B1B3D] font-semibold">₹{rawSubtotal.toLocaleString("en-IN")}</span>
                   </div>
 
                   {couponDiscount > 0 && (
-                    <div className="flex justify-between text-[#10B981] font-semibold">
+                    <div className="flex justify-between text-[#1B5E20] font-semibold">
                       <span>Promo Discount ({appliedCoupon})</span>
                       <span>-₹{couponDiscount.toLocaleString("en-IN")}</span>
                     </div>
@@ -706,36 +704,37 @@ export default function CartDrawer() {
                     <span>Express Pan-India Shipping</span>
                     <span>
                       {shippingFee === 0 ? (
-                        <strong className="text-[#10B981] font-bold">FREE</strong>
+                        <strong className="text-[#1B5E20] font-bold">FREE</strong>
                       ) : (
                         `₹${shippingFee}`
                       )}
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-[#251B38] flex justify-between items-baseline text-sm">
-                    <span className="font-serif font-semibold text-[#FBF8F3]">Estimated Total:</span>
-                    <span className="text-xl font-bold font-serif text-[#F59E0B]">
+                  <div className="pt-2 border-t border-[#EFE9E2] flex justify-between items-baseline text-sm">
+                    <span className="font-serif font-semibold text-[#2B1B3D]">Estimated Total:</span>
+                    <span className="text-xl font-bold font-serif text-[#7B4FC9]">
                       ₹{grandTotal.toLocaleString("en-IN")}
                     </span>
                   </div>
                 </div>
 
-                {/* Primary CTA Button: Full-Width Glowing Gold */}
+                {/* Primary CTA Button: Full-Width Amethyst Gradient */}
                 <div className="pt-1">
                   <Link
                     href="/checkout"
                     onClick={toggleCart}
-                    className="w-full py-4 px-6 rounded-2xl text-xs sm:text-sm font-serif font-bold tracking-widest uppercase text-[#0D0A14] bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#F59E0B] hover:shadow-[0_0_30px_rgba(245,158,11,0.55)] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg text-center"
+                    className="w-full py-4 px-6 rounded-2xl text-xs sm:text-sm font-serif font-bold tracking-widest uppercase text-white btn-amethyst hover:shadow-[0_8px_30px_rgba(123,79,201,0.4)] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md text-center"
                   >
+                    <Sparkles size={15} className="text-[#C9A24D]" />
                     <span>PROCEED TO SACRED CHECKOUT</span>
                     <ArrowRight size={16} />
                   </Link>
                 </div>
 
                 {/* Micro-Trust & Prepaid Nudge Bar */}
-                <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] text-[#A79DB8] pt-1">
-                  <ShieldCheck size={13} className="text-[#F59E0B]" />
+                <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] text-[#635572] pt-1">
+                  <ShieldCheck size={13} className="text-[#C9A24D]" />
                   <span>🛡️ Extra 5% Off on UPI / Prepaid • 100% Authentically Sourced Stones</span>
                 </div>
               </div>
