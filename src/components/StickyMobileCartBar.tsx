@@ -36,7 +36,7 @@ export default function StickyMobileCartBar() {
 
   // Coupon discount
   let couponDiscount = 0;
-  if (appliedCoupon === "RIYA10") couponDiscount = Math.round(rawSubtotal * 0.10);
+  if (appliedCoupon === "DIVINE10" || appliedCoupon === "RIYA10") couponDiscount = Math.round(rawSubtotal * 0.10);
   else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15") couponDiscount = Math.round(rawSubtotal * 0.15);
   else if (appliedCoupon === "DIVINE20" || appliedCoupon === "KUNDALI20") couponDiscount = Math.round(rawSubtotal * 0.20);
 

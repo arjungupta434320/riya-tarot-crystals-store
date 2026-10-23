@@ -11,13 +11,17 @@ import {
   Heart, 
   Sparkles, 
   Truck, 
+  Gift, 
   Trash2, 
   ArrowRight, 
   Tag, 
   Check, 
-  ShieldCheck 
+  ShieldCheck,
+  Lock,
+  Flame,
+  CheckCircle2
 } from "lucide-react";
-import { useStore, Product } from "@/store/useStore";
+import { useStore, Product, CartItem } from "@/store/useStore";
 import { cartUpsells, fetchProducts, fallbackProducts } from "@/data/products";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -33,7 +37,6 @@ export default function CartDrawer() {
     wishlist,
     toggleWishlist,
     addToCart,
-    toggleCheckoutModal,
     appliedCoupon,
     applyCoupon,
     removeCoupon,
@@ -41,7 +44,6 @@ export default function CartDrawer() {
   } = useStore();
 
   const [couponInput, setCouponInput] = useState("");
-  const [isMobile, setIsMobile] = useState(false);
   const [allProducts, setAllProducts] = useState<Product[]>(fallbackProducts);
   const [wishlistQuantities, setWishlistQuantities] = useState<Record<string, number>>({});
 
@@ -49,40 +51,97 @@ export default function CartDrawer() {
     fetchProducts().then(setAllProducts);
   }, []);
 
+  // 1. Lock body scroll when cart drawer is open
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640);
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
+    if (isCartOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isCartOpen]);
 
+  // 2. Close on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isCartOpen) {
+        toggleCart();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isCartOpen, toggleCart]);
+
+  // Total quantity and raw subtotal calculated dynamically from paid items in cart
   const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
   const rawSubtotal = cart.reduce(
     (sum, item) => sum + (item.salePrice || item.price) * item.quantity,
     0
   );
 
-  // Tiered discount logic: Buy 2 get 15% off automatically
-  const isTieredQualified = totalQuantity >= 2;
-  const tieredDiscount = isTieredQualified ? Math.round(rawSubtotal * 0.15) : 0;
+  // 2-Tier Milestone Thresholds
+  const TIER_1_SHIPPING = 999;
+  const TIER_2_FREE_GIFT = 1999;
+  const FREE_GIFT_VALUE = 699;
 
-  // Coupon discount logic
+  const isTier1Unlocked = rawSubtotal >= TIER_1_SHIPPING;
+  const isTier2Unlocked = rawSubtotal >= TIER_2_FREE_GIFT;
+
+  // Milestone Progress Bar Percentage:
+  // 0 to ₹999 maps to 0% -> 50%
+  // ₹999 to ₹1,999 maps to 50% -> 100%
+  let progressPercent = 0;
+  if (rawSubtotal <= 0) {
+    progressPercent = 0;
+  } else if (rawSubtotal <= TIER_1_SHIPPING) {
+    progressPercent = Math.min(50, Math.round((rawSubtotal / TIER_1_SHIPPING) * 50));
+  } else if (rawSubtotal < TIER_2_FREE_GIFT) {
+    const tier2Range = TIER_2_FREE_GIFT - TIER_1_SHIPPING;
+    const tier2Current = rawSubtotal - TIER_1_SHIPPING;
+    progressPercent = 50 + Math.min(50, Math.round((tier2Current / tier2Range) * 50));
+  } else {
+    progressPercent = 100;
+  }
+
+  // Dynamic Milestone Copy
+  let milestoneCopy = "";
+  if (rawSubtotal < TIER_1_SHIPPING) {
+    milestoneCopy = `Add ₹${(TIER_1_SHIPPING - rawSubtotal).toLocaleString("en-IN")} more for FREE Express Shipping! 🚚`;
+  } else if (rawSubtotal < TIER_2_FREE_GIFT) {
+    milestoneCopy = `🎉 Free Shipping Unlocked! Add ₹${(TIER_2_FREE_GIFT - rawSubtotal).toLocaleString("en-IN")} more for a FREE Selenite Charger (Worth ₹699) ✨`;
+  } else {
+    milestoneCopy = "✨ All Sacred Rewards Unlocked! (Free Shipping + Free Selenite Charger)";
+  }
+
+  // Coupon Discount Calculation
   let couponDiscount = 0;
-  if (appliedCoupon === "RIYA10") couponDiscount = Math.round(rawSubtotal * 0.10);
-  else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15") couponDiscount = Math.round(rawSubtotal * 0.15);
-  else if (appliedCoupon === "DIVINE20" || appliedCoupon === "KUNDALI20") couponDiscount = Math.round(rawSubtotal * 0.20);
+  if (appliedCoupon === "DIVINE10" || appliedCoupon === "RIYA10") {
+    couponDiscount = Math.round(rawSubtotal * 0.10);
+  } else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15") {
+    couponDiscount = Math.round(rawSubtotal * 0.15);
+  } else if (appliedCoupon === "DIVINE20" || appliedCoupon === "KUNDALI20") {
+    couponDiscount = Math.round(rawSubtotal * 0.20);
+  }
 
-  const totalDiscount = tieredDiscount + couponDiscount;
+  // Total MRP for calculating strikethrough catalog savings
+  const totalMrp = cart.reduce(
+    (sum, item) => sum + (item.price || item.salePrice || 0) * item.quantity,
+    0
+  );
+  const catalogMrpDiscount = Math.max(0, totalMrp - rawSubtotal);
+  const freeGiftSavings = isTier2Unlocked ? FREE_GIFT_VALUE : 0;
+  const totalSacredSavings = catalogMrpDiscount + couponDiscount + freeGiftSavings;
 
-  // Shipping logic: Free above ₹1,499
-  const freeShippingThreshold = 1499;
-  const isFreeShipping = (rawSubtotal - totalDiscount) >= freeShippingThreshold || rawSubtotal >= freeShippingThreshold;
-  const shippingFee = isFreeShipping || cart.length === 0 ? 0 : 99;
+  // Shipping Fee Logic
+  const shippingFee = isTier1Unlocked || cart.length === 0 ? 0 : 79;
+  const grandTotal = Math.max(0, rawSubtotal - couponDiscount + shippingFee);
 
-  const grandTotal = Math.max(0, rawSubtotal - totalDiscount + shippingFee);
-
-  // Free shipping progress
-  const progressPercent = Math.min(100, Math.round((rawSubtotal / freeShippingThreshold) * 100));
+  // Check if upsell item is already added to cart
+  const isCleansingBowlInCart = cart.some(
+    (item) => item.id === "upsell-selenite-cleansing-bowl" || item.name.toLowerCase().includes("selenite cleansing bowl")
+  );
 
   const handleApplyCouponCode = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -97,9 +156,27 @@ export default function CartDrawer() {
     showToast(res.message, res.success ? "success" : "info");
   };
 
-  const handleAddUpsell = (upsell: Product) => {
-    addToCart(upsell, 1, "8mm");
-    showToast(`✨ Added ${upsell.name} to complete your set!`);
+  // 1-Click Upsell Add
+  const handleAddCleansingBowlUpsell = () => {
+    const upsellItem: Product = {
+      id: "upsell-selenite-cleansing-bowl",
+      name: "Himalayan Selenite Cleansing Bowl (3-Inch)",
+      description: "Handcrafted Moroccan Selenite bowl to cleanse, neutralize, and charge your crystal bracelets and chakra oils overnight.",
+      shortIntention: "Overnight Crystal Clearing & Pranic Recharging",
+      price: 799,
+      salePrice: 299,
+      image: "/images/products/selenite-new.jpg",
+      category: "Overall wellness",
+      subCategory: "Overall wellness",
+      badge: "Save 62%",
+      chakra: "Crown (Sahasrara)",
+      planet: "Moon (Chandra)",
+      rating: 4.98,
+      reviewCount: 310,
+      benefits: ["Cleanses and resets crystal frequencies", "Zero maintenance or water needed"]
+    };
+    addToCart(upsellItem, 1);
+    showToast("✨ Added Himalayan Selenite Cleansing Bowl (Save 62%) to your bag!");
   };
 
   return (
@@ -111,174 +188,228 @@ export default function CartDrawer() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-[#2C2A29]/30 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/65 backdrop-blur-sm transition-opacity"
             onClick={toggleCart}
           />
 
-          {/* Responsive Drawer: Bottom-sheet slide-up on mobile, right slide-over on desktop */}
+          {/* Luxury Slide-Over Cart Drawer */}
           <motion.div
-            initial={isMobile ? { y: "100%" } : { x: "100%" }}
-            animate={isMobile ? { y: 0 } : { x: 0 }}
-            exit={isMobile ? { y: "100%" } : { x: "100%" }}
-            transition={{ type: "spring", damping: 28, stiffness: 300 }}
-            className="fixed bottom-0 right-0 max-h-[92dvh] sm:max-h-none sm:top-0 h-full w-full sm:w-[440px] bg-[#FFFFFF] rounded-t-3xl sm:rounded-none shadow-2xl z-10 flex flex-col border-t sm:border-t-0 sm:border-l border-[#EAE5DF]"
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 320 }}
+            className="fixed top-0 right-0 h-full w-full sm:w-[480px] bg-[#0D0A14] text-[#FBF8F3] shadow-[0_0_50px_rgba(0,0,0,0.8)] z-10 flex flex-col border-l border-[#2D2244]"
           >
-            {/* Mobile Drag Indicator */}
-            <div className="sm:hidden w-full pt-2.5 pb-1 flex justify-center bg-[#FAF9F6] rounded-t-3xl">
-              <div className="w-10 h-1 bg-[#D4AF37]/40 rounded-full" />
-            </div>
-
-            {/* Header */}
-            <div className="p-4 sm:p-6 border-b border-[#EAE5DF] bg-[#FAF9F6] flex items-center justify-between flex-shrink-0">
-              <div className="flex gap-6">
+            {/* Header: Title, Tab Switcher & Close */}
+            <div className="p-4 sm:p-5 border-b border-[#251B38] bg-[#161122] flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-6">
                 <button
                   onClick={() => setDrawerTab("cart")}
-                  className={`font-serif tracking-wider text-sm pb-1 transition-all cursor-pointer ${
+                  className={`font-serif tracking-widest text-xs sm:text-sm uppercase pb-1 transition-all cursor-pointer flex items-center gap-1.5 ${
                     activeDrawerTab === "cart"
-                      ? "border-b-2 border-[#D4AF37] text-[#2C2A29] font-bold"
-                      : "text-[#6E6A64] hover:text-[#2C2A29]"
+                      ? "border-b-2 border-[#F59E0B] text-[#FBF8F3] font-bold"
+                      : "text-[#A79DB8] hover:text-[#FBF8F3]"
                   }`}
                 >
-                  YOUR BAG ({totalQuantity})
+                  <ShoppingBag size={14} className={activeDrawerTab === "cart" ? "text-[#F59E0B]" : "text-[#A79DB8]"} />
+                  <span>YOUR BAG ({totalQuantity})</span>
                 </button>
+
                 <button
                   onClick={() => setDrawerTab("wishlist")}
-                  className={`font-serif tracking-wider text-sm pb-1 transition-all cursor-pointer ${
+                  className={`font-serif tracking-widest text-xs sm:text-sm uppercase pb-1 transition-all cursor-pointer flex items-center gap-1.5 ${
                     activeDrawerTab === "wishlist"
-                      ? "border-b-2 border-[#D4AF37] text-[#2C2A29] font-bold"
-                      : "text-[#6E6A64] hover:text-[#2C2A29]"
+                      ? "border-b-2 border-[#F59E0B] text-[#FBF8F3] font-bold"
+                      : "text-[#A79DB8] hover:text-[#FBF8F3]"
                   }`}
                 >
-                  WISHLIST ({wishlist.length})
+                  <Heart size={14} className={activeDrawerTab === "wishlist" ? "text-[#F59E0B]" : "text-[#A79DB8]"} />
+                  <span>WISHLIST ({wishlist.length})</span>
                 </button>
               </div>
 
               <button
                 onClick={toggleCart}
-                className="w-8 h-8 rounded-full bg-white border border-[#EAE5DF] flex items-center justify-center text-[#6E6A64] hover:text-[#2C2A29] transition-colors"
-                aria-label="Close cart"
+                className="w-8 h-8 rounded-full bg-[#201831] border border-[#3A2A57] flex items-center justify-center text-[#A79DB8] hover:text-[#FBF8F3] hover:border-[#F59E0B]/50 transition-colors cursor-pointer"
+                aria-label="Close cart drawer"
               >
                 <X size={16} />
               </button>
             </div>
 
-            {/* Free Shipping & Tiered Discount Progress Bar */}
-            {activeDrawerTab === "cart" && cart.length > 0 && (
-              <div className="bg-[#F8F4EC] p-4 border-b border-[#EAE5DF] space-y-2 flex-shrink-0">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-[#2C2A29] flex items-center gap-1.5">
-                    <Truck size={14} className="text-[#D4AF37]" />
-                    {isFreeShipping ? (
-                      <span className="text-emerald-800 font-bold">✨ Free Express Shipping Unlocked!</span>
-                    ) : (
-                      <span>Add ₹{freeShippingThreshold - rawSubtotal} for FREE Shipping</span>
-                    )}
-                  </span>
-                  
-                  <span className="text-[11px] font-bold text-[#9A7B2C]">
-                    {isTieredQualified ? "15% Duo Discount Active!" : "Buy 2 for 15% Off"}
-                  </span>
+            {/* 1. 2-TIER GAMIFIED MILESTONE PROGRESS BAR (TOP OF DRAWER) */}
+            {activeDrawerTab === "cart" && (
+              <div className="bg-[#130E1F] p-4 border-b border-[#251B38] space-y-3 flex-shrink-0">
+                {/* Dynamic Copy */}
+                <div className="flex items-center justify-between text-xs min-h-[22px]">
+                  <p className="text-[11px] sm:text-xs font-semibold text-[#FBF8F3] leading-snug">
+                    {milestoneCopy}
+                  </p>
                 </div>
 
-                {/* Progress bar track in Champagne Gold */}
-                <div className="w-full h-2 bg-[#EAE5DF] rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-[#D4AF37] to-[#C59B27] transition-all duration-400 ease-out"
-                    style={{ width: `${progressPercent}%` }}
-                  />
+                {/* Progress Bar Track with Milestone Nodes */}
+                <div className="relative pt-1 pb-4">
+                  {/* Track line */}
+                  <div className="w-full h-2.5 bg-[#201831] rounded-full overflow-hidden border border-[#3A2A57]/60">
+                    <div
+                      className="h-full bg-gradient-to-r from-[#D97706] via-[#F59E0B] to-[#FBBF24] transition-all duration-500 ease-out shadow-[0_0_12px_rgba(245,158,11,0.6)]"
+                      style={{ width: `${progressPercent}%` }}
+                    />
+                  </div>
+
+                  {/* Tier 1 Node at 50% (₹999) */}
+                  <div 
+                    className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-none"
+                    style={{ marginTop: "-2px" }}
+                  >
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-sm ${
+                      isTier1Unlocked 
+                        ? "bg-[#F59E0B] border-[#FDE68A] text-[#0D0A14] scale-110 shadow-[0_0_10px_rgba(245,158,11,0.8)]"
+                        : "bg-[#1E1630] border-[#3A2A57] text-[#A79DB8]"
+                    }`}>
+                      <Truck size={11} strokeWidth={isTier1Unlocked ? 2.5 : 2} />
+                    </div>
+                    <span className={`text-[9px] font-bold uppercase tracking-wider mt-1.5 whitespace-nowrap transition-colors ${
+                      isTier1Unlocked ? "text-[#F59E0B]" : "text-[#746988]"
+                    }`}>
+                      ₹999 Free Ship
+                    </span>
+                  </div>
+
+                  {/* Tier 2 Node at 100% (₹1,999) */}
+                  <div 
+                    className="absolute top-1/2 -translate-y-1/2 right-0 flex flex-col items-center pointer-events-none"
+                    style={{ marginTop: "-2px" }}
+                  >
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-300 shadow-sm ${
+                      isTier2Unlocked 
+                        ? "bg-[#10B981] border-[#A7F3D0] text-[#0D0A14] scale-110 shadow-[0_0_12px_rgba(16,185,129,0.8)]"
+                        : "bg-[#1E1630] border-[#3A2A57] text-[#A79DB8]"
+                    }`}>
+                      <Gift size={11} strokeWidth={isTier2Unlocked ? 2.5 : 2} />
+                    </div>
+                    <span className={`text-[9px] font-bold uppercase tracking-wider mt-1.5 whitespace-nowrap transition-colors ${
+                      isTier2Unlocked ? "text-[#10B981]" : "text-[#746988]"
+                    }`}>
+                      ₹1,999 Free Gift
+                    </span>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* Body */}
-            <div className="flex-grow overflow-y-auto p-5 sm:p-6 space-y-4">
+            {/* Scrollable Body: Cart Items, Free Gift, Upsell & Promo Code */}
+            <div className="flex-grow overflow-y-auto p-4 sm:p-5 space-y-4">
               {activeDrawerTab === "cart" ? (
                 cart.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center text-[#6E6A64] gap-4 py-16">
-                    <div className="w-16 h-16 rounded-full bg-[#FAF9F6] border border-[#EAE5DF] flex items-center justify-center text-[#D4AF37]">
-                      <ShoppingBag size={30} strokeWidth={1.5} />
+                  /* Empty State */
+                  <div className="flex flex-col items-center justify-center h-full text-center text-[#A79DB8] gap-4 py-16">
+                    <div className="w-16 h-16 rounded-full bg-[#161122] border border-[#2D2244] flex items-center justify-center text-[#F59E0B] shadow-inner">
+                      <ShoppingBag size={28} strokeWidth={1.5} />
                     </div>
                     <div>
-                      <h4 className="font-serif text-base font-semibold text-[#2C2A29] mb-1">
+                      <h4 className="font-serif text-lg font-bold text-[#FBF8F3] mb-1">
                         Your Sacred Bag is Empty
                       </h4>
-                      <p className="text-xs text-[#6E6A64] max-w-xs leading-relaxed">
-                        Explore our authentically sourced healed crystal bracelets to awaken abundance, love, and protection.
+                      <p className="text-xs text-[#A79DB8] max-w-xs leading-relaxed mx-auto">
+                        Invite authentic Vedic blessings, abundance, love, and psychic protection into your sanctuary.
                       </p>
                     </div>
-                    <button
+                    <Link
+                      href="/shop"
                       onClick={toggleCart}
-                      className="mt-2 px-6 py-2.5 rounded-full text-xs font-semibold tracking-wider uppercase text-[#2C2A29] btn-gold-shimmer"
+                      className="mt-2 px-6 py-3 rounded-full text-xs font-bold tracking-wider uppercase text-[#0D0A14] bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#F59E0B] hover:shadow-[0_0_20px_rgba(245,158,11,0.5)] transition-all"
                     >
-                      Explore Collections
-                    </button>
+                      Explore Sacred Collections
+                    </Link>
                   </div>
                 ) : (
                   <>
-                    {/* Cart Items List */}
-                    <div className="space-y-3.5">
+                    {/* 2. Paid Cart Items List */}
+                    <div className="space-y-3">
                       {cart.map((item) => {
                         const itemKey = item.cartKey || `${item.id}-${item.selectedBeadSize || '8mm'}`;
                         const linePrice = (item.salePrice || item.price) * item.quantity;
+                        const originalPrice = (item.price || item.salePrice || 0) * item.quantity;
 
                         return (
                           <div
                             key={itemKey}
-                            className="p-3.5 rounded-2xl bg-[#FFFFFF] border border-[#EAE5DF] shadow-xs flex gap-3.5 items-center group"
+                            className="p-3.5 rounded-2xl bg-[#161122] border border-[#2D2244] hover:border-[#F59E0B]/40 transition-all flex gap-3.5 items-center group shadow-xs"
                           >
-                            <div className="w-18 h-18 bg-[#FAF9F6] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#EAE5DF]">
+                            {/* Product Thumbnail */}
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-[#201831] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#3A2A57]">
                               <Image
                                 src={item.image}
                                 alt={item.name}
                                 fill
-                                className="object-cover group-hover:scale-105 transition-transform"
+                                className="object-cover group-hover:scale-105 transition-transform duration-300"
                               />
                             </div>
 
+                            {/* Details */}
                             <div className="flex-grow min-w-0">
-                              <h4 className="text-xs font-semibold text-[#2C2A29] leading-snug truncate">
+                              <h4 className="text-xs sm:text-sm font-serif font-bold text-[#FBF8F3] leading-snug truncate">
                                 {item.name}
                               </h4>
 
-                              <div className="flex items-center gap-2 mt-1 text-[11px] text-[#6E6A64]">
-                                <span className="px-1.5 py-0.5 rounded bg-[#FAF9F6] border border-[#EAE5DF] font-medium">
-                                  {item.category === "Oils" 
-                                    ? (item.id === "oil-7-chakra-master-box" ? "7x10ml Master Box" : "15ml Dropper")
-                                    : (item.selectedBeadSize || "8mm")}
-                                </span>
-                                <span className="text-[#9A7B2C] italic truncate">
-                                  {item.subCategory || "Energized"}
+                              {/* Subtle Sacred Trust Badge */}
+                              <div className="mt-1">
+                                <span className="inline-flex items-center gap-1 text-[9px] text-[#F59E0B] bg-[#F59E0B]/10 border border-[#F59E0B]/25 px-2 py-0.5 rounded-full font-medium">
+                                  ✨ 108 Mantra Japa + Sacred Thread Included
                                 </span>
                               </div>
 
+                              {/* Item Spec Info */}
+                              <div className="flex items-center gap-2 mt-1 text-[11px] text-[#A79DB8]">
+                                <span className="px-1.5 py-0.2 rounded bg-[#201831] border border-[#3A2A57] text-[10px] text-[#FBF8F3]">
+                                  {item.category === "Oils"
+                                    ? (item.id === "oil-7-chakra-master-box" ? "7x10ml Master Box" : "15ml Dropper")
+                                    : (item.selectedBeadSize || "8mm Beads")}
+                                </span>
+                                <span className="text-[#F59E0B] italic truncate text-[10px]">
+                                  {item.subCategory || "Consecrated"}
+                                </span>
+                              </div>
+
+                              {/* Stepper & Price */}
                               <div className="flex items-center justify-between mt-2.5">
-                                <div className="flex items-center border border-[#EAE5DF] rounded-lg bg-[#FAF9F6] px-1.5 py-0.5">
+                                {/* Quantity Stepper */}
+                                <div className="flex items-center border border-[#3A2A57] rounded-lg bg-[#201831] px-1 py-0.5">
                                   <button
                                     onClick={() => updateQuantity(itemKey, item.quantity - 1)}
-                                    className="p-1 text-[#6E6A64] hover:text-[#2C2A29] cursor-pointer"
+                                    className="p-1 text-[#A79DB8] hover:text-[#FBF8F3] transition-colors cursor-pointer"
                                     aria-label="Decrease quantity"
                                   >
                                     <Minus size={11} />
                                   </button>
-                                  <span className="w-6 text-center text-xs font-bold text-[#2C2A29]">
+                                  <span className="w-6 text-center text-xs font-bold text-[#FBF8F3]">
                                     {item.quantity}
                                   </span>
                                   <button
                                     onClick={() => updateQuantity(itemKey, item.quantity + 1)}
-                                    className="p-1 text-[#6E6A64] hover:text-[#2C2A29] cursor-pointer"
+                                    className="p-1 text-[#A79DB8] hover:text-[#FBF8F3] transition-colors cursor-pointer"
                                     aria-label="Increase quantity"
                                   >
                                     <Plus size={11} />
                                   </button>
                                 </div>
 
+                                {/* Price & Remove */}
                                 <div className="flex items-center gap-2.5">
-                                  <span className="text-xs font-bold text-[#2C2A29]">
-                                    ₹{linePrice.toLocaleString("en-IN")}
-                                  </span>
+                                  <div className="text-right">
+                                    <span className="text-xs sm:text-sm font-bold text-[#FBF8F3] block">
+                                      ₹{linePrice.toLocaleString("en-IN")}
+                                    </span>
+                                    {originalPrice > linePrice && (
+                                      <span className="text-[10px] text-[#746988] line-through">
+                                        ₹{originalPrice.toLocaleString("en-IN")}
+                                      </span>
+                                    )}
+                                  </div>
                                   <button
                                     onClick={() => removeFromCart(itemKey)}
-                                    className="text-[#6E6A64] hover:text-rose-600 p-1 cursor-pointer transition-colors"
+                                    className="text-[#746988] hover:text-rose-400 p-1 cursor-pointer transition-colors"
                                     aria-label="Remove item"
                                   >
                                     <Trash2 size={13} />
@@ -289,56 +420,118 @@ export default function CartDrawer() {
                           </div>
                         );
                       })}
+
+                      {/* AUTO-INJECTED FREE GIFT CARD (UNLOCKED AT ₹1,999) */}
+                      {isTier2Unlocked && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95, y: 8 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          className="p-3.5 rounded-2xl bg-gradient-to-r from-[#17221D] via-[#141C1A] to-[#1E2824] border-2 border-[#10B981]/60 shadow-[0_4px_20px_rgba(16,185,129,0.2)] flex gap-3.5 items-center relative overflow-hidden"
+                        >
+                          <div className="w-16 h-16 sm:w-18 sm:h-18 bg-[#0D1411] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#10B981]/40">
+                            <Image
+                              src="/images/products/selenite-new.jpg"
+                              alt="Raw Selenite Energy Charging Plate"
+                              fill
+                              className="object-cover"
+                            />
+                            <div className="absolute top-1 left-1 bg-[#10B981] text-white text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full tracking-wider shadow-sm">
+                              FREE
+                            </div>
+                          </div>
+
+                          <div className="flex-grow min-w-0">
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-[#10B981] bg-[#10B981]/15 px-2 py-0.5 rounded-full border border-[#10B981]/30 flex items-center gap-1">
+                                <Gift size={10} /> Auto-Added Free Gift
+                              </span>
+                            </div>
+
+                            <h4 className="text-xs sm:text-sm font-serif font-bold text-[#FBF8F3] leading-snug truncate">
+                              Raw Selenite Energy Charging Plate
+                            </h4>
+
+                            <p className="text-[10px] text-[#A7F3D0]/80 truncate mt-0.5">
+                              Overnight crystal cleansing & lunar frequency charger
+                            </p>
+
+                            <div className="flex items-center justify-between mt-2">
+                              <div className="flex items-baseline gap-1.5">
+                                <span className="text-xs font-bold text-[#10B981]">FREE</span>
+                                <span className="text-[10px] text-[#746988] line-through">₹699</span>
+                              </div>
+                              <span className="text-[9px] font-semibold text-[#10B981] flex items-center gap-1">
+                                <CheckCircle2 size={11} /> Unlocked
+                              </span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
                     </div>
 
-                    {/* In-Cart Upsell Strip: "Complete Your Energy Set" */}
-                    <div className="pt-2">
-                      <div className="p-3.5 rounded-2xl bg-[#FAF9F6] border border-[#EAE5DF] space-y-2.5">
-                        <span className="text-[10px] uppercase font-bold tracking-wider text-[#9A7B2C] flex items-center gap-1">
-                          <Sparkles size={11} /> Complete Your Energy Set
-                        </span>
+                    {/* 3. 1-CLICK PRIEST-RECOMMENDED UPSELL WIDGET */}
+                    {!isCleansingBowlInCart && (
+                      <div className="pt-2">
+                        <div className="p-3.5 rounded-2xl bg-[#161122] border-2 border-dashed border-[#F59E0B]/50 hover:border-[#F59E0B] transition-all space-y-2.5 relative">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] uppercase font-bold tracking-wider text-[#F59E0B] flex items-center gap-1">
+                              <Sparkles size={11} /> Priest-Recommended In-Cart Add-on
+                            </span>
+                            <span className="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase bg-emerald-500/20 text-[#10B981] border border-emerald-500/40">
+                              Save 62%
+                            </span>
+                          </div>
 
-                        <div className="space-y-2">
-                          {cartUpsells.map((upsell) => (
-                            <div
-                              key={upsell.id}
-                              className="p-2.5 rounded-xl bg-white border border-[#EAE5DF] flex items-center justify-between gap-2.5"
-                            >
-                              <div className="flex items-center gap-2.5 min-w-0">
-                                <div className="w-11 h-11 rounded-lg overflow-hidden relative flex-shrink-0 bg-[#FAF9F6] border border-[#EAE5DF]">
-                                  <Image src={upsell.image} alt={upsell.name} fill className="object-cover" />
-                                </div>
-                                <div className="min-w-0">
-                                  <h5 className="text-[11px] font-semibold text-[#2C2A29] truncate">{upsell.name}</h5>
-                                  <span className="text-xs font-bold text-[#9A7B2C]">₹{upsell.salePrice}</span>
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-14 h-14 rounded-xl overflow-hidden relative flex-shrink-0 bg-[#201831] border border-[#3A2A57]">
+                                <Image
+                                  src="/images/products/selenite-new.jpg"
+                                  alt="Himalayan Selenite Cleansing Bowl"
+                                  fill
+                                  className="object-cover"
+                                />
+                              </div>
+                              <div className="min-w-0">
+                                <h5 className="text-xs font-serif font-bold text-[#FBF8F3] truncate">
+                                  Himalayan Selenite Cleansing Bowl
+                                </h5>
+                                <p className="text-[10px] text-[#A79DB8] truncate mt-0.5">
+                                  Pure lunar salt to clear & recharge crystals
+                                </p>
+                                <div className="flex items-baseline gap-1.5 mt-1">
+                                  <span className="text-xs font-bold text-[#F59E0B]">₹299</span>
+                                  <span className="text-[10px] text-[#746988] line-through">₹799</span>
                                 </div>
                               </div>
-
-                              <button
-                                type="button"
-                                onClick={() => handleAddUpsell(upsell)}
-                                className="px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider text-[#2C2A29] btn-pearl-gold flex-shrink-0 cursor-pointer"
-                              >
-                                + Add
-                              </button>
                             </div>
-                          ))}
+
+                            <button
+                              type="button"
+                              onClick={handleAddCleansingBowlUpsell}
+                              className="px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-[#0D0A14] bg-gradient-to-r from-[#F59E0B] to-[#FBBF24] hover:shadow-[0_0_15px_rgba(245,158,11,0.5)] active:scale-95 transition-all flex-shrink-0 cursor-pointer flex items-center gap-1"
+                            >
+                              <Plus size={13} strokeWidth={2.5} />
+                              <span>Add</span>
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
 
-                    {/* Coupon Application Box & Clickable Chips */}
+                    {/* 4. PROMO CODE BOX & CLICKABLE CHIPS */}
                     <div className="pt-1">
-                      <div className="p-3.5 rounded-2xl bg-[#FFFFFF] border border-[#EAE5DF] space-y-2.5">
+                      <div className="p-3.5 rounded-2xl bg-[#161122] border border-[#2D2244] space-y-2.5">
                         <div className="flex items-center justify-between text-xs">
-                          <span className="font-semibold text-[#2C2A29] flex items-center gap-1">
-                            <Tag size={13} className="text-[#D4AF37]" />
-                            Promo Code
+                          <span className="font-semibold text-[#FBF8F3] flex items-center gap-1.5">
+                            <Tag size={13} className="text-[#F59E0B]" />
+                            Sacred Coupon Code
                           </span>
                           {appliedCoupon && (
                             <button
                               onClick={removeCoupon}
-                              className="text-[10px] text-rose-600 hover:underline cursor-pointer font-semibold"
+                              className="text-[10px] text-rose-400 hover:underline cursor-pointer font-semibold"
                             >
                               Remove ({appliedCoupon})
                             </button>
@@ -348,14 +541,14 @@ export default function CartDrawer() {
                         <form onSubmit={handleApplyCouponCode} className="flex gap-2">
                           <input
                             type="text"
-                            placeholder="Enter code (e.g. RIYA15)"
+                            placeholder="Enter code (e.g. DIVINE10)"
                             value={couponInput}
                             onChange={(e) => setCouponInput(e.target.value)}
-                            className="flex-grow px-3 py-2 text-xs rounded-xl bg-[#FAF9F6] border border-[#EAE5DF] uppercase text-[#2C2A29] focus:outline-none focus:border-[#D4AF37]"
+                            className="flex-grow px-3 py-2 text-xs rounded-xl bg-[#201831] border border-[#3A2A57] uppercase text-[#FBF8F3] placeholder-[#746988] focus:outline-none focus:border-[#F59E0B]"
                           />
                           <button
                             type="submit"
-                            className="px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider text-[#2C2A29] btn-pearl-gold cursor-pointer"
+                            className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-[#0D0A14] bg-[#F59E0B] hover:bg-[#FBBF24] transition-colors cursor-pointer"
                           >
                             Apply
                           </button>
@@ -363,21 +556,25 @@ export default function CartDrawer() {
 
                         {/* Available coupon chips */}
                         <div className="flex flex-wrap gap-1.5 pt-1">
-                          {["RIYA10", "LUXURY15", "DIVINE20"].map((code) => {
-                            const isSelected = appliedCoupon === code;
+                          {[
+                            { code: "DIVINE10", label: "10% OFF" },
+                            { code: "LUXURY15", label: "15% OFF" },
+                            { code: "DIVINE20", label: "20% OFF" },
+                          ].map((c) => {
+                            const isSelected = appliedCoupon === c.code;
                             return (
                               <button
-                                key={code}
+                                key={c.code}
                                 type="button"
-                                onClick={() => handleChipCoupon(code)}
+                                onClick={() => handleChipCoupon(c.code)}
                                 className={`px-2.5 py-1 rounded-full text-[10px] font-bold border transition-colors flex items-center gap-1 cursor-pointer ${
                                   isSelected
-                                    ? "bg-emerald-50 border-emerald-500 text-emerald-800"
-                                    : "bg-[#FAF9F6] border-[#D4AF37]/40 text-[#6E6A64] hover:border-[#D4AF37]"
+                                    ? "bg-emerald-500/20 border-emerald-500 text-emerald-300"
+                                    : "bg-[#201831] border-[#3A2A57] text-[#A79DB8] hover:border-[#F59E0B]/50 hover:text-[#FBF8F3]"
                                 }`}
                               >
-                                {isSelected && <Check size={10} className="text-emerald-600" />}
-                                <span>{code}</span>
+                                {isSelected && <Check size={10} className="text-emerald-400" />}
+                                <span>{c.code} ({c.label})</span>
                               </button>
                             );
                           })}
@@ -388,15 +585,15 @@ export default function CartDrawer() {
                 )
               ) : (
                 /* Wishlist Tab */
-                <div className="space-y-3.5">
+                <div className="space-y-3">
                   {wishlist.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center text-[#6E6A64] gap-4 py-16">
-                      <Heart size={32} strokeWidth={1.5} className="text-[#D4AF37]" />
-                      <h4 className="font-serif text-base font-semibold text-[#2C2A29]">
+                    <div className="flex flex-col items-center justify-center h-full text-center text-[#A79DB8] gap-4 py-16">
+                      <Heart size={32} strokeWidth={1.5} className="text-[#F59E0B]" />
+                      <h4 className="font-serif text-lg font-bold text-[#FBF8F3]">
                         No saved crystals yet
                       </h4>
-                      <p className="text-xs text-[#6E6A64] max-w-xs">
-                        Tap the heart icon on any product card to save it to your wishlist.
+                      <p className="text-xs text-[#A79DB8] max-w-xs">
+                        Tap the heart icon on any gemstone card to save it to your sacred wishlist.
                       </p>
                     </div>
                   ) : (
@@ -409,13 +606,12 @@ export default function CartDrawer() {
                       return (
                         <div
                           key={product.id}
-                          className="p-3.5 rounded-2xl bg-[#FFFFFF] border border-[#EAE5DF] shadow-xs flex gap-3.5 items-center group transition-all"
+                          className="p-3.5 rounded-2xl bg-[#161122] border border-[#2D2244] flex gap-3.5 items-center group transition-all"
                         >
-                          {/* Image */}
                           <Link
                             href={`/product?id=${product.id}`}
                             onClick={toggleCart}
-                            className="w-18 h-18 bg-[#FAF9F6] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#EAE5DF] cursor-pointer"
+                            className="w-16 h-16 bg-[#201831] rounded-xl overflow-hidden relative flex-shrink-0 border border-[#3A2A57] cursor-pointer"
                           >
                             <Image
                               src={product.image}
@@ -425,73 +621,43 @@ export default function CartDrawer() {
                             />
                           </Link>
 
-                          {/* Content */}
                           <div className="flex-grow min-w-0">
                             <Link
                               href={`/product?id=${product.id}`}
                               onClick={toggleCart}
                               className="block"
                             >
-                              <h4 className="text-xs font-semibold text-[#2C2A29] leading-snug truncate hover:text-[#7B4FC9] transition-colors">
+                              <h4 className="text-xs sm:text-sm font-serif font-bold text-[#FBF8F3] leading-snug truncate hover:text-[#F59E0B] transition-colors">
                                 {product.name}
                               </h4>
                             </Link>
 
-                            <div className="flex items-center gap-2 mt-1 text-[11px] text-[#6E6A64]">
-                              <span className="px-1.5 py-0.5 rounded bg-[#FAF9F6] border border-[#EAE5DF] font-medium text-[10px]">
-                                8mm
-                              </span>
-                              <span className="text-[#9A7B2C] italic truncate text-[11px] capitalize">
-                                {product.category || product.subCategory || "Vedic Energized"}
+                            <div className="flex items-center gap-2 mt-1 text-[11px] text-[#A79DB8]">
+                              <span className="text-[#F59E0B] italic truncate text-[10px]">
+                                {product.chakra || product.category || "Vedic Energized"}
                               </span>
                             </div>
 
                             <div className="flex items-center justify-between mt-2.5">
-                              {/* Quantity & Move to bag */}
-                              <div className="flex items-center gap-2">
-                                <div className="flex items-center border border-[#EAE5DF] rounded-lg bg-[#FAF9F6] px-1.5 py-0.5">
-                                  <button
-                                    onClick={() => setWishlistQuantities((prev) => ({ ...prev, [product.id]: Math.max(1, qty - 1) }))}
-                                    className="p-1 text-[#6E6A64] hover:text-[#2C2A29] cursor-pointer"
-                                    aria-label="Decrease quantity"
-                                  >
-                                    <Minus size={11} />
-                                  </button>
-                                  <span className="w-6 text-center text-xs font-bold text-[#2C2A29]">
-                                    {qty}
-                                  </span>
-                                  <button
-                                    onClick={() => setWishlistQuantities((prev) => ({ ...prev, [product.id]: qty + 1 }))}
-                                    className="p-1 text-[#6E6A64] hover:text-[#2C2A29] cursor-pointer"
-                                    aria-label="Increase quantity"
-                                  >
-                                    <Plus size={11} />
-                                  </button>
-                                </div>
+                              <button
+                                onClick={() => {
+                                  addToCart(product, qty);
+                                  showToast(`✨ Moved ${product.name} to sacred bag!`);
+                                }}
+                                className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider text-[#0D0A14] bg-[#F59E0B] hover:bg-[#FBBF24] transition-all flex items-center gap-1 cursor-pointer"
+                              >
+                                <ShoppingBag size={11} />
+                                <span>Move to Bag</span>
+                              </button>
 
-                                <button
-                                  onClick={() => {
-                                    addToCart(product, qty);
-                                    showToast(`✨ Moved ${product.name} to sacred bag!`);
-                                  }}
-                                  className="px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider text-[#7B4FC9] bg-[#F5F0FD] border border-[#7B4FC9]/30 hover:bg-[#7B4FC9] hover:text-white transition-all flex items-center gap-1 cursor-pointer"
-                                  title="Add to sacred bag"
-                                >
-                                  <ShoppingBag size={11} />
-                                  <span>Add</span>
-                                </button>
-                              </div>
-
-                              {/* Price & Delete */}
                               <div className="flex items-center gap-2.5">
-                                <span className="text-xs font-bold text-[#2C2A29]">
+                                <span className="text-xs font-bold text-[#FBF8F3]">
                                   ₹{price.toLocaleString("en-IN")}
                                 </span>
                                 <button
                                   onClick={() => toggleWishlist(product.id)}
-                                  className="text-[#6E6A64] hover:text-rose-600 p-1 cursor-pointer transition-colors"
+                                  className="text-[#746988] hover:text-rose-400 p-1 cursor-pointer transition-colors"
                                   aria-label="Remove from wishlist"
-                                  title="Remove from wishlist"
                                 >
                                   <Trash2 size={13} />
                                 </button>
@@ -506,67 +672,74 @@ export default function CartDrawer() {
               )}
             </div>
 
-            {/* Footer Summary & Checkout Button with Safe Area Padding */}
+            {/* 4. HIGH-CONVERTING CHECKOUT FOOTER */}
             {activeDrawerTab === "cart" && cart.length > 0 && (
-              <div className="p-4 sm:p-6 pb-safe sm:pb-6 border-t border-[#EAE5DF] bg-[#FAF9F6] space-y-3 flex-shrink-0">
-                <div className="space-y-1.5 text-xs text-[#6E6A64]">
+              <div className="p-4 sm:p-5 border-t border-[#251B38] bg-[#161122] space-y-3 flex-shrink-0">
+                {/* Total Sacred Savings Banner */}
+                {totalSacredSavings > 0 && (
+                  <div className="p-2.5 rounded-xl bg-gradient-to-r from-[#10B981]/15 via-[#F59E0B]/10 to-[#10B981]/15 border border-[#10B981]/35 flex items-center justify-between text-xs">
+                    <span className="text-[#10B981] font-semibold flex items-center gap-1.5 text-[11px]">
+                      <Sparkles size={12} className="text-[#F59E0B]" />
+                      Total Sacred Savings Included:
+                    </span>
+                    <span className="font-extrabold text-[#10B981] text-xs">
+                      ₹{totalSacredSavings.toLocaleString("en-IN")}
+                    </span>
+                  </div>
+                )}
+
+                {/* Subtotal, Shipping & Total Calculation */}
+                <div className="space-y-1.5 text-xs text-[#A79DB8]">
                   <div className="flex justify-between">
                     <span>Subtotal</span>
-                    <span className="text-[#2C2A29] font-semibold">₹{rawSubtotal.toLocaleString("en-IN")}</span>
+                    <span className="text-[#FBF8F3] font-semibold">₹{rawSubtotal.toLocaleString("en-IN")}</span>
                   </div>
 
-                  {tieredDiscount > 0 && (
-                    <div className="flex justify-between text-emerald-700 font-medium">
-                      <span>Buy 2 Tiered Discount (15%)</span>
-                      <span>-₹{tieredDiscount.toLocaleString("en-IN")}</span>
-                    </div>
-                  )}
-
                   {couponDiscount > 0 && (
-                    <div className="flex justify-between text-emerald-700 font-medium">
-                      <span>Promo Code ({appliedCoupon})</span>
+                    <div className="flex justify-between text-[#10B981] font-semibold">
+                      <span>Promo Discount ({appliedCoupon})</span>
                       <span>-₹{couponDiscount.toLocaleString("en-IN")}</span>
                     </div>
                   )}
 
-                  <div className="flex justify-between">
-                    <span>Insured Delivery</span>
+                  <div className="flex justify-between items-center">
+                    <span>Express Pan-India Shipping</span>
                     <span>
                       {shippingFee === 0 ? (
-                        <strong className="text-emerald-700">FREE</strong>
+                        <strong className="text-[#10B981] font-bold">FREE</strong>
                       ) : (
                         `₹${shippingFee}`
                       )}
                     </span>
                   </div>
 
-                  <div className="pt-2 border-t border-[#EAE5DF] flex justify-between text-sm font-semibold text-[#2C2A29]">
-                    <span>Final Amount:</span>
-                    <span className="text-base font-bold text-[#2C2A29]">
+                  <div className="pt-2 border-t border-[#251B38] flex justify-between items-baseline text-sm">
+                    <span className="font-serif font-semibold text-[#FBF8F3]">Estimated Total:</span>
+                    <span className="text-xl font-bold font-serif text-[#F59E0B]">
                       ₹{grandTotal.toLocaleString("en-IN")}
                     </span>
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <a
+                {/* Primary CTA Button: Full-Width Glowing Gold */}
+                <div className="pt-1">
+                  <Link
                     href="/checkout"
                     onClick={toggleCart}
-                    className="w-full py-3.5 px-6 rounded-full text-xs font-semibold tracking-wider uppercase text-white btn-amethyst flex items-center justify-center gap-2 cursor-pointer shadow-md text-center"
+                    className="w-full py-4 px-6 rounded-2xl text-xs sm:text-sm font-serif font-bold tracking-widest uppercase text-[#0D0A14] bg-gradient-to-r from-[#F59E0B] via-[#FBBF24] to-[#F59E0B] hover:shadow-[0_0_30px_rgba(245,158,11,0.55)] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg text-center"
                   >
-                    <Sparkles size={15} className="text-[#C9A24D]" />
-                    <span>Proceed to Express Checkout</span>
-                    <ArrowRight size={14} />
-                  </a>
+                    <span>PROCEED TO SACRED CHECKOUT</span>
+                    <ArrowRight size={16} />
+                  </Link>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 text-[10px] text-[#6E6A64] pt-0.5">
-                  <ShieldCheck size={12} className="text-[#D4AF37]" />
-                  <span>256-Bit SSL Encrypted • Lab Certificate Included</span>
+                {/* Micro-Trust & Prepaid Nudge Bar */}
+                <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] text-[#A79DB8] pt-1">
+                  <ShieldCheck size={13} className="text-[#F59E0B]" />
+                  <span>🛡️ Extra 5% Off on UPI / Prepaid • 100% Authentically Sourced Stones</span>
                 </div>
               </div>
             )}
-
           </motion.div>
         </div>
       )}

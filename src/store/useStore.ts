@@ -236,9 +236,9 @@ export const useStore = create<StoreState>()(
 
       applyCoupon: (code: string) => {
         const clean = code.trim().toUpperCase();
-        if (clean === 'RIYA10') {
-          set({ appliedCoupon: 'RIYA10' });
-          return { success: true, message: '✨ RIYA10 applied: 10% Off your order!', discountPercent: 10 };
+        if (clean === 'DIVINE10' || clean === 'RIYA10') {
+          set({ appliedCoupon: clean });
+          return { success: true, message: `✨ ${clean} applied: 10% Off your order!`, discountPercent: 10 };
         }
         if (clean === 'LUXURY15' || clean === 'RIYA15') {
           set({ appliedCoupon: clean });
@@ -248,7 +248,7 @@ export const useStore = create<StoreState>()(
           set({ appliedCoupon: 'DIVINE20' });
           return { success: true, message: '✨ DIVINE20 applied: 20% Off your order!', discountPercent: 20 };
         }
-        return { success: false, message: 'Invalid promo code. Try RIYA15 or LUXURY15.', discountPercent: 0 };
+        return { success: false, message: 'Invalid promo code. Try DIVINE10 or LUXURY15.', discountPercent: 0 };
       },
 
       removeCoupon: () => set({ appliedCoupon: null }),

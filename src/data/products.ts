@@ -659,6 +659,23 @@ export const luxuryBundles: Bundle[] = [
 // In-cart upsells
 export const cartUpsells: Product[] = [
   {
+    id: "upsell-selenite-cleansing-bowl",
+    name: "Himalayan Selenite Cleansing Bowl (3-Inch)",
+    description: "Pure natural translucent Moroccan Selenite bowl to cleanse, neutralize, and charge your sacred crystal jewelry and gemstone oils overnight.",
+    shortIntention: "Overnight Crystal Clearing & Pranic Recharging",
+    price: 799,
+    salePrice: 299,
+    image: "/images/products/selenite-new.jpg",
+    category: "Overall wellness",
+    subCategory: "Overall wellness",
+    badge: "Save 62%",
+    chakra: "Crown (Sahasrara)",
+    planet: "Moon (Chandra)",
+    rating: 4.98,
+    reviewCount: 310,
+    benefits: ["Cleanses and resets crystal frequencies", "Zero water or sunlight required"]
+  },
+  {
     id: "upsell-selenite-plate",
     name: "Raw Moroccan Selenite Charging Plate (4-Inch)",
     description: "Place your 8mm crystal bracelets on this pure lunar Selenite slab to recharge their vibration overnight effortlessly.",

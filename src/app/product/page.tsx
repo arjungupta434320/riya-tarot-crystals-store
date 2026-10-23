@@ -133,8 +133,7 @@ function ProductContent() {
     showToast(`✨ Added ${product.name} to your sacred bag!`);
     setTimeout(() => {
       setJustAdded(false);
-      toggleCart();
-    }, 700);
+    }, 1200);
   };
 
   const handleBuyNow = () => {

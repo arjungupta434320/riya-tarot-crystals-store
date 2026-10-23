@@ -87,14 +87,14 @@ export default function CheckoutModal() {
 
   // Coupon discount
   let couponDiscount = 0;
-  if (appliedCoupon === "RIYA10") couponDiscount = Math.round(rawSubtotal * 0.10);
+  if (appliedCoupon === "DIVINE10" || appliedCoupon === "RIYA10") couponDiscount = Math.round(rawSubtotal * 0.10);
   else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15") couponDiscount = Math.round(rawSubtotal * 0.15);
   else if (appliedCoupon === "DIVINE20" || appliedCoupon === "KUNDALI20") couponDiscount = Math.round(rawSubtotal * 0.20);
 
   const totalDiscount = tieredDiscount + couponDiscount;
 
-  // Delivery fee
-  const isFreeStandard = (rawSubtotal - totalDiscount) >= 1499 || rawSubtotal >= 1499;
+  // Delivery fee (Free above ₹999)
+  const isFreeStandard = (rawSubtotal - totalDiscount) >= 999 || rawSubtotal >= 999;
   const deliveryFee = deliveryMethod === "express" ? 99 : (isFreeStandard ? 0 : 79);
 
   const grandTotal = Math.max(0, rawSubtotal - totalDiscount + deliveryFee);
