@@ -6,12 +6,12 @@ import { fallbackProducts } from "@/data/products";
 const supabaseUrl = 
   process.env.NEXT_PUBLIC_SUPABASE_URL || 
   process.env.SUPABASE_URL || 
-  "https://roztuxxxfmvdfvqjdopo.supabase.co";
+  "https://fxrjipbcrvootsayqsas.supabase.co";
 
 const supabaseAnonKey = 
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
   process.env.SUPABASE_ANON_KEY || 
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvenR1eHh4Zm12ZGZ2cWpkb3BvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwMzU0NjQsImV4cCI6MjEwNjYxMTQ2NH0.51bFHO4cYIgCKA_sfl5-adyHkVJzh5hrNEZB1Ms4gEo";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ4cmppcGJjcnZvb3RzYXlxc2FzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI3MzcwNjcsImV4cCI6MjEwODMxMzA2N30.LkqvrjmZLLU52RRH-vywhY9XlC8wk3Y-qHycwCXhLSQ";
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
