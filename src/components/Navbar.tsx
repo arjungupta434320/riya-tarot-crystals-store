@@ -345,7 +345,7 @@ export default function Navbar() {
               transition={{ type: "spring", damping: 25, stiffness: 280 }}
               className="lg:hidden fixed top-0 left-0 bottom-0 w-[84%] max-w-sm bg-white z-[80] shadow-2xl flex flex-col border-r border-[#EFE9E2]"
             >
-              <div className="p-5 border-b border-[#EFE9E2] bg-[#FAF8F3] flex items-center justify-between">
+              <div className="p-5 border-b border-[#EFE9E2] bg-white flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
                   <div className="w-8 h-8 rounded-full bg-white border border-[#C9A24D]/50 flex items-center justify-center text-[#7B4FC9]">
                     <Sparkles size={16} />
@@ -370,7 +370,7 @@ export default function Navbar() {
               </div>
 
               {/* Quiz Callout Card */}
-              <div className="p-4 bg-[#F5F0FD] border-b border-[#EFE9E2]">
+              <div className="p-4 bg-white border-b border-[#EFE9E2]">
                 <div className="p-3 rounded-2xl bg-white border border-[#7B4FC9]/30 text-xs text-[#2B1B3D] space-y-1 shadow-2xs">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#7B4FC9] flex items-center gap-1">
                     <Sparkles size={11} /> 60-Second Energy Match
@@ -390,7 +390,7 @@ export default function Navbar() {
               </div>
 
               {/* Navigation Links with Category Accordions */}
-              <div className="flex-grow overflow-y-auto p-4 sm:p-5 space-y-2.5">
+              <div className="flex-grow overflow-y-auto p-4 sm:p-5 space-y-2.5 bg-white">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-[#8E6D24] block mb-2 px-1">
                   Sacred Collections & Navigation
                 </span>
@@ -399,7 +399,7 @@ export default function Navbar() {
                 <Link
                   href="/shop"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
+                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] shadow-2xs active:scale-[0.99] transition-all"
                 >
                   <span className="font-semibold text-xs uppercase tracking-wider">ALL COLLECTIONS</span>
                   <ArrowRight size={14} className="text-[#C9A24D]" />
@@ -414,7 +414,7 @@ export default function Navbar() {
                   <Link
                     href="/shop?category=Love+and+relationship"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] shadow-2xs active:scale-[0.99] transition-all"
                   >
                     <span className="font-medium text-xs">💖 Love & Relationship</span>
                     <ArrowRight size={13} className="text-[#C9A24D]" />
@@ -423,7 +423,7 @@ export default function Navbar() {
                   <Link
                     href="/shop?category=Job+and+business"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] shadow-2xs active:scale-[0.99] transition-all"
                   >
                     <span className="font-medium text-xs">💼 Job & Business</span>
                     <ArrowRight size={13} className="text-[#C9A24D]" />
@@ -432,7 +432,7 @@ export default function Navbar() {
                   <Link
                     href="/shop?category=Wealth+and+prosperity"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] shadow-2xs active:scale-[0.99] transition-all"
                   >
                     <span className="font-medium text-xs">💰 Wealth & Prosperity</span>
                     <ArrowRight size={13} className="text-[#C9A24D]" />
@@ -441,7 +441,7 @@ export default function Navbar() {
                   <Link
                     href="/shop?category=Overall+wellness"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] shadow-2xs active:scale-[0.99] transition-all"
                   >
                     <span className="font-medium text-xs">🌿 Overall Wellness</span>
                     <ArrowRight size={13} className="text-[#C9A24D]" />
@@ -450,7 +450,7 @@ export default function Navbar() {
                   <Link
                     href="/shop?category=Negativity+protection"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] shadow-2xs active:scale-[0.99] transition-all"
                   >
                     <span className="font-medium text-xs">🛡️ Negativity Protection</span>
                     <ArrowRight size={13} className="text-[#C9A24D]" />
@@ -459,9 +459,9 @@ export default function Navbar() {
                   <Link
                     href="/shop?category=Oils"
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-[#FAF6EE] border border-[#C9A24D]/50 text-[#7B4FC9] hover:border-[#7B4FC9] active:scale-[0.99] transition-all"
+                    className="flex items-center justify-between p-3 min-h-[44px] rounded-xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#7B4FC9] shadow-2xs active:scale-[0.99] transition-all"
                   >
-                    <span className="font-semibold text-xs text-[#2B1B3D]">🪔 Sacred Chakra Oils</span>
+                    <span className="font-medium text-xs text-[#2B1B3D]">🪔 Sacred Chakra Oils</span>
                     <ArrowRight size={13} className="text-[#C9A24D]" />
                   </Link>
                 </div>
@@ -470,7 +470,7 @@ export default function Navbar() {
                 <Link
                   href="/quiz"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#F5F0FD] border border-[#7B4FC9]/30 text-[#7B4FC9] active:scale-[0.99] transition-all"
+                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-white border border-[#EFE9E2] hover:border-[#7B4FC9] text-[#7B4FC9] shadow-2xs active:scale-[0.99] transition-all"
                 >
                   <span className="font-semibold text-xs flex items-center gap-1.5">
                     <Sparkles size={13} className="text-[#C9A24D]" />
@@ -483,7 +483,7 @@ export default function Navbar() {
                 <Link
                   href="/blog"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
+                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] shadow-2xs active:scale-[0.99] transition-all"
                 >
                   <span className="font-semibold text-xs flex items-center gap-1.5">
                     <BookOpen size={13} className="text-[#C9A24D]" />
@@ -496,7 +496,7 @@ export default function Navbar() {
                 <Link
                   href="/about"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
+                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] shadow-2xs active:scale-[0.99] transition-all"
                 >
                   <span className="font-semibold text-xs">About Riya & Sourcing</span>
                   <ArrowRight size={14} className="text-[#C9A24D]" />
@@ -506,7 +506,7 @@ export default function Navbar() {
                 <Link
                   href="/track"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] active:scale-[0.99] transition-all"
+                  className="flex items-center justify-between p-3.5 min-h-[48px] rounded-2xl bg-white border border-[#EFE9E2] text-[#2B1B3D] hover:border-[#C9A24D] shadow-2xs active:scale-[0.99] transition-all"
                 >
                   <span className="font-semibold text-xs flex items-center gap-1.5">
                     <Truck size={13} />
@@ -516,7 +516,7 @@ export default function Navbar() {
                 </Link>
               </div>
 
-              <div className="p-4 border-t border-[#EFE9E2] bg-[#FBF8F3] text-center text-[11px] text-[#635572]">
+              <div className="p-4 border-t border-[#EFE9E2] bg-white text-center text-[11px] text-[#635572]">
                 100% Authentically Sourced Natural Stones • Free Shipping Above ₹999
               </div>
             </motion.div>
