@@ -244,11 +244,15 @@ export const useStore = create<StoreState>()(
           set({ appliedCoupon: clean });
           return { success: true, message: `✨ ${clean} applied: 15% Off your order!`, discountPercent: 15 };
         }
-        if (clean === 'DIVINE20' || clean === 'KUNDALI20') {
-          set({ appliedCoupon: 'DIVINE20' });
-          return { success: true, message: '✨ DIVINE20 applied: 20% Off your order!', discountPercent: 20 };
+        if (clean === 'DIVINE20' || clean === 'KUNDALI20' || clean === 'DIWALI20' || clean === 'SHUBH20') {
+          set({ appliedCoupon: 'DIWALI20' });
+          return { success: true, message: '🪔 DIWALI20 applied: Flat 20% Festive Off your order!', discountPercent: 20 };
         }
-        return { success: false, message: 'Invalid promo code. Try DIVINE10 or LUXURY15.', discountPercent: 0 };
+        if (clean === 'DIWALI' || clean === 'SHUBH15') {
+          set({ appliedCoupon: 'DIWALI' });
+          return { success: true, message: '🪔 DIWALI applied: Flat 15% Festive Off your order!', discountPercent: 15 };
+        }
+        return { success: false, message: 'Invalid promo code. Try DIWALI20 or DIVINE10.', discountPercent: 0 };
       },
 
       removeCoupon: () => set({ appliedCoupon: null }),

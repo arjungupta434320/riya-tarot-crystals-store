@@ -77,8 +77,10 @@ export default function CheckoutPage() {
   let couponDiscount = 0;
   if (appliedCoupon === "DIVINE10" || appliedCoupon === "RIYA10") {
     couponDiscount = Math.round(rawSubtotal * 0.10);
-  } else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15") {
+  } else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15" || appliedCoupon === "DIWALI" || appliedCoupon === "SHUBH15") {
     couponDiscount = Math.round(rawSubtotal * 0.15);
+  } else if (appliedCoupon === "DIVINE20" || appliedCoupon === "KUNDALI20" || appliedCoupon === "DIWALI20" || appliedCoupon === "SHUBH20") {
+    couponDiscount = Math.round(rawSubtotal * 0.20);
   }
 
   // Free shipping above ₹999

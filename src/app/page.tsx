@@ -28,6 +28,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { fetchProducts } from "@/data/products";
 import { Product, useStore } from "@/store/useStore";
 import { ChakraExplorer } from "@/components/home/ChakraExplorer";
+import { DiwaliOffersBanner } from "@/components/home/DiwaliOffersBanner";
 import { TiltCard } from "@/components/animations/TiltCard";
 import { Magnetic } from "@/components/animations/Magnetic";
 
@@ -88,97 +89,107 @@ export default function HomePage() {
         <div className="absolute bottom-10 right-10 w-80 sm:w-96 h-80 sm:h-96 bg-[#F4C6D0]/20 rounded-full blur-3xl pointer-events-none animate-aurora" />
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
             
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#C9A24D]/40 shadow-xs">
-              <Sparkles size={13} className="text-[#C9A24D]" />
-              <span className="text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-[#8E6D24]">
-                Certified Vedic Astrologer & Tarot Reader Curation
-              </span>
-            </div>
-
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-[#2B1B3D] leading-[1.15] font-bold tracking-tight">
-              Authentic Healing Crystals & <br className="hidden sm:inline" />
-              <span className="italic font-serif text-[#7B4FC9]">Sacred Bracelets</span>. <br />
-              Energized for Wealth, Peace & Protection.
-            </h1>
-
-            <p className="text-xs sm:text-base text-[#635572] leading-relaxed max-w-xl mx-auto font-light">
-              100% natural, certified Grade-A gemstones and healing bracelets. Purified with Himalayan salts and energized with 108 Vedic Beej Mantras for wealth, peace of mind, and daily protection.
-            </p>
-
-            {/* Trust Indicators */}
-            <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-lg mx-auto pt-1">
-              <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
-                <Award size={18} className="mx-auto text-[#C9A24D] mb-1" />
-                <span className="block text-xs sm:text-sm font-bold text-[#2B1B3D]">100% Natural</span>
-                <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Authentically Sourced</span>
+            {/* Left Column: Authority Copy, Headline, Shimmer & Dual CTAs */}
+            <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+              
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#C9A24D]/40 shadow-xs">
+                <Sparkles size={13} className="text-[#C9A24D]" />
+                <span className="text-[10px] sm:text-xs font-semibold tracking-wider uppercase text-[#8E6D24]">
+                  Certified Vedic Astrologer & Tarot Reader Curation
+                </span>
               </div>
 
-              <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
-                <Compass size={18} className="mx-auto text-[#7B4FC9] mb-1" />
-                <span className="block text-xs sm:text-sm font-bold text-[#2B1B3D]">Bespoke</span>
-                <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Vedic Energized</span>
-              </div>
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-[#2B1B3D] leading-[1.15] font-bold tracking-tight">
+                Authentic Healing Crystals & <br className="hidden sm:inline" />
+                <span className="italic font-serif text-[#7B4FC9]">Sacred Bracelets</span>. <br />
+                Energized for Wealth, Peace & Protection.
+              </h1>
 
-              <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
-                <div className="flex items-center justify-center text-[#C9A24D] gap-0.5 mb-1 font-bold text-xs sm:text-sm">
-                  <Star size={14} className="fill-[#C9A24D] text-[#C9A24D]" />
-                  <span>4.9★</span>
+              <p className="text-xs sm:text-base text-[#635572] leading-relaxed max-w-xl mx-auto lg:mx-0 font-light">
+                100% natural, certified Grade-A gemstones and healing bracelets. Purified with Himalayan salts and energized with 108 Vedic Beej Mantras for wealth, peace of mind, and daily protection.
+              </p>
+
+              {/* Trust Indicators */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-lg mx-auto lg:mx-0 pt-1">
+                <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
+                  <Award size={18} className="mx-auto text-[#C9A24D] mb-1" />
+                  <span className="block text-xs sm:text-sm font-bold text-[#2B1B3D]">100% Natural</span>
+                  <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Authentically Sourced</span>
                 </div>
-                <span className="block text-xs sm:text-sm font-bold text-[#2B1B3D]">14,000+</span>
-                <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Blessed Souls</span>
-              </div>
-            </div>
 
-            {/* Dual CTAs with Magnetic Effect */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2">
-              <Magnetic strength={0.25}>
+                <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
+                  <Compass size={18} className="mx-auto text-[#7B4FC9] mb-1" />
+                  <span className="block text-xs sm:text-sm font-bold text-[#2B1B3D]">Bespoke</span>
+                  <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Vedic Energized</span>
+                </div>
+
+                <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
+                  <div className="flex items-center justify-center text-[#C9A24D] gap-0.5 mb-1 font-bold text-xs sm:text-sm">
+                    <Star size={14} className="fill-[#C9A24D] text-[#C9A24D]" />
+                    <span>4.9★</span>
+                  </div>
+                  <span className="block text-xs sm:text-sm font-bold text-[#2B1B3D]">14,000+</span>
+                  <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Blessed Souls</span>
+                </div>
+              </div>
+
+              {/* Dual CTAs with Magnetic Effect */}
+              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4 pt-2">
+                <Magnetic strength={0.25}>
+                  <Link
+                    href="/shop"
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-full text-xs font-semibold tracking-wider uppercase text-white btn-amethyst flex items-center justify-center gap-2 shadow-lg"
+                  >
+                    <span>Shop All Bracelets</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </Magnetic>
+
+                <Magnetic strength={0.25}>
+                  <Link
+                    href="/quiz"
+                    className="w-full sm:w-auto px-7 py-3.5 rounded-full text-xs font-semibold tracking-wider uppercase text-[#2B1B3D] btn-pearl-gold flex items-center justify-center gap-2 cursor-pointer shadow-xs"
+                  >
+                    <Sparkles size={14} className="text-[#C9A24D]" />
+                    <span>Find My Crystal — Take Quiz</span>
+                  </Link>
+                </Magnetic>
+              </div>
+
+              {/* Bestseller Floating Strip */}
+              <div className="pt-2 flex items-center justify-center lg:justify-start">
                 <Link
                   href="/shop"
-                  className="w-full sm:w-auto px-8 py-3.5 rounded-full text-xs font-semibold tracking-wider uppercase text-white btn-amethyst flex items-center justify-center gap-2 shadow-lg"
+                  className="p-2.5 pr-4 rounded-2xl bg-white border border-[#C9A24D]/40 shadow-[0_8px_25px_rgba(201,162,77,0.12)] flex items-center gap-3 max-w-sm hover:border-[#C9A24D] transition-all cursor-pointer"
                 >
-                  <span>Shop All Bracelets</span>
-                  <ArrowRight size={14} />
+                  <div className="w-12 h-12 rounded-xl overflow-hidden relative flex-shrink-0 bg-[#FAF8F3]">
+                    <Image
+                      src="/images/products/money-maker.jpg"
+                      alt="Triple Synergy Mixed Abundance"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="text-left min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#F5F0FD] text-[#7B4FC9] font-bold border border-[#7B4FC9]/30">
+                        Top Bestseller
+                      </span>
+                      <span className="text-[9px] text-[#2E7D32] font-semibold truncate">Vedic Cleansed</span>
+                    </div>
+                    <span className="text-xs font-bold text-[#2B1B3D] block truncate">Triple Synergy Mixed Abundance</span>
+                    <span className="text-[11px] text-[#635572]">₹1,499 <del className="text-[#9588A3]">₹2,999</del></span>
+                  </div>
                 </Link>
-              </Magnetic>
+              </div>
 
-              <Magnetic strength={0.25}>
-                <Link
-                  href="/quiz"
-                  className="w-full sm:w-auto px-7 py-3.5 rounded-full text-xs font-semibold tracking-wider uppercase text-[#2B1B3D] btn-pearl-gold flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-                >
-                  <Sparkles size={14} className="text-[#C9A24D]" />
-                  <span>Find My Crystal — Take Quiz</span>
-                </Link>
-              </Magnetic>
             </div>
 
-            {/* Bestseller Floating Strip */}
-            <div className="pt-2 flex items-center justify-center">
-              <Link
-                href="/shop"
-                className="p-2.5 pr-4 rounded-2xl bg-white border border-[#C9A24D]/40 shadow-[0_8px_25px_rgba(201,162,77,0.12)] flex items-center gap-3 max-w-sm hover:border-[#C9A24D] transition-all cursor-pointer"
-              >
-                <div className="w-12 h-12 rounded-xl overflow-hidden relative flex-shrink-0 bg-[#FAF8F3]">
-                  <Image
-                    src="/images/products/money-maker.jpg"
-                    alt="Triple Synergy Mixed Abundance"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="text-left min-w-0">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#F5F0FD] text-[#7B4FC9] font-bold border border-[#7B4FC9]/30">
-                      Top Bestseller
-                    </span>
-                    <span className="text-[9px] text-[#2E7D32] font-semibold truncate">Vedic Cleansed</span>
-                  </div>
-                  <span className="text-xs font-bold text-[#2B1B3D] block truncate">Triple Synergy Mixed Abundance</span>
-                  <span className="text-[11px] text-[#635572]">₹1,499 <del className="text-[#9588A3]">₹2,999</del></span>
-                </div>
-              </Link>
+            {/* Right Column: Festive Diwali Offers Banner Carousel */}
+            <div className="lg:col-span-5 relative w-full flex items-center justify-center">
+              <DiwaliOffersBanner />
             </div>
 
           </div>

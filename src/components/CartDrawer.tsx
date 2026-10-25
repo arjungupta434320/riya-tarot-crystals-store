@@ -117,9 +117,9 @@ export default function CartDrawer() {
   let couponDiscount = 0;
   if (appliedCoupon === "DIVINE10" || appliedCoupon === "RIYA10") {
     couponDiscount = Math.round(rawSubtotal * 0.10);
-  } else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15") {
+  } else if (appliedCoupon === "LUXURY15" || appliedCoupon === "RIYA15" || appliedCoupon === "DIWALI" || appliedCoupon === "SHUBH15") {
     couponDiscount = Math.round(rawSubtotal * 0.15);
-  } else if (appliedCoupon === "DIVINE20" || appliedCoupon === "KUNDALI20") {
+  } else if (appliedCoupon === "DIVINE20" || appliedCoupon === "KUNDALI20" || appliedCoupon === "DIWALI20" || appliedCoupon === "SHUBH20") {
     couponDiscount = Math.round(rawSubtotal * 0.20);
   }
 
@@ -555,9 +555,9 @@ export default function CartDrawer() {
                         {/* Available coupon chips */}
                         <div className="flex flex-wrap gap-1.5 pt-1">
                           {[
+                            { code: "DIWALI20", label: "🪔 DIWALI 20%" },
                             { code: "DIVINE10", label: "10% OFF" },
                             { code: "LUXURY15", label: "15% OFF" },
-                            { code: "DIVINE20", label: "20% OFF" },
                           ].map((c) => {
                             const isSelected = appliedCoupon === c.code;
                             return (
