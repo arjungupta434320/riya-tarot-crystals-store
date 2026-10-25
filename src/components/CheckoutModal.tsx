@@ -60,24 +60,21 @@ export default function CheckoutModal() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isMobileSummaryOpen, setIsMobileSummaryOpen] = useState(false);
 
-  // Intelligent Real-Time Autofill from Indian PIN code
+  // Intelligent Autofill: Triggers only when the full 6-digit PIN code is entered
   const handlePincodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, "");
     setPincode(val);
 
-    // 1. Instant 0ms offline prefix matching (2+ digits)
-    if (val.length >= 2) {
-      const match = lookupIndianPincode(val);
-      if (match) {
-        if (!city || city === "New Delhi" || city.includes("/")) {
-          setCity(match.city.split(" / ")[0]);
-        }
-        setStateName(match.state);
-      }
-    }
-
-    // 2. Real-time India Post official API lookup when 6 digits are typed
+    // Only trigger autofill when the customer finishes entering all 6 digits
     if (val.length === 6) {
+      // 1. Immediate offline postal database match
+      const offlineMatch = lookupIndianPincode(val);
+      if (offlineMatch) {
+        setCity(offlineMatch.city.split(" / ")[0]);
+        setStateName(offlineMatch.state);
+      }
+
+      // 2. Real-time official India Post API verification
       const live = await fetchLivePincodeDetails(val);
       if (live) {
         setCity(live.city);
