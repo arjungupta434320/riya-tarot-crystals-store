@@ -102,13 +102,13 @@ export default function HomePage() {
               </div>
 
               <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-[#2B1B3D] leading-[1.15] font-bold tracking-tight">
-                Consecrated for Your <br className="hidden sm:inline" />
-                <span className="italic font-serif text-[#7B4FC9]">Divine Alignment</span>. <br />
-                Vedic Energized Crystals.
+                Authentic Healing Crystals & <br className="hidden sm:inline" />
+                <span className="italic font-serif text-[#7B4FC9]">Sacred Bracelets</span>. <br />
+                Energized for Wealth, Peace & Protection.
               </h1>
 
               <p className="text-xs sm:text-base text-[#635572] leading-relaxed max-w-xl mx-auto lg:mx-0 font-light">
-                100% authentic, ethically and authentically sourced Grade-A gemstones and healing bracelets. Purified in Himalayan waters and consecrated with 108 Vedic Beej Mantras for wealth manifestation, soulmate love, and impenetrable evil-eye defense.
+                100% natural, certified Grade-A gemstones and healing bracelets. Purified with Himalayan salts and energized with 108 Vedic Beej Mantras for wealth, peace of mind, and daily protection.
               </p>
 
               {/* Trust Indicators */}
@@ -122,7 +122,7 @@ export default function HomePage() {
                 <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
                   <Compass size={18} className="mx-auto text-[#7B4FC9] mb-1" />
                   <span className="block text-xs sm:text-sm font-bold text-[#2B1B3D]">Bespoke</span>
-                  <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Vedic Consecration</span>
+                  <span className="text-[9px] sm:text-[10px] text-[#635572] uppercase tracking-wider block">Vedic Energized</span>
                 </div>
 
                 <div className="p-3 rounded-2xl bg-white border border-[#EFE9E2] text-center shadow-xs">
