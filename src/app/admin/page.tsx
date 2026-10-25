@@ -48,9 +48,13 @@ import {
   EyeOff,
   ShieldAlert,
   Key,
-  Mail
+  Mail,
+  Phone,
+  MapPin,
+  MessageCircle,
+  Truck
 } from "lucide-react";
-import { supabase } from "@/lib/supabaseClient";
+import { supabase, getOrders, updateOrderStatus } from "@/lib/supabaseClient";
 import { useStore } from "@/store/useStore";
 
 const standardCategories = [
@@ -171,44 +175,10 @@ export default function AdminDashboard() {
   const [newProdCategory, setNewProdCategory] = useState("Heal Energized Bracelets");
   const [newProdIntention, setNewProdIntention] = useState("");
 
-  const [ordersList, setOrdersList] = useState<any[]>([
-    {
-      id: "RTC-84920",
-      date: "21 Oct 2026, 02:40 PM",
-      customer: "Ananya Sharma",
-      email: "ananya.sharma@example.com",
-      phone: "+91 98111 22233",
-      destination: "Noida, Uttar Pradesh (201301)",
-      status: "108 Mantra Japa in Progress",
-      total: 2899,
-      paymentMethod: "Razorpay (Prepaid)",
-      items: [
-        {
-          name: "Triple Synergy Mixel Abundance Bracelet",
-          size: "8mm",
-          qty: 1
-        }
-      ]
-    },
-    {
-      id: "RTC-73912",
-      date: "20 Oct 2026, 06:15 PM",
-      customer: "Vikram Malhotra",
-      email: "vikram.m@example.com",
-      phone: "+91 98200 44556",
-      destination: "Mumbai, Maharashtra (400050)",
-      status: "Packed & Sealed with Raksha Sutra",
-      total: 2299,
-      paymentMethod: "Cash on Delivery (COD)",
-      items: [
-        {
-          name: "Heart Armor Mixel Bracelet (Rose Quartz + Tourmaline)",
-          size: "10mm",
-          qty: 1,
-        }
-      ]
-    }
-  ]);
+  const [ordersList, setOrdersList] = useState<any[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+  const [ordersSearchQuery, setOrdersSearchQuery] = useState("");
+  const [ordersStatusFilter, setOrdersStatusFilter] = useState("all");
 
   // Check persistent session on mount with auto-expiration (2 hours)
   useEffect(() => {
@@ -242,10 +212,11 @@ export default function AdminDashboard() {
     }
   }, []);
 
-  // Fetch all posts when authenticated or tab changes
+  // Fetch all posts and customer orders when authenticated
   useEffect(() => {
     if (isAuthenticated) {
       loadBlogPosts();
+      loadOrders();
     }
   }, [isAuthenticated]);
 
@@ -254,6 +225,18 @@ export default function AdminDashboard() {
     const data = await getBlogPosts({ includeDrafts: true });
     setAllPosts(data);
     setLoadingPosts(false);
+  };
+
+  const loadOrders = async () => {
+    setOrdersLoading(true);
+    try {
+      const data = await getOrders();
+      setOrdersList(data);
+    } catch (err) {
+      console.error("Failed to load customer orders:", err);
+    } finally {
+      setOrdersLoading(false);
+    }
   };
 
   // Secure Passcode Login Handler with Rate Limiting & Zero Leakage
@@ -519,6 +502,31 @@ export default function AdminDashboard() {
     return matchesStatus && matchesSearch;
   });
 
+  // Filtered orders for Admin Orders list
+  const filteredOrders = ordersList.filter((o) => {
+    let matchesStatus = true;
+    const st = (o.status || "").toLowerCase();
+    if (ordersStatusFilter === "pending") {
+      matchesStatus = st.includes("confirmed") || st.includes("scheduled");
+    } else if (ordersStatusFilter === "consecrating") {
+      matchesStatus = st.includes("japa") || st.includes("purification") || st.includes("sutra") || st.includes("progress");
+    } else if (ordersStatusFilter === "dispatched") {
+      matchesStatus = st.includes("dispatched");
+    } else if (ordersStatusFilter === "delivered") {
+      matchesStatus = st.includes("delivered");
+    }
+
+    const q = ordersSearchQuery.toLowerCase().trim();
+    const matchesSearch =
+      !q ||
+      (o.id && o.id.toLowerCase().includes(q)) ||
+      (o.customer && o.customer.toLowerCase().includes(q)) ||
+      (o.email && o.email.toLowerCase().includes(q)) ||
+      (o.phone && o.phone.toLowerCase().includes(q)) ||
+      (o.destination && o.destination.toLowerCase().includes(q));
+    return matchesStatus && matchesSearch;
+  });
+
   // ==========================================
   // PRODUCT HANDLERS
   // ==========================================
@@ -556,11 +564,12 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleUpdateOrderStatus = (orderId: string, newStatus: string) => {
-    setOrdersList(
-      ordersList.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
+  const handleUpdateOrderStatus = async (orderId: string, newStatus: string) => {
+    setOrdersList((prev) =>
+      prev.map((o) => (o.id === orderId || o.order_id === orderId ? { ...o, status: newStatus } : o))
     );
-    showToast(`Order status updated to: ${newStatus}`);
+    showToast(`✨ Consecration status updated to: ${newStatus}`, "success");
+    await updateOrderStatus(orderId, newStatus);
   };
 
   // 1. Password Protected Screen (Enterprise Security Hardened)
@@ -818,7 +827,10 @@ export default function AdminDashboard() {
           </button>
 
           <button
-            onClick={() => setActiveTab("orders")}
+            onClick={() => {
+              setActiveTab("orders");
+              loadOrders();
+            }}
             className={`px-5 py-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === "orders"
                 ? "bg-[#7B4FC9] text-white shadow-xs font-bold"
@@ -1586,49 +1598,260 @@ export default function AdminDashboard() {
         {/* TAB 3: CUSTOMER ORDERS                                     */}
         {/* ========================================================= */}
         {activeTab === "orders" && (
-          <div className="space-y-4">
-            {ordersList.map((order) => (
-              <div key={order.id} className="p-5 sm:p-6 rounded-3xl bg-white border border-[#EFE9E2] shadow-xs space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#EFE9E2]">
-                  <div>
-                    <span className="text-xs font-bold text-[#7B4FC9]">{order.id}</span>
-                    <span className="text-xs text-[#635572] ml-2">• {order.date}</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-[#2B1B3D]">₹{order.total}</span>
-                    <span className="text-[10px] text-[#8E6D24] bg-[#F7EFE2] px-2.5 py-0.5 rounded-full font-semibold">
-                      {order.paymentMethod}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs text-[#635572]">
-                  <div>
-                    <span className="font-bold text-[#2B1B3D] block">{order.customer}</span>
-                    <span>{order.email} • {order.phone}</span>
-                    <span className="block mt-0.5">{order.destination}</span>
-                  </div>
-
-                  {/* Status Dropdown */}
-                  <div>
-                    <span className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-1">
-                      Consecration Stage:
-                    </span>
-                    <select
-                      value={order.status}
-                      onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-[#FAF8F3] border border-[#EFE9E2] text-xs text-[#2B1B3D]"
-                    >
-                      <option value="108 Mantra Japa in Progress">108 Mantra Japa in Progress</option>
-                      <option value="Himalayan Salt Purification">Himalayan Salt Purification</option>
-                      <option value="Packed & Sealed with Raksha Sutra">Packed & Sealed with Raksha Sutra</option>
-                      <option value="Dispatched via Bluedart Air">Dispatched via Bluedart Air</option>
-                      <option value="Delivered & Attuned">Delivered & Attuned</option>
-                    </select>
-                  </div>
-                </div>
+          <div className="space-y-6">
+            {/* Orders Action Bar */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 rounded-3xl bg-white border border-[#EFE9E2] shadow-xs">
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  onClick={() => setOrdersStatusFilter("all")}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all ${
+                    ordersStatusFilter === "all"
+                      ? "bg-[#7B4FC9] text-white shadow-xs"
+                      : "bg-[#FBF8F3] text-[#635572] hover:bg-[#F5F0FD]"
+                  }`}
+                >
+                  All ({ordersList.length})
+                </button>
+                <button
+                  onClick={() => setOrdersStatusFilter("pending")}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all ${
+                    ordersStatusFilter === "pending"
+                      ? "bg-[#B78103] text-white shadow-xs"
+                      : "bg-[#FBF8F3] text-[#635572] hover:bg-[#FFF9E6]"
+                  }`}
+                >
+                  Scheduled ({ordersList.filter(o => (o.status || "").toLowerCase().includes("confirmed") || (o.status || "").toLowerCase().includes("scheduled")).length})
+                </button>
+                <button
+                  onClick={() => setOrdersStatusFilter("consecrating")}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all ${
+                    ordersStatusFilter === "consecrating"
+                      ? "bg-[#7B4FC9] text-white shadow-xs"
+                      : "bg-[#FBF8F3] text-[#635572] hover:bg-[#F5F0FD]"
+                  }`}
+                >
+                  In Consecration ({ordersList.filter(o => {
+                    const st = (o.status || "").toLowerCase();
+                    return st.includes("japa") || st.includes("purification") || st.includes("sutra") || st.includes("progress");
+                  }).length})
+                </button>
+                <button
+                  onClick={() => setOrdersStatusFilter("dispatched")}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all ${
+                    ordersStatusFilter === "dispatched"
+                      ? "bg-blue-600 text-white shadow-xs"
+                      : "bg-[#FBF8F3] text-[#635572] hover:bg-blue-50"
+                  }`}
+                >
+                  Dispatched ({ordersList.filter(o => (o.status || "").toLowerCase().includes("dispatched")).length})
+                </button>
+                <button
+                  onClick={() => setOrdersStatusFilter("delivered")}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-semibold cursor-pointer transition-all ${
+                    ordersStatusFilter === "delivered"
+                      ? "bg-emerald-600 text-white shadow-xs"
+                      : "bg-[#FBF8F3] text-[#635572] hover:bg-emerald-50"
+                  }`}
+                >
+                  Delivered ({ordersList.filter(o => (o.status || "").toLowerCase().includes("delivered")).length})
+                </button>
               </div>
-            ))}
+
+              <div className="flex items-center gap-3">
+                <div className="relative flex-1 sm:w-64">
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#635572]" />
+                  <input
+                    type="text"
+                    placeholder="Search customer, phone, ID..."
+                    value={ordersSearchQuery}
+                    onChange={(e) => setOrdersSearchQuery(e.target.value)}
+                    className="w-full pl-8 pr-3 py-2 text-xs rounded-xl bg-[#FBF8F3] border border-[#EFE9E2] text-[#2B1B3D] focus:outline-none focus:border-[#C9A24D]"
+                  />
+                </div>
+
+                <button
+                  onClick={loadOrders}
+                  disabled={ordersLoading}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-[#7B4FC9] bg-[#F5F0FD] hover:bg-[#EADBFC] border border-[#7B4FC9]/20 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 flex-shrink-0"
+                  title="Refresh Orders from Supabase"
+                >
+                  <RefreshCw size={13} className={ordersLoading ? "animate-spin" : ""} />
+                  <span>{ordersLoading ? "Syncing..." : "Refresh"}</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Orders Feed */}
+            {ordersLoading && ordersList.length === 0 ? (
+              <div className="py-20 text-center text-xs text-[#635572] bg-white rounded-3xl border border-[#EFE9E2] space-y-3">
+                <Sparkles className="w-8 h-8 text-[#C9A24D] animate-spin mx-auto" />
+                <p className="font-semibold text-sm text-[#2B1B3D]">Syncing Customer Orders from Supabase Cloud...</p>
+                <p className="text-[11px] text-[#9588A3]">Connecting to live consecrated order stream</p>
+              </div>
+            ) : filteredOrders.length === 0 ? (
+              <div className="py-16 text-center text-xs text-[#635572] bg-white rounded-3xl border border-[#EFE9E2] space-y-3 p-8">
+                <ShoppingBag size={36} className="mx-auto text-[#9588A3]" />
+                <h4 className="font-serif text-base font-bold text-[#2B1B3D]">No Customer Orders Found</h4>
+                <p className="text-xs text-[#635572] max-w-md mx-auto">
+                  {ordersSearchQuery || ordersStatusFilter !== "all"
+                    ? "No orders match your filter criteria. Try clearing search or selecting 'All'."
+                    : "No orders have been placed yet. When a customer completes checkout on the website, their order will immediately appear here."}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredOrders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="p-5 sm:p-6 rounded-3xl bg-white border border-[#EFE9E2] shadow-xs space-y-4 transition-all hover:border-[#C9A24D]/40"
+                  >
+                    {/* Header Row: ID, Date, Amount, Payment Method */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#EFE9E2]">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-[#F5F0FD] text-[#7B4FC9] border border-[#7B4FC9]/20">
+                          #{order.id}
+                        </span>
+                        <span className="text-xs text-[#635572] flex items-center gap-1">
+                          <Calendar size={12} className="text-[#8E6D24]" />
+                          <span>{order.date}</span>
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-3">
+                        <span className="font-serif text-sm sm:text-base font-bold text-[#2B1B3D]">
+                          ₹{Number(order.total || 0).toLocaleString("en-IN")}
+                        </span>
+                        <span className="text-[10px] text-[#8E6D24] bg-[#F7EFE2] border border-[#C9A24D]/30 px-2.5 py-0.5 rounded-full font-semibold">
+                          {order.paymentMethod}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Customer Info & Consecration Stage Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-[#635572]">
+                      {/* Customer Info Column */}
+                      <div className="space-y-1.5 p-3 rounded-2xl bg-[#FBF8F3] border border-[#EFE9E2]/60">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-[#2B1B3D] text-sm">{order.customer}</span>
+                          {order.phone && (
+                            <a
+                              href={`https://wa.me/${order.phone.replace(/\D/g, "")}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full hover:bg-emerald-100 transition-colors"
+                            >
+                              <MessageCircle size={10} />
+                              <span>WhatsApp</span>
+                            </a>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px]">
+                          {order.email && (
+                            <a href={`mailto:${order.email}`} className="text-[#7B4FC9] hover:underline flex items-center gap-1">
+                              <Mail size={11} />
+                              <span>{order.email}</span>
+                            </a>
+                          )}
+                          {order.phone && (
+                            <a href={`tel:${order.phone}`} className="text-[#635572] hover:text-[#2B1B3D] flex items-center gap-1">
+                              <Phone size={11} />
+                              <span>{order.phone}</span>
+                            </a>
+                          )}
+                        </div>
+
+                        <div className="pt-1 border-t border-[#EFE9E2] flex items-start gap-1.5 text-[11px] text-[#2B1B3D]">
+                          <MapPin size={12} className="text-[#C9A24D] flex-shrink-0 mt-0.5" />
+                          <span className="leading-snug">{order.destination}</span>
+                        </div>
+                      </div>
+
+                      {/* Status / Consecration Stage Column */}
+                      <div className="space-y-2 p-3 rounded-2xl bg-[#FAF8F3] border border-[#EFE9E2]/60 flex flex-col justify-between">
+                        <div>
+                          <label className="text-[10px] uppercase font-bold text-[#8E6D24] block mb-1 flex items-center gap-1">
+                            <Sparkles size={11} className="text-[#7B4FC9]" />
+                            <span>Consecration & Dispatch Stage:</span>
+                          </label>
+                          <select
+                            value={order.status}
+                            onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                            className="w-full px-3 py-2.5 rounded-xl bg-white border border-[#EFE9E2] text-xs font-semibold text-[#2B1B3D] focus:outline-none focus:border-[#7B4FC9] shadow-2xs"
+                          >
+                            <option value="Confirmed & Scheduled for Energization">Confirmed & Scheduled for Energization</option>
+                            <option value="108 Mantra Japa in Progress">108 Mantra Japa in Progress</option>
+                            <option value="Himalayan Salt Purification">Himalayan Salt Purification</option>
+                            <option value="Packed & Sealed with Raksha Sutra">Packed & Sealed with Raksha Sutra</option>
+                            <option value="Dispatched via Bluedart Air">Dispatched via Bluedart Air</option>
+                            <option value="Delivered & Attuned">Delivered & Attuned</option>
+                            <option value="Cancelled / Refunded">Cancelled / Refunded</option>
+                          </select>
+                        </div>
+
+                        <div className="text-[10px] text-[#9588A3] flex items-center justify-between">
+                          <span>Status updates sync live to client tracking</span>
+                          <span className="font-mono text-[#7B4FC9]">ID: {order.id}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Ordered Items Preview */}
+                    {order.items && order.items.length > 0 && (
+                      <div className="pt-3 border-t border-[#EFE9E2]">
+                        <span className="text-[10px] uppercase font-bold text-[#8E6D24] tracking-wider block mb-2">
+                          Ordered Sacred Gems ({order.items.length} {order.items.length === 1 ? "item" : "items"}):
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                          {order.items.map((item: any, idx: number) => (
+                            <div
+                              key={idx}
+                              className="p-2.5 rounded-xl bg-[#FBF8F3] border border-[#EFE9E2] flex items-center gap-2.5 text-xs"
+                            >
+                              {item.image && (
+                                <div className="relative w-9 h-9 rounded-lg overflow-hidden bg-white border border-[#EFE9E2] flex-shrink-0">
+                                  <Image src={item.image} alt={item.name || "Gemstone"} fill className="object-cover" />
+                                </div>
+                              )}
+                              <div className="min-w-0 flex-1">
+                                <p className="font-semibold text-[#2B1B3D] truncate text-[11px]">{item.name || "Sacred Gemstone"}</p>
+                                <p className="text-[10px] text-[#635572]">
+                                  {item.selectedBeadSize ? `${item.selectedBeadSize} • ` : ""}Qty: {item.quantity || 1} • ₹{item.salePrice || item.price || 0}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Energization Note Preview (if provided) */}
+                    {order.energizationNote && (
+                      <div className="p-3 rounded-2xl bg-[#FFFDF9] border border-[#C9A24D]/30 text-xs space-y-1">
+                        <span className="text-[10px] uppercase font-bold text-[#8E6D24] tracking-wider flex items-center gap-1">
+                          <Sparkles size={11} className="text-[#C9A24D]" />
+                          <span>Vedic Energization Intention:</span>
+                        </span>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
+                          <div>
+                            <span className="text-[#635572] block text-[10px]">Wearer Name:</span>
+                            <strong className="text-[#2B1B3D]">{order.energizationNote.name || order.customer}</strong>
+                          </div>
+                          <div>
+                            <span className="text-[#635572] block text-[10px]">Date of Birth / Gotra:</span>
+                            <strong className="text-[#2B1B3D]">{order.energizationNote.dob || "Vedic Consecration"}</strong>
+                          </div>
+                          <div>
+                            <span className="text-[#635572] block text-[10px]">Sacred Intention:</span>
+                            <strong className="text-[#7B4FC9]">{order.energizationNote.intention || "General Abundance & Protection"}</strong>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

@@ -117,6 +117,7 @@ export async function saveQuizLead(leadData: {
  * Submit order to Supabase orders table with full energization note
  */
 export async function submitOrder(orderData: {
+  orderId?: string;
   customer: {
     name: string;
     email: string;
@@ -135,7 +136,7 @@ export async function submitOrder(orderData: {
     intention: string;
   };
 }) {
-  const orderId = `RTC-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
+  const orderId = orderData.orderId || `RTC-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`;
   const orderPayload = {
     order_id: orderId,
     customer_name: orderData.customer.name,
@@ -156,15 +157,16 @@ export async function submitOrder(orderData: {
       .insert([orderPayload])
       .select();
 
-    // Cache order locally for order tracking preview
+    // Cache order locally for order tracking preview and admin panel instant view
     if (typeof window !== "undefined") {
       const orders = JSON.parse(localStorage.getItem("riya_orders") || "[]");
-      orders.unshift(orderPayload);
-      localStorage.setItem("riya_orders", JSON.stringify(orders));
+      const filtered = orders.filter((o: any) => (o.order_id || o.id) !== orderId);
+      filtered.unshift(orderPayload);
+      localStorage.setItem("riya_orders", JSON.stringify(filtered));
     }
 
     if (error) {
-      console.info("Saved order to local storage (Supabase table pending):", error.message);
+      console.info("Saved order to local storage (Supabase note):", error.message);
       return { success: true, orderId, data: orderPayload };
     }
 
@@ -172,10 +174,177 @@ export async function submitOrder(orderData: {
   } catch (err) {
     if (typeof window !== "undefined") {
       const orders = JSON.parse(localStorage.getItem("riya_orders") || "[]");
-      orders.unshift(orderPayload);
-      localStorage.setItem("riya_orders", JSON.stringify(orders));
+      const filtered = orders.filter((o: any) => (o.order_id || o.id) !== orderId);
+      filtered.unshift(orderPayload);
+      localStorage.setItem("riya_orders", JSON.stringify(filtered));
     }
     return { success: true, orderId, data: orderPayload };
+  }
+}
+
+/**
+ * Helper to format ISO timestamp into readable Indian Standard Time
+ */
+export function formatOrderDate(isoString: string): string {
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return isoString;
+    return d.toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  } catch (e) {
+    return isoString;
+  }
+}
+
+/**
+ * Fetch all customer orders with hybrid cloud + local persistence
+ */
+export async function getOrders(): Promise<any[]> {
+  let cloudOrders: any[] = [];
+  try {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (!error && data) {
+      cloudOrders = data;
+    }
+  } catch (err) {
+    console.warn("Could not query Supabase orders:", err);
+  }
+
+  // Get locally cached orders
+  let localOrders: any[] = [];
+  if (typeof window !== "undefined") {
+    try {
+      localOrders = JSON.parse(localStorage.getItem("riya_orders") || "[]");
+    } catch (e) {
+      localOrders = [];
+    }
+  }
+
+  // Status overrides from localStorage
+  let statusOverrides: Record<string, string> = {};
+  if (typeof window !== "undefined") {
+    try {
+      statusOverrides = JSON.parse(localStorage.getItem("riya_order_status_overrides") || "{}");
+    } catch (e) {}
+  }
+
+  const orderMap = new Map<string, any>();
+
+  // Add cloud orders
+  cloudOrders.forEach((o) => {
+    const id = o.order_id || o.id;
+    if (id && !id.startsWith("TEST-DIAG")) {
+      orderMap.set(id, {
+        id,
+        order_id: id,
+        customer: o.customer_name || o.customer || "Blessed Customer",
+        customer_name: o.customer_name || o.customer || "Blessed Customer",
+        email: o.customer_email || o.email || "",
+        customer_email: o.customer_email || o.email || "",
+        phone: o.customer_phone || o.phone || "",
+        customer_phone: o.customer_phone || o.phone || "",
+        destination: o.shipping_address || o.destination || "",
+        shipping_address: o.shipping_address || o.destination || "",
+        status: statusOverrides[id] || o.status || "Confirmed & Scheduled for Energization",
+        total: Number(o.total_amount || o.total || 0),
+        total_amount: Number(o.total_amount || o.total || 0),
+        paymentMethod: o.payment_method || o.paymentMethod || "Prepaid",
+        payment_method: o.payment_method || o.paymentMethod || "Prepaid",
+        items: Array.isArray(o.items) ? o.items : [],
+        energizationNote: o.energization_note || o.energizationNote || null,
+        energization_note: o.energization_note || o.energizationNote || null,
+        date: o.created_at ? formatOrderDate(o.created_at) : "Recent",
+        created_at: o.created_at || new Date().toISOString()
+      });
+    }
+  });
+
+  // Merge local orders (either override cloud or add if offline)
+  localOrders.forEach((o) => {
+    const id = o.order_id || o.id;
+    if (id && !id.startsWith("TEST-DIAG")) {
+      const existing = orderMap.get(id);
+      orderMap.set(id, {
+        id,
+        order_id: id,
+        customer: o.customer_name || o.customer || existing?.customer || "Blessed Customer",
+        customer_name: o.customer_name || o.customer || existing?.customer || "Blessed Customer",
+        email: o.customer_email || o.email || existing?.email || "",
+        customer_email: o.customer_email || o.email || existing?.email || "",
+        phone: o.customer_phone || o.phone || existing?.phone || "",
+        customer_phone: o.customer_phone || o.phone || existing?.phone || "",
+        destination: o.shipping_address || o.destination || existing?.destination || "",
+        shipping_address: o.shipping_address || o.destination || existing?.destination || "",
+        status: statusOverrides[id] || o.status || existing?.status || "Confirmed & Scheduled for Energization",
+        total: Number(o.total_amount || o.total || existing?.total || 0),
+        total_amount: Number(o.total_amount || o.total || existing?.total || 0),
+        paymentMethod: o.payment_method || o.paymentMethod || existing?.paymentMethod || "Prepaid",
+        payment_method: o.payment_method || o.paymentMethod || existing?.paymentMethod || "Prepaid",
+        items: Array.isArray(o.items) && o.items.length > 0 ? o.items : (existing?.items || []),
+        energizationNote: o.energization_note || o.energizationNote || existing?.energizationNote || null,
+        energization_note: o.energization_note || o.energizationNote || existing?.energizationNote || null,
+        date: o.created_at ? formatOrderDate(o.created_at) : (existing?.date || "Recent"),
+        created_at: o.created_at || existing?.created_at || new Date().toISOString()
+      });
+    }
+  });
+
+  // Sort descending by created_at
+  const allOrders = Array.from(orderMap.values()).sort((a, b) => {
+    const timeA = new Date(a.created_at).getTime() || 0;
+    const timeB = new Date(b.created_at).getTime() || 0;
+    return timeB - timeA;
+  });
+
+  return allOrders;
+}
+
+/**
+ * Update order status across Supabase cloud and local storage
+ */
+export async function updateOrderStatus(orderId: string, newStatus: string): Promise<boolean> {
+  // 1. Save to local storage status overrides
+  if (typeof window !== "undefined") {
+    try {
+      const overrides = JSON.parse(localStorage.getItem("riya_order_status_overrides") || "{}");
+      overrides[orderId] = newStatus;
+      localStorage.setItem("riya_order_status_overrides", JSON.stringify(overrides));
+
+      // Also update in riya_orders array if present
+      const localOrders = JSON.parse(localStorage.getItem("riya_orders") || "[]");
+      const updated = localOrders.map((o: any) =>
+        (o.order_id === orderId || o.id === orderId) ? { ...o, status: newStatus } : o
+      );
+      localStorage.setItem("riya_orders", JSON.stringify(updated));
+    } catch (e) {
+      console.warn("Could not save status override to localStorage:", e);
+    }
+  }
+
+  // 2. Update in Supabase
+  try {
+    const { error } = await supabase
+      .from("orders")
+      .update({ status: newStatus })
+      .eq("order_id", orderId);
+
+    if (error) {
+      console.info("Supabase order update note:", error.message);
+    }
+    return true;
+  } catch (err) {
+    console.warn("Error updating order in Supabase:", err);
+    return true;
   }
 }
 

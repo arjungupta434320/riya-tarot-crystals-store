@@ -1,1 +1,10 @@
-export { supabase, getProducts, getProductById, saveQuizLead, submitOrder } from "./supabaseClient";
+export { 
+  supabase, 
+  getProducts, 
+  getProductById, 
+  saveQuizLead, 
+  submitOrder, 
+  getOrders, 
+  updateOrderStatus, 
+  formatOrderDate 
+} from "./supabaseClient";

@@ -10,6 +10,7 @@ import {
   fetchLivePincodeDetails, 
   STATE_PRIMARY_HUBS 
 } from "@/lib/pincodes";
+import { submitOrder } from "@/lib/supabaseClient";
 import { loadRazorpayScript } from "@/lib/razorpay";
 import { fireDivineConfetti } from "@/components/animations/ConfettiCelebration";
 import { 
@@ -201,12 +202,39 @@ export default function CheckoutPage() {
     }
   };
 
-  const finalizeOrder = (orderNum: string) => {
+  const finalizeOrder = async (orderNum: string) => {
     setOrderId(orderNum);
-    setLoading(false);
-    setStep("confirmed");
-    clearCart();
-    fireDivineConfetti();
+    setLoading(true);
+
+    try {
+      await submitOrder({
+        orderId: orderNum,
+        customer: {
+          name: fullName,
+          email,
+          phone,
+          address: landmark ? `${address} (Landmark: ${landmark})` : address,
+          city,
+          state: stateName,
+          pincode,
+        },
+        items: cart,
+        total: grandTotal,
+        paymentMethod: paymentMethod === "razorpay" ? "Razorpay Online (Prepaid)" : "Cash on Delivery (COD)",
+        energizationNote: {
+          name: fullName,
+          dob: "General Vedic Consecration",
+          intention: "General Abundance, Health & Spiritual Harmony",
+        },
+      });
+    } catch (err) {
+      console.error("Order submit error:", err);
+    } finally {
+      setLoading(false);
+      setStep("confirmed");
+      clearCart();
+      fireDivineConfetti();
+    }
   };
 
   // 1. Order Confirmed Celebration Page
