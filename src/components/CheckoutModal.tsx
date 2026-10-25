@@ -5,6 +5,12 @@ import Image from "next/image";
 import { useStore } from "@/store/useStore";
 import { submitOrder } from "@/lib/supabaseClient";
 import { 
+  ALL_INDIAN_STATES, 
+  lookupIndianPincode, 
+  fetchLivePincodeDetails, 
+  STATE_PRIMARY_HUBS 
+} from "@/lib/pincodes";
+import { 
   X, 
   Sparkles, 
   ShieldCheck, 
@@ -21,25 +27,6 @@ import {
   ShoppingBag
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const INDIAN_STATES = [
-  "Delhi NCR",
-  "Maharashtra",
-  "Karnataka",
-  "Tamil Nadu",
-  "Gujarat",
-  "Uttar Pradesh",
-  "Telangana",
-  "West Bengal",
-  "Rajasthan",
-  "Punjab",
-  "Haryana",
-  "Madhya Pradesh",
-  "Kerala",
-  "Goa",
-  "Chandigarh",
-  "Other Indian State"
-];
 
 export default function CheckoutModal() {
   const { 
@@ -72,6 +59,43 @@ export default function CheckoutModal() {
   // Validation Touched States for modern feedback
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [isMobileSummaryOpen, setIsMobileSummaryOpen] = useState(false);
+
+  // Intelligent Real-Time Autofill from Indian PIN code
+  const handlePincodeChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, "");
+    setPincode(val);
+
+    // 1. Instant 0ms offline prefix matching (2+ digits)
+    if (val.length >= 2) {
+      const match = lookupIndianPincode(val);
+      if (match) {
+        if (!city || city === "New Delhi" || city.includes("/")) {
+          setCity(match.city.split(" / ")[0]);
+        }
+        setStateName(match.state);
+      }
+    }
+
+    // 2. Real-time India Post official API lookup when 6 digits are typed
+    if (val.length === 6) {
+      const live = await fetchLivePincodeDetails(val);
+      if (live) {
+        setCity(live.city);
+        setStateName(live.state);
+      }
+    }
+  };
+
+  // State selection handler: autofills primary hub if city not customized
+  const handleStateChange = (selectedState: string) => {
+    setStateName(selectedState);
+    if (!city || city === "New Delhi" || city.includes("/")) {
+      const hub = STATE_PRIMARY_HUBS[selectedState];
+      if (hub) {
+        setCity(hub.split(" / ")[0]);
+      }
+    }
+  };
 
   if (!isCheckoutModalOpen) return null;
 
@@ -375,11 +399,11 @@ export default function CheckoutModal() {
                             maxLength={6}
                             placeholder=" "
                             value={pincode}
-                            onChange={(e) => setPincode(e.target.value)}
+                            onChange={handlePincodeChange}
                             onBlur={() => markTouched("pincode")}
                             className={touched.pincode && !isPincodeValid ? "!border-rose-400 !bg-rose-50/40" : touched.pincode && isPincodeValid ? "!border-emerald-500" : ""}
                           />
-                          <label htmlFor="pincode">PIN / ZIP (6 Digits) *</label>
+                          <label htmlFor="pincode">PIN Code (Autofill) *</label>
                         </div>
 
                         <div className="floating-input-group">
@@ -400,15 +424,15 @@ export default function CheckoutModal() {
                           <select
                             id="state"
                             value={stateName}
-                            onChange={(e) => setStateName(e.target.value)}
+                            onChange={(e) => handleStateChange(e.target.value)}
                           >
-                            {INDIAN_STATES.map((st) => (
+                            {ALL_INDIAN_STATES.map((st) => (
                               <option key={st} value={st}>
                                 {st}
                               </option>
                             ))}
                           </select>
-                          <label htmlFor="state">State</label>
+                          <label htmlFor="state">State *</label>
                         </div>
                       </div>
                     </form>

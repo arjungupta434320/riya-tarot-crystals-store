@@ -555,9 +555,9 @@ export default function CartDrawer() {
                         {/* Available coupon chips */}
                         <div className="flex flex-wrap gap-1.5 pt-1">
                           {[
-                            { code: "DIWALI20", label: "🪔 DIWALI 20%" },
                             { code: "DIVINE10", label: "10% OFF" },
                             { code: "LUXURY15", label: "15% OFF" },
+                            { code: "DIVINE20", label: "20% OFF" },
                           ].map((c) => {
                             const isSelected = appliedCoupon === c.code;
                             return (
