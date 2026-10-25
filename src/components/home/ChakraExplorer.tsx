@@ -205,15 +205,6 @@ export function ChakraExplorer() {
           >
             {/* Left 7 cols: Information */}
             <div className="md:col-span-7 space-y-4">
-              <div className="flex items-center gap-2">
-                <span
-                  style={{ color: selectedChakra.colorHex, borderColor: selectedChakra.borderColor }}
-                  className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-white border shadow-2xs"
-                >
-                  {selectedChakra.sanskritName} • Beej Mantra: {selectedChakra.beejMantra}
-                </span>
-              </div>
-
               <h3 className="text-2xl sm:text-3xl font-serif text-[#2B1B3D] font-bold">
                 {selectedChakra.englishName}
               </h3>
@@ -249,7 +240,7 @@ export function ChakraExplorer() {
                   href={`/shop?category=Oils&chakra=${encodeURIComponent(selectedChakra.filterParam)}`}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-xs font-semibold uppercase tracking-wider text-white btn-amethyst shadow-md"
                 >
-                  <span>Explore {selectedChakra.englishName} Chakra Oils</span>
+                  <span>Explore {selectedChakra.englishName} Oils</span>
                   <ArrowRight size={14} />
                 </Link>
               </div>

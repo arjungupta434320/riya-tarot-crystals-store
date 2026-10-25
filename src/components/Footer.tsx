@@ -60,9 +60,6 @@ export default function Footer() {
                 <h4 className="font-serif text-lg font-bold tracking-wider text-[#2B1B3D] uppercase">
                   RIYA TAROT CRYSTALS
                 </h4>
-                <span className="text-[9px] tracking-widest uppercase text-[#8E6D24] font-semibold block">
-                  AUTHENTIC SPIRITUAL BOUTIQUE
-                </span>
               </div>
             </div>
 
