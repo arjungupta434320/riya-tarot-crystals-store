@@ -74,7 +74,7 @@ export default async function BlogPostPage({
     "@type": "Article",
     headline: post.title,
     description: post.excerpt,
-    image: `https://riyatarotcrystals.com${post.coverImage}`,
+    image: `https://thevedicstudio.com${post.coverImage}`,
     datePublished: post.publishDate,
     author: {
       "@type": "Person",
@@ -86,7 +86,7 @@ export default async function BlogPostPage({
       name: "Riya Tarot Crystals",
       logo: {
         "@type": "ImageObject",
-        url: "https://riyatarotcrystals.com/images/logo.jpg",
+        url: "https://thevedicstudio.com/images/logo.jpg",
       },
     },
   };

@@ -40,7 +40,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "Riya Tarot Crystals | Authentically Sourced & Energized Spiritual Gemstones",
   description: "Authentically sourced healed crystal bracelets, raw clusters, and 7-Chakra curations. 100% natural earth gems pre-energized with 108 Vedic Beej Mantras.",
-  metadataBase: new URL("https://riyatarotcrystals.com"),
+  metadataBase: new URL("https://thevedicstudio.com"),
   openGraph: {
     title: "Riya Tarot Crystals | Authentically Sourced & Energized Spiritual Gemstones",
     description: "Authentically sourced healed crystal bracelets, raw clusters, and 7-Chakra curations.",
