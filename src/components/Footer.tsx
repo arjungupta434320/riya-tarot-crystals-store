@@ -209,11 +209,11 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="mailto:blessings@riyatarotcrystals.com"
+                  href="mailto:auracrystalstarot2@gmail.com"
                   className="inline-flex items-center gap-2 hover:text-[#7B4FC9] transition-colors"
                 >
                   <Mail size={14} className="text-[#C9A24D] flex-shrink-0" />
-                  <span>blessings@riyatarotcrystals.com</span>
+                  <span>auracrystalstarot2@gmail.com</span>
                 </a>
               </li>
               <li className="pt-1">
@@ -223,6 +223,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li className="pt-2">
+                <Link href="/policies/contact" className="hover:text-[#7B4FC9] transition-colors block font-medium text-[#2B1B3D]">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
                 <Link href="/policies/shipping" className="hover:text-[#7B4FC9] transition-colors block">
                   Shipping & Delivery
                 </Link>

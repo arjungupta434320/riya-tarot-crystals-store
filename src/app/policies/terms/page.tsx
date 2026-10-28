@@ -26,7 +26,7 @@ export default function TermsPage() {
           <p className="mb-4">The healing properties mentioned regarding our crystals are for spiritual and energetic support only. They are not meant to replace professional medical, psychological, or financial advice.</p>
 
           <h2 className="text-xl font-serif mt-8 mb-4 text-primary">5. Contact Information</h2>
-          <p className="mb-4">Questions about the Terms of Service should be sent to us at riyatarotcrystals@example.com.</p>
+          <p className="mb-4">Questions about the Terms of Service should be sent to us at auracrystalstarot2@gmail.com.</p>
         </div>
       </div>
     </div>
