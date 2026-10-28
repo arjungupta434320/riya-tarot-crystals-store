@@ -14,7 +14,10 @@ import {
   ArrowRight, 
   Heart,
   CheckCircle2,
-  BookOpen
+  BookOpen,
+  Package,
+  RotateCcw,
+  FileText
 } from "lucide-react";
 import { useStore } from "@/store/useStore";
 
@@ -182,41 +185,42 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Customer Support & Policies */}
+          {/* Contact Us & Policies */}
           <div>
-            <h5 className="text-xs font-bold tracking-widest uppercase mb-4 text-[#2B1B3D]">
-              Customer Support & Policies
-            </h5>
+            <Link href="/policies/contact" className="inline-block">
+              <h5 className="text-xs font-bold tracking-widest uppercase mb-4 text-[#2B1B3D] hover:text-[#7B4FC9] transition-colors">
+                Contact Us
+              </h5>
+            </Link>
             <ul className="space-y-2.5 text-xs text-[#635572]">
               <li>
-                <Link href="/policies/contact" className="hover:text-[#7B4FC9] transition-colors block font-medium text-[#2B1B3D]">
-                  Contact Us
-                </Link>
-              </li>
-              <li>
-                <Link href="/track" className="hover:text-[#7B4FC9] transition-colors flex items-center gap-1 text-[#2B1B3D]">
-                  <Truck size={13} className="text-[#7B4FC9]" />
+                <Link href="/track" className="hover:text-[#7B4FC9] transition-colors flex items-center gap-2 text-[#2B1B3D]">
+                  <Truck size={13} className="text-[#7B4FC9] flex-shrink-0" />
                   <span>Track Your Order</span>
                 </Link>
               </li>
               <li>
-                <Link href="/policies/shipping" className="hover:text-[#7B4FC9] transition-colors block">
-                  Shipping & Delivery
+                <Link href="/policies/shipping" className="hover:text-[#7B4FC9] transition-colors flex items-center gap-2">
+                  <Package size={13} className="text-[#7B4FC9] flex-shrink-0" />
+                  <span>Shipping & Delivery</span>
                 </Link>
               </li>
               <li>
-                <Link href="/policies/refunds" className="hover:text-[#7B4FC9] transition-colors block">
-                  Returns & Cancellations
+                <Link href="/policies/refunds" className="hover:text-[#7B4FC9] transition-colors flex items-center gap-2">
+                  <RotateCcw size={13} className="text-[#7B4FC9] flex-shrink-0" />
+                  <span>Returns & Cancellations</span>
                 </Link>
               </li>
               <li>
-                <Link href="/policies/privacy" className="hover:text-[#7B4FC9] transition-colors block">
-                  Privacy Policy
+                <Link href="/policies/privacy" className="hover:text-[#7B4FC9] transition-colors flex items-center gap-2">
+                  <ShieldCheck size={13} className="text-[#7B4FC9] flex-shrink-0" />
+                  <span>Privacy Policy</span>
                 </Link>
               </li>
               <li>
-                <Link href="/policies/terms" className="hover:text-[#7B4FC9] transition-colors block">
-                  Terms & Conditions
+                <Link href="/policies/terms" className="hover:text-[#7B4FC9] transition-colors flex items-center gap-2">
+                  <FileText size={13} className="text-[#7B4FC9] flex-shrink-0" />
+                  <span>Terms & Conditions</span>
                 </Link>
               </li>
             </ul>

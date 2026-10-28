@@ -27,7 +27,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { fetchProducts } from "@/data/products";
 import { Product, useStore } from "@/store/useStore";
-import { ChakraExplorer } from "@/components/home/ChakraExplorer";
 import { TiltCard } from "@/components/animations/TiltCard";
 import { Magnetic } from "@/components/animations/Magnetic";
 
@@ -391,9 +390,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* 4. INTERACTIVE 7-CHAKRA EXPLORER */}
-      <ChakraExplorer />
 
       {/* 5. BEST SELLERS CAROUSEL / GRID */}
       <section className="py-16 sm:py-24 bg-[#FBF8F3] border-b border-[#EFE9E2]">

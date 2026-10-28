@@ -189,12 +189,6 @@ function ProductContent() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="w-full lg:w-1/2 flex flex-col gap-4 relative"
           >
-            {/* Shimmering Sacred Consecration Seal */}
-            <div className="absolute -top-3 -right-2 z-20 flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-[#7B4FC9] to-[#5E37A1] text-white text-[10px] font-bold uppercase tracking-wider shadow-md border border-[#C9A24D]/60 animate-bounce">
-              <Sparkles size={11} className="text-[#C9A24D]" />
-              <span>108 Vedic Mantras Charged</span>
-            </div>
-
             <Image360Viewer images={galleryImages} productName={product.name} />
           </motion.div>
 
