@@ -88,7 +88,7 @@ export default function HomePage() {
         <div className="absolute bottom-10 right-10 w-80 sm:w-96 h-80 sm:h-96 bg-[#F4C6D0]/20 rounded-full blur-3xl pointer-events-none animate-aurora" />
 
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
+          <div className="max-w-4xl mx-auto text-center space-y-6">
             
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#C9A24D]/40 shadow-xs">
               <Sparkles size={13} className="text-[#C9A24D]" />
@@ -97,15 +97,18 @@ export default function HomePage() {
               </span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif text-[#2B1B3D] leading-[1.15] font-bold tracking-tight">
-              Authentic Healing Crystals & <br className="hidden sm:inline" />
-              <span className="italic font-serif text-[#7B4FC9]">Sacred Bracelets</span>. <br />
-              Energized for Wealth, Peace & Protection.
+            {/* Accessible SEO Heading */}
+            <h1 className="sr-only">
+              The Vedic Studio | Authentic Healing Crystals & Sacred Bracelets Energized for Wealth, Peace & Protection
             </h1>
 
-            <p className="text-xs sm:text-base text-[#635572] leading-relaxed max-w-xl mx-auto font-light">
-              100% natural, certified Grade-A gemstones and healing bracelets. Purified with Himalayan salts and energized with 108 Vedic Beej Mantras for wealth, peace of mind, and daily protection.
-            </p>
+            {/* HERO IMAGE CONTAINER: Space left blank for adding custom hero images / banner */}
+            <div 
+              id="hero-images-container" 
+              className="w-full min-h-[260px] sm:min-h-[380px] md:min-h-[460px] rounded-3xl flex items-center justify-center relative my-4 transition-all"
+            >
+              {/* Space left blank for hero images */}
+            </div>
 
             {/* Trust Indicators */}
             <div className="grid grid-cols-3 gap-2 sm:gap-4 max-w-lg mx-auto pt-1">
